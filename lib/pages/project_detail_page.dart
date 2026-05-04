@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:social_hub/pages/volunteer_application_page.dart';
+import 'package:social_hub/services/auth_service.dart';
+import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/theme/theme.dart';
+import 'package:intl/intl.dart';
 
 class ProjectDetailPage extends StatefulWidget {
-  const ProjectDetailPage({super.key});
+  const ProjectDetailPage({super.key, required this.uid});
+
+  final String uid;
 
   @override
   State<ProjectDetailPage> createState() => _ProjectDetailPageState();
@@ -12,208 +17,296 @@ class ProjectDetailPage extends StatefulWidget {
 
 class _ProjectDetailPageState extends State<ProjectDetailPage> {
   String selectedAmt = 'RM25';
+  final formatter = NumberFormat.currency(
+    locale: 'en_MY',
+    symbol: 'RM',
+    decimalDigits: 2,
+  );
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      body: Stack(
-        children: [
-          CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 250,
-                pinned: true,
-                backgroundColor: AppColors.primary.withAlpha(100),
-                iconTheme: const IconThemeData(color: Colors.black),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.network(
-                        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
-                        fit: BoxFit.cover,
-                      ),
-                      Container(color: Colors.black.withValues(alpha: 0.1)),
-                    ],
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  transform: Matrix4.translationValues(0.0, -24.0, 0.0),
-                  decoration: const BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                    ),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-                      Row(
-                        children: const [
-                          Icon(
-                            Icons.menu_book,
-                            color: AppColors.primary,
-                            size: 14,
+    return FirestoreFutureBuilder(
+      future: AuthService().getCollectionData(
+        widget.uid,
+        'communityEvents',
+      ),
+      builder: (event) {
+        return Scaffold(
+          backgroundColor: AppColors.surface,
+          body: Stack(
+            children: [
+              CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: 250,
+                    pinned: true,
+                    backgroundColor: AppColors.primary.withAlpha(100),
+                    iconTheme: const IconThemeData(color: Colors.black),
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
+                            fit: BoxFit.cover,
                           ),
-                          SizedBox(width: 4),
-                          Text(
-                            'QUALITY EDUCATION',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
+                          Container(color: Colors.black.withValues(alpha: 0.1)),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Rural Tech Initiative Rural Tech Education Initiative',
-                        style: GoogleFonts.poppins(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      transform: Matrix4.translationValues(0.0, -24.0, 0.0),
+                      decoration: const BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
                         ),
                       ),
-                      const SizedBox(height: 24),
-
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondary.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.25),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.2),
-                                shape: BoxShape.circle,
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.menu_book,
+                                color: AppColors.primary,
+                                size: 14,
                               ),
-                              child: const Center(
-                                child: Text(
-                                  'EG',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              SizedBox(width: 4),
+                              Text(
+                                'QUALITY EDUCATION',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '${event?['eventTitle'] ?? 'Project Title'}',
+                            style: GoogleFonts.poppins(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondary.withValues(
+                                alpha: 0.15,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.25,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  'EduGlobal NGO',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      'EG',
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  'Verified via UN Partner API',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textMuted,
-                                  ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'EduGlobal NGO',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Verified via ${event?['verifiedBy'] ?? 'email'}',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.appBg,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: const [
-                                  Text(
-                                    'Raised',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: AppColors.textMuted,
-                                    ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.appBg,
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    '\$12,400',
-                                    style: TextStyle(
-                                      fontSize: 16.5,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primary,
-                                    ),
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                        'Raised',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: AppColors.textMuted,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        formatter.format(event?['amountRaised'] ?? 0),
+                                        style: const TextStyle(
+                                          fontSize: 16.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.appBg,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                        'Target',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: AppColors.textMuted,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        formatter.format(event?['amountTarget'] ?? 0),
+                                        style: const TextStyle(
+                                          fontSize: 16.5,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+
+                          const Text(
+                            'Description',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.appBg,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: const [
-                                  Text(
-                                    'Target',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: AppColors.textMuted,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    '\$20,000',
-                                    style: TextStyle(
-                                      fontSize: 16.5,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          const SizedBox(height: 8),
+                          Text(
+                            event?['eventDescription'] ??
+                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textMuted,
+                              height: 1.5,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                    ),
+                  ),
+                ],
+              ),
 
-                      const Text(
-                        'Description',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    border: const Border(
+                      top: BorderSide(color: AppColors.gray100),
+                    ),
+                    boxShadow: floatingShadow,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              createSlideRoute(VolunteerApplicationPage()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondary.withValues(
+                              alpha: 0.1,
+                            ),
+                            foregroundColor: AppColors.primary,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text(
+                            'Join',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'We are setting up computer labs in 5 remote villages. Join us as a coding volunteer or donate to help buy hardware.We are setting up computer labs in 5 remote villages. Join us as a coding volunteer or donate to help buy hardware.We are setting up computer labs in 5 remote villages. Join us as a coding volunteer or donate to help buy hardware.We are setting up computer labs in 5 remote villages. Join us as a coding volunteer or donate to help buy hardware.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textMuted,
-                          height: 1.5,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => _showDonationSheet(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text(
+                            'Donate',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -222,75 +315,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
               ),
             ],
           ),
-
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                border: const Border(top: BorderSide(color: AppColors.gray100)),
-                boxShadow: floatingShadow,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          createSlideRoute(VolunteerApplicationPage()
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.secondary.withValues(
-                          alpha: 0.1,
-                        ),
-                        foregroundColor: AppColors.primary,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text(
-                        'Join',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _showDonationSheet(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text(
-                        'Donate',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -303,11 +329,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-      
         return GestureDetector(
           onTap: () => textFocus.unfocus(),
           child: StatefulBuilder(
-            
             builder: (context, setModalState) {
               return Container(
                 padding: EdgeInsets.only(
@@ -350,7 +374,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                       Row(
                         children: [
                           Expanded(
-                            child: _buildAmtBtn('RM10', selectedAmtLocal, (val) {
+                            child: _buildAmtBtn('RM10', selectedAmtLocal, (
+                              val,
+                            ) {
                               setModalState(() {
                                 selectedAmtLocal = val;
                                 textController.text = val.replaceAll('RM', '');
@@ -359,7 +385,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: _buildAmtBtn('RM25', selectedAmtLocal, (val) {
+                            child: _buildAmtBtn('RM25', selectedAmtLocal, (
+                              val,
+                            ) {
                               setModalState(() {
                                 selectedAmtLocal = val;
                                 textController.text = val.replaceAll('RM', '');
@@ -368,7 +396,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: _buildAmtBtn('RM50', selectedAmtLocal, (val) {
+                            child: _buildAmtBtn('RM50', selectedAmtLocal, (
+                              val,
+                            ) {
                               setModalState(() {
                                 selectedAmtLocal = val;
                                 textController.text = val.replaceAll('RM', '');
@@ -397,7 +427,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                             prefixText: 'RM',
                             hintText: ' Custom Amount (RM)',
                             border: InputBorder.none,
-                            hintStyle: const TextStyle(fontWeight: FontWeight.w700),
+                            hintStyle: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           keyboardType: TextInputType.number,
                           style: const TextStyle(fontWeight: FontWeight.w700),

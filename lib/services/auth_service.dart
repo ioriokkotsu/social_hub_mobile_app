@@ -13,13 +13,15 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
 
   // --- Sign Up with Email & Password ---
-  Future<UserCredential> signUpWithEmail(String email, String password, {String? name}) async {
+  Future<UserCredential> signUpWithEmail(
+    String email,
+    String password, {
+    String? name,
+  }) async {
     try {
       // 1. Create the user in Firebase Auth
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
       // 2. Auto-create the user document in the 'users' Firestore collection
       if (userCredential.user != null) {
@@ -74,5 +76,106 @@ class AuthService {
   // --- Log Out ---
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  // User Data : Future
+  Future<Map<String, dynamic>?> getUserData(String? uid) async {
+    try {
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(uid)
+          .get();
+      if (doc.exists) {
+        return doc.data() as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      throw Exception('Failed to fetch user data: ${e.toString()}');
+    }
+  }
+
+  // User Data : Stream Snapshot
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getUserDataSnapshot(
+    String? uid,
+  ) {
+    return _firestore.collection('users').doc(uid).snapshots();
+  }
+
+  // Single Collection : Future
+  Future<Map<String, dynamic>?> getCollectionData(
+    String? uid,
+    String collection,
+  ) async {
+    try {
+      DocumentSnapshot doc = await _firestore
+          .collection(collection)
+          .doc(uid)
+          .get();
+      if (doc.exists) {
+        return doc.data() as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      throw Exception('Failed to fetch collection data: ${e.toString()}');
+    }
+  }
+
+  // Single Collection : Stream Snapshot
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getCollectionDataSnapshot(
+    String? uid,
+    String collection,
+  ) {
+    return _firestore.collection(collection).doc(uid).snapshots();
+  }
+
+  //Query Collection : Future
+  Future<List<Map<String, dynamic>>> getUsers(String collection) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+          .collection(collection)
+          .get();
+
+      return snapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch collection data: ${e.toString()}');
+    }
+  }
+
+  //Query Collection : Stream Snapshot
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCollectionStream(
+    String collection,
+  ) {
+    return _firestore.collection(collection).snapshots();
+  }
+
+  // Query with Multiple Filters
+  Future<List<Map<String, dynamic>>> getQueryAdvanced({
+    List<Map<String, dynamic>>? filters,
+    required String collection,
+  }) async {
+    try {
+      Query<Map<String, dynamic>> query = _firestore.collection(collection);
+
+      if (filters != null) {
+        for (var f in filters) {
+          query = query.where(f['field'], isEqualTo: f['value']);
+        }
+      }
+
+      final snapshot = await query.get();
+
+      return snapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch collection data: ${e.toString()}');
+    }
+  }
+
+  //Update Users Collection
+  Future<void> updateCollection(String uid, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection('users').doc(uid).update(data);
+    } catch (e) {
+      throw Exception('Failed to update user data: ${e.toString()}');
+    }
   }
 }

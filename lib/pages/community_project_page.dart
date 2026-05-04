@@ -169,7 +169,7 @@ class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
   }) {
     return GestureDetector(
       onTap: () =>
-          Navigator.push(context, createSlideRoute(const ProjectDetailPage())),
+          Navigator.push(context, createSlideRoute(const ProjectDetailPage(uid : 'QzMtSxmpzlPR0VP5qwIc'))),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirestoreFutureBuilder<T> extends StatelessWidget {
-  final Future<T> future;
+class FirestoreStreamBuilder<T> extends StatelessWidget {
+  final Stream<T> stream;
   final Widget Function(T data) builder;
 
   final Widget? loading;
   final Widget Function(Object error)? errorBuilder;
   final Widget? empty;
-  
+
   final double? width;
   final double? height;
 
-  const FirestoreFutureBuilder({
+  const FirestoreStreamBuilder({
     super.key,
-    required this.future,
+    required this.stream,
     required this.builder,
     this.width,
     this.height,
@@ -25,40 +26,48 @@ class FirestoreFutureBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<T>(
-      future: future,
+    return StreamBuilder<T>(
+      stream: stream,
       builder: (context, snapshot) {
 
+        /// 🔹 LOADING
         if (snapshot.connectionState == ConnectionState.waiting) {
           return loading ?? _defaultShimmer();
         }
 
+        /// 🔹 ERROR
         if (snapshot.hasError) {
           return errorBuilder != null
               ? errorBuilder!(snapshot.error!)
               : Center(child: Text("Error: ${snapshot.error}"));
         }
 
-        if (!snapshot.hasData) {
+        final data = snapshot.data;
+
+        /// 🔹 NO DATA
+        if (data == null) {
           return empty ?? const Center(child: Text("No data"));
         }
 
-        return builder(snapshot.data as T);
+        /// 🔹 HANDLE FIRESTORE QUERY EMPTY
+        if (data is QuerySnapshot && data.docs.isEmpty) {
+          return empty ?? const Center(child: Text("No data"));
+        }
+
+        /// 🔹 SUCCESS
+        return builder(data);
       },
     );
   }
 
   Widget _defaultShimmer() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+    return SizedBox(
+      width: width ?? double.infinity,
+      height: height ?? double.infinity,
       child: Shimmer.fromColors(
-        // loop: 2,
-        // period: const Duration(seconds: 2),
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
         child: Container(
-          width: width ?? double.infinity,
-          height: height ?? double.infinity,
           color: Colors.grey[300],
         ),
       ),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:social_hub/pages/community_project_page.dart';
 import 'package:social_hub/pages/project_detail_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
+import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 import 'package:social_hub/component/header.dart';
 
@@ -35,7 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = AuthService().currentUser;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -61,40 +64,13 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      // Text(
-                      //   'Community Projects',
-                      //   style: GoogleFonts.poppins(
-                      //     color: AppColors.textMain,
-                      //     fontSize: 18,
-                      //     fontWeight: FontWeight.w600,
-                      //   ),
-                      // ),
-                      FirestoreFutureBuilder(
-                        future: FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(user?.uid)
-                            .get(),
-
-                        loading: Shimmer.fromColors(
-                          baseColor: Colors.grey.shade600,
-                          highlightColor: Colors.grey.shade100,
-                          child: Container(
-                            width: 100,
-                            height: 16,
-                            color: Colors.transparent,
-                          ),
+                      Text(
+                        'Community Projects',
+                        style: GoogleFonts.poppins(
+                          color: AppColors.textMain,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
-
-                        builder: (doc) {
-                          final data = doc.data();
-                          return Text('Hello ${data?['displayName']}',
-                            style: GoogleFonts.poppins(
-                              color: AppColors.textMain,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          );
-                        },
                       ),
                       InkWell(
                         onTap: () {
@@ -114,12 +90,35 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  card(context),
-                  const SizedBox(height: 24),
-                  card(context),
-                  const SizedBox(height: 24),
-                  card(context),
+                  FirestoreStreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                    stream: AuthService().getCollectionStream(
+                      'communityEvents',
+                    ),
+                    builder: (snapshot) {
+                      final docs = snapshot.docs;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: docs.length,
+                        itemBuilder: (context, index) {
+                          final doc = docs[index].data();
+                          return card(
+                            context,
+                            doc['eventTitle'] ?? 'No Title',
+                            doc['eventDescription'] ?? 'No description available',
+                            doc['amountRaised'] ?? 0,
+                            doc['amountTarget'] ?? 0,
+                            docs[index].id,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  // const SizedBox(height: 16),
+                  // card(context),
+                  // const SizedBox(height: 24),
+                  // card(context),
+                  // const SizedBox(height: 24),
+                  // card(context),
                 ],
               ),
             ),
@@ -130,12 +129,12 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Widget card(BuildContext context) {
+Widget card(BuildContext context, String eventTitle,String eventDescription,double amountRaised,double amountTarget,String uid) {
   return GestureDetector(
     onTap: () {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ProjectDetailPage()),
+        MaterialPageRoute(builder: (context) => ProjectDetailPage(uid: uid)),
       );
     },
     child: Container(
@@ -203,7 +202,7 @@ Widget card(BuildContext context) {
           ),
           const SizedBox(height: 12),
           Text(
-            'Empowering Communities',
+            eventTitle,
             style: GoogleFonts.poppins(
               color: AppColors.textMain,
               fontSize: 16,
@@ -212,7 +211,7 @@ Widget card(BuildContext context) {
           ),
           const SizedBox(height: 4),
           Text(
-            'A project focused on providing resources and support to underprivileged communities to help them achieve self-sufficiency and improve their quality of life.',
+            eventDescription,
             style: GoogleFonts.poppins(
               color: AppColors.textMuted,
               fontSize: 14,
@@ -228,7 +227,7 @@ Widget card(BuildContext context) {
                 child: SizedBox(
                   height: 6,
                   child: LinearProgressIndicator(
-                    value: 0.6,
+                    value: amountTarget > 0 ? (amountRaised / amountTarget).clamp(0, 1) : 0,
                     borderRadius: BorderRadius.circular(4),
                     backgroundColor: Colors.grey[200],
                     valueColor: const AlwaysStoppedAnimation(AppColors.primary),
@@ -237,7 +236,7 @@ Widget card(BuildContext context) {
               ),
               const SizedBox(width: 12),
               Text(
-                '60% Funded',
+                '${(amountTarget > 0 ? (amountRaised / amountTarget) * 100 : 0).round()}% Funded',
                 style: GoogleFonts.poppins(
                   color: AppColors.primary,
                   fontSize: 13.4,

@@ -3,6 +3,7 @@ import 'package:social_hub/pages/chat_page.dart';
 import 'package:social_hub/pages/notifications_page.dart';
 import 'package:social_hub/pages/test_nav_bar.dart';
 import 'package:social_hub/services/auth_service.dart';
+import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 
 Widget header() => const Header();
@@ -40,6 +41,7 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService().currentUser;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -84,14 +86,19 @@ class _HeaderState extends State<Header> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Text(
-                            'Faiz Volunteer',
-                            style: TextStyle(
-                              color: AppColors.textMain,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
-                            ),
+                          FirestoreFutureBuilder(
+                            future: AuthService().getUserData(user!.uid),
+                            builder: (data) {
+                              return Text(
+                                data?['displayName'] ?? 'Guest',
+                                style: TextStyle(
+                                  color: AppColors.textMain,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                              );
+                            }, width: 80, height: 26,
                           ),
                         ],
                       ),
