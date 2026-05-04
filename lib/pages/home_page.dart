@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:social_hub/component/drawer.dart';
 import 'package:social_hub/pages/community_project_page.dart';
 import 'package:social_hub/pages/project_detail_page.dart';
+import 'package:social_hub/services/auth_service.dart';
+import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 import 'package:social_hub/component/header.dart';
 
@@ -30,6 +35,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -55,21 +61,46 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        'Community Projects',
-                        style: GoogleFonts.poppins(
-                          color: AppColors.textMain,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                      // Text(
+                      //   'Community Projects',
+                      //   style: GoogleFonts.poppins(
+                      //     color: AppColors.textMain,
+                      //     fontSize: 18,
+                      //     fontWeight: FontWeight.w600,
+                      //   ),
+                      // ),
+                      FirestoreFutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user?.uid)
+                            .get(),
+
+                        loading: Shimmer.fromColors(
+                          baseColor: Colors.grey.shade600,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: 100,
+                            height: 16,
+                            color: Colors.transparent,
+                          ),
                         ),
+
+                        builder: (doc) {
+                          final data = doc.data();
+                          return Text('Hello ${data?['displayName']}',
+                            style: GoogleFonts.poppins(
+                              color: AppColors.textMain,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          );
+                        },
                       ),
                       InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
-                            createSlideRoute(
-                               CommunityProjectsPage()
-                            ),
+                            createSlideRoute(CommunityProjectsPage()),
                           );
                         },
                         child: Text(
@@ -104,9 +135,7 @@ Widget card(BuildContext context) {
     onTap: () {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ProjectDetailPage()
-        ),
+        MaterialPageRoute(builder: (context) => ProjectDetailPage()),
       );
     },
     child: Container(
