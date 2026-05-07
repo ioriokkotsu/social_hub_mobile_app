@@ -112,6 +112,8 @@ class _HomePageState extends State<HomePage> {
                         },
                       );
                     },
+                    width: 363.4,
+                    height: 306,
                   ),
                   // const SizedBox(height: 16),
                   // card(context),

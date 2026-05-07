@@ -103,17 +103,26 @@ class AuthService {
 
   // Single Collection : Future
   Future<Map<String, dynamic>?> getCollectionData(
-    String? uid,
+    dynamic referenceOrUid,
     String collection,
   ) async {
     try {
-      DocumentSnapshot doc = await _firestore
-          .collection(collection)
-          .doc(uid)
-          .get();
-      if (doc.exists) {
-        return doc.data() as Map<String, dynamic>;
+      DocumentSnapshot<Map<String, dynamic>> doc;
+
+      if (referenceOrUid is DocumentReference<Map<String, dynamic>>) {
+        doc = await referenceOrUid.get();
+      } else {
+        // Normal UID string
+        doc = await _firestore.collection(collection).doc(referenceOrUid).get();
       }
+
+      if (doc.exists) {
+        final data = doc.data()!;
+
+        data['uid'] = doc.id;
+        return data;
+      }
+
       return null;
     } catch (e) {
       throw Exception('Failed to fetch collection data: ${e.toString()}');
@@ -122,10 +131,18 @@ class AuthService {
 
   // Single Collection : Stream Snapshot
   Stream<DocumentSnapshot<Map<String, dynamic>>> getCollectionDataSnapshot(
-    String? uid,
+    dynamic referenceOrUid,
     String collection,
   ) {
-    return _firestore.collection(collection).doc(uid).snapshots();
+    DocumentReference<Map<String, dynamic>> docRef;
+
+    if (referenceOrUid is DocumentReference<Map<String, dynamic>>) {
+      docRef = referenceOrUid;
+    } else {
+      docRef = _firestore.collection(collection).doc(referenceOrUid);
+    }
+
+    return docRef.snapshots();
   }
 
   //Query Collection : Future

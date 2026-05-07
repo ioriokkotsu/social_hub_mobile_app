@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:social_hub/pages/ngo_profile_page.dart';
 import 'package:social_hub/pages/volunteer_application_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
@@ -25,10 +27,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
   @override
   Widget build(BuildContext context) {
     return FirestoreFutureBuilder(
-      future: AuthService().getCollectionData(
-        widget.uid,
-        'communityEvents',
-      ),
+      future: AuthService().getCollectionData(widget.uid, 'communityEvents'),
       builder: (event) {
         return Scaffold(
           backgroundColor: AppColors.surface,
@@ -98,63 +97,155 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                             ),
                           ),
                           const SizedBox(height: 24),
-
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.secondary.withValues(
-                                alpha: 0.15,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppColors.primary.withValues(
-                                  alpha: 0.25,
-                                ),
-                              ),
+                          Text(
+                            //start date - end date
+                            '${DateFormat.yMMMd().add_jm().format((event?['startDate'] as Timestamp).toDate())} - ${DateFormat.yMMMd().add_jm().format((event?['endDate'] as Timestamp).toDate())}',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.5,
+                              color: AppColors.textMain,
+                              fontWeight: FontWeight.w600,
                             ),
-                            child: Row(
+                          ),
+                          const SizedBox(height: 24),
+                          RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
                               children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.2,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'EG',
-                                      style: TextStyle(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                TextSpan(
+                                  text: 'Location: ',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'EduGlobal NGO',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Verified via ${event?['verifiedBy'] ?? 'email'}',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.textMuted,
-                                      ),
-                                    ),
-                                  ],
+                                TextSpan(
+                                  text: event?['eventVenue'] ?? 'N/A',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textMuted,
+                                  ),
                                 ),
                               ],
                             ),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            'Organized by: ',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: AppColors.textMain,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          FirestoreFutureBuilder(
+                            future: AuthService().getCollectionData(
+                              event?['organizedBy'],
+                              'ngo',
+                            ),
+                            builder: (ngo) {
+                              bool isVerified = ngo?['isVerified'] == true;
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    createSlideRoute(
+                                      NGOProfilePage(
+                                        ngoId: ngo?['uid'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isVerified
+                                        ? AppColors.primary.withValues(
+                                            alpha: 0.15,
+                                          )
+                                        : AppColors.appBg,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: isVerified 
+                                          ? AppColors.primary.withValues(
+                                              alpha: 0.25,
+                                            )
+                                          : AppColors.textMain.withValues(
+                                              alpha: 0.25,
+                                            ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.2,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            'EG',
+                                            style: TextStyle(
+                                              color: AppColors.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      isVerified
+                                          ? Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  ngo?['ngoName'] ?? 'NGO Name',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Verified via ${ngo?['verifiedBy'] ?? 'email'}',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.textMuted,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  ngo?['ngoName'] ?? 'NGO Name',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Not Verified',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.textMuted,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(height: 24),
                           Row(
@@ -177,7 +268,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        formatter.format(event?['amountRaised'] ?? 0),
+                                        formatter.format(
+                                          event?['amountRaised'] ?? 0,
+                                        ),
                                         style: const TextStyle(
                                           fontSize: 16.5,
                                           fontWeight: FontWeight.w700,
@@ -207,7 +300,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        formatter.format(event?['amountTarget'] ?? 0),
+                                        formatter.format(
+                                          event?['amountTarget'] ?? 0,
+                                        ),
                                         style: const TextStyle(
                                           fontSize: 16.5,
                                           fontWeight: FontWeight.w700,

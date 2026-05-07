@@ -4,6 +4,7 @@ import 'package:social_hub/pages/notifications_page.dart';
 import 'package:social_hub/pages/test_nav_bar.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
+import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 
 Widget header() => const Header();
@@ -86,11 +87,11 @@ class _HeaderState extends State<Header> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          FirestoreFutureBuilder(
-                            future: AuthService().getUserData(user!.uid),
-                            builder: (data) {
+                          FirestoreStreamBuilder(
+                            stream: AuthService().getUserDataSnapshot(user!.uid),
+                            builder: (user) {
                               return Text(
-                                data?['displayName'] ?? 'Guest',
+                                user['displayName'] ?? 'Guest',
                                 style: TextStyle(
                                   color: AppColors.textMain,
                                   fontSize: 18,
