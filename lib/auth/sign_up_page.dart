@@ -26,7 +26,25 @@ class _SignUpPageState extends State<SignUpPage> {
         _passwordController.text.trim(),
         name: _nameController.text.trim(),
       );
-      // Additional logic here to save _nameController.text to Firestore later
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), backgroundColor: AppColors.red500),
+      );
+      print(e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await _authService.loginWithEmail(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString()), backgroundColor: AppColors.red500),
@@ -68,6 +86,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _signUp,
+                  onLongPress: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),

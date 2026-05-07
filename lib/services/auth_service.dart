@@ -195,4 +195,29 @@ class AuthService {
       throw Exception('Failed to update user data: ${e.toString()}');
     }
   }
+
+  //Get a  specific field from colection using document path
+  Future<String?> getFieldOfCollectionFromPath(String path,String fieldName) async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance.doc(path).get();
+
+      if (doc.exists) {
+        return doc[fieldName];
+      }
+
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  //Add data to a collection
+  Future<void> addDataToCollection(String collection, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection(collection).add(data);
+    } catch (e) {
+      throw Exception('Failed to add data to collection: ${e.toString()}');
+    }
+  }
 }

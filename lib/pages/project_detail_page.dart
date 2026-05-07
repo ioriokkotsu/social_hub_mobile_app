@@ -355,31 +355,39 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              createSlideRoute(VolunteerApplicationPage()),
+                        child: FirestoreFutureBuilder(
+                          future: AuthService().getCollectionData(
+                            event?['organizedBy'],
+                            'ngo',
+                          ),
+                          builder: (ngo) {
+                            return ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  createSlideRoute(VolunteerApplicationPage(uid: widget.uid, ngoName: ngo?['ngoName'], ngoID: ngo?['uid'],)),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.secondary.withValues(
+                                  alpha: 0.1,
+                                ),
+                                foregroundColor: AppColors.primary,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text(
+                                'Join',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.secondary.withValues(
-                              alpha: 0.1,
-                            ),
-                            foregroundColor: AppColors.primary,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: const Text(
-                            'Join',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          }
                         ),
                       ),
                       const SizedBox(width: 12),
