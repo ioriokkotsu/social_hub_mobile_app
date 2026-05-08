@@ -57,9 +57,13 @@ class FirestoreFutureBuilder<T> extends StatelessWidget {
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
         child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.grey[300],
+          ),
           width: width ?? double.infinity,
           height: height ?? double.infinity,
-          color: Colors.grey[300],
+          
         ),
       ),
     );

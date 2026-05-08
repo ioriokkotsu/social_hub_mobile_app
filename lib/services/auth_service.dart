@@ -212,8 +212,8 @@ class AuthService {
     }
   }
 
-  //Add data to a collection
-  Future<void> addDataToCollection(String collection, Map<String, dynamic> data) async {
+  //Add new document to a collection
+  Future<void> addDocToCollection(String collection, Map<String, dynamic> data) async {
     try {
       await _firestore.collection(collection).add(data);
     } catch (e) {

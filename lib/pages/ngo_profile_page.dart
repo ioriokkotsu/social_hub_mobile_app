@@ -19,7 +19,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
     setState(() {
       _isFollowing = !_isFollowing;
     });
-    
+
     if (_isFollowing) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -40,7 +40,6 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
           backgroundColor: AppColors.appBg,
           body: Column(
             children: [
-              // Sticky Top Header & Profile Info
               Container(
                 padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
                 decoration: BoxDecoration(
@@ -58,9 +57,12 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                       children: [
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: const Icon(Icons.arrow_back, color: AppColors.textMuted),
+                          child: const Icon(
+                            Icons.arrow_back,
+                            color: AppColors.textMuted,
+                          ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 100),
                         const Text(
                           'NGO Profile',
                           style: TextStyle(
@@ -101,18 +103,24 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                children: const [
+                                children: [
                                   Text(
-                                    'EduGlobal NGO',
-                                    style: TextStyle(
+                                    ngo?["ngoName"] ?? 'NGO Name',
+                                    style: const TextStyle(
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                       color: AppColors.textMain,
                                     ),
                                   ),
-                                  SizedBox(width: 4),
-                                  Icon(Icons.check_circle, color: AppColors.secondary, size: 16),
+                                  const SizedBox(width: 4),
+                                  ngo?['isVerified'] == true ?
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: AppColors.secondary,
+                                    size: 16,
+                                  )
+                                  : const SizedBox(),
                                 ],
                               ),
                               const Text(
@@ -129,18 +137,27 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                         GestureDetector(
                           onTap: _toggleFollow,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
-                              color: _isFollowing ? AppColors.primary : AppColors.primary.withOpacity(0.1),
+                              color: _isFollowing
+                                  ? AppColors.primary
+                                  : AppColors.primary.withOpacity(0.1),
                               border: Border.all(
-                                color: _isFollowing ? AppColors.primary : AppColors.primary.withOpacity(0.2),
+                                color: _isFollowing
+                                    ? AppColors.primary
+                                    : AppColors.primary.withOpacity(0.2),
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               _isFollowing ? 'Following' : 'Follow',
                               style: TextStyle(
-                                color: _isFollowing ? Colors.white : AppColors.primary,
+                                color: _isFollowing
+                                    ? Colors.white
+                                    : AppColors.primary,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -152,8 +169,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                   ],
                 ),
               ),
-              
-              // Scrollable Content Body
+
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(24),
@@ -162,30 +178,60 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                     // Impact Stats
                     const Text(
                       'Overall Impact',
-                      style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 14),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Expanded(child: _buildStatCard('Projects', '24', AppColors.primary)),
+                        Expanded(
+                          child: _buildStatCard(
+                            'Projects',
+                            ngo?['overallStats']?['totalProjects'].toString() ?? 'N/A',
+                            AppColors.primary,
+                          ),
+                        ),
                         const SizedBox(width: 12),
-                        Expanded(child: _buildStatCard('Vols.', '850+', AppColors.textMain)),
+                        Expanded(
+                          child: _buildStatCard(
+                            'Vols.',
+                            ngo?['overallStats']?['totalVolunteers'].toString() ?? 'N/A',
+                            AppColors.textMain,
+                          ),
+                        ),
                         const SizedBox(width: 12),
-                        Expanded(child: _buildStatCard('Raised', '\$1.2M', AppColors.accent)),
+                        Expanded(
+                          child: _buildStatCard(
+                            'Raised',
+                            'RM ${ngo?['overallStats']?['totalRaised'].toString() ?? 'N/A'}',
+                            AppColors.accent,
+                          ),
+                        ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // About Us
                     const Text(
                       'About Us',
-                      style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 14),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'EduGlobal NGO is dedicated to bridging the digital divide in rural communities across Southeast Asia. We believe quality education is a universal right and strive to provide modern technological resources to underprivileged schools.',
-                      style: TextStyle(fontSize: 12, color: AppColors.textMuted, height: 1.5),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textMuted,
+                        height: 1.5,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Wrap(
@@ -196,22 +242,28 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                         _buildTag(Icons.email_outlined, 'hello@eduglobal.org'),
                       ],
                     ),
-        
+
                     const SizedBox(height: 24),
-                    
+
                     // Completed Projects
                     const Text(
                       'Completed Projects',
-                      style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 14),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     _buildCompletedProject(
-                      imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=150&q=80',
+                      imageUrl:
+                          'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=150&q=80',
                       title: '2023 Digital Literacy Camp',
                       subtitle: 'Completed • 500+ students reached',
                     ),
                     _buildCompletedProject(
-                      imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=150&q=80',
+                      imageUrl:
+                          'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=150&q=80',
                       title: 'Library Renovation Project',
                       subtitle: 'Completed • 3 Schools Updated',
                     ),
@@ -221,7 +273,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
             ],
           ),
         );
-      }
+      },
     );
   }
 
@@ -252,12 +304,15 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: valueColor,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: valueColor,
+              ),
             ),
           ),
         ],
@@ -287,7 +342,11 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
     );
   }
 
-  Widget _buildCompletedProject({required String imageUrl, required String title, required String subtitle}) {
+  Widget _buildCompletedProject({
+    required String imageUrl,
+    required String title,
+    required String subtitle,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -321,12 +380,18 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),

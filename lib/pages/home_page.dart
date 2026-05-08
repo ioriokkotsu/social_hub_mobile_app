@@ -1,15 +1,11 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:social_hub/component/drawer.dart';
 import 'package:social_hub/pages/community_project_page.dart';
 import 'package:social_hub/pages/project_detail_page.dart';
 import 'package:social_hub/services/auth_service.dart';
-import 'package:social_hub/services/future_builder.dart';
+import 'package:social_hub/services/search_events.dart';
 import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 import 'package:social_hub/component/header.dart';
@@ -36,12 +32,36 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  void _testFirebase() async {
+    try {
+      String? result = await AuthService().getFieldOfCollectionFromPath(
+        'users/admin',
+        'fullName',
+      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Result: $result')));
+      print(result);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error fetching data: $e')));
+      print('Error fetching data: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AuthService().currentUser;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => searchEvents('', 'title', context),
+          backgroundColor: AppColors.primary,
+          child: const Icon(Icons.add, color: AppColors.surface),
+        ),
         backgroundColor: AppColors.appBg,
         drawer: DrawerSideBar(),
         onDrawerChanged: (isOpen) {
@@ -104,7 +124,8 @@ class _HomePageState extends State<HomePage> {
                           return card(
                             context,
                             doc['eventTitle'] ?? 'No Title',
-                            doc['eventDescription'] ?? 'No description available',
+                            doc['eventDescription'] ??
+                                'No description available',
                             doc['amountRaised'] ?? 0,
                             doc['amountTarget'] ?? 0,
                             docs[index].id,
@@ -131,7 +152,14 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Widget card(BuildContext context, String eventTitle,String eventDescription,double amountRaised,double amountTarget,String uid) {
+Widget card(
+  BuildContext context,
+  String eventTitle,
+  String eventDescription,
+  double amountRaised,
+  double amountTarget,
+  String uid,
+) {
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -229,7 +257,9 @@ Widget card(BuildContext context, String eventTitle,String eventDescription,doub
                 child: SizedBox(
                   height: 6,
                   child: LinearProgressIndicator(
-                    value: amountTarget > 0 ? (amountRaised / amountTarget).clamp(0, 1) : 0,
+                    value: amountTarget > 0
+                        ? (amountRaised / amountTarget).clamp(0, 1)
+                        : 0,
                     borderRadius: BorderRadius.circular(4),
                     backgroundColor: Colors.grey[200],
                     valueColor: const AlwaysStoppedAnimation(AppColors.primary),

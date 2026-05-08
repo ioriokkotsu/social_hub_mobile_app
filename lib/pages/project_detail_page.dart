@@ -24,6 +24,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
     symbol: 'RM',
     decimalDigits: 2,
   );
+  late DocumentReference eventRef = FirebaseFirestore.instance
+      .collection('communityEvents')
+      .doc(widget.uid);
   @override
   Widget build(BuildContext context) {
     return FirestoreFutureBuilder(
@@ -153,9 +156,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                   Navigator.push(
                                     context,
                                     createSlideRoute(
-                                      NGOProfilePage(
-                                        ngoId: ngo?['uid'],
-                                      ),
+                                      NGOProfilePage(ngoId: ngo?['uid']),
                                     ),
                                   );
                                 },
@@ -169,7 +170,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                         : AppColors.appBg,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: isVerified 
+                                      color: isVerified
                                           ? AppColors.primary.withValues(
                                               alpha: 0.25,
                                             )
@@ -355,18 +356,52 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: FirestoreFutureBuilder(
-                          future: AuthService().getCollectionData(
-                            event?['organizedBy'],
-                            'ngo',
-                          ),
-                          builder: (ngo) {
+                        child: FirestoreFutureBuilder<QuerySnapshot>(
+                          width: 175.7,
+                          height: 55,
+                          // future: FirebaseFirestore.instance
+                          // .collection('volunteerApplication')
+                          // .where('eventID', isEqualTo: FirebaseFirestore.instance.collection('communityEvents').doc('QzMtSxmpzlPR0VP5qwIc'))
+                          // .where('userID',
+                          //     isEqualTo: AuthService().currentUser?.uid)
+                          // .get(),
+                          future: FirebaseFirestore.instance
+                              .collection('volunteerApplication')
+                              .where(
+                                'eventID',
+                                isEqualTo: FirebaseFirestore.instance
+                                    .collection('communityEvents')
+                                    .doc(widget.uid),
+                              )
+                              .where(
+                                'userID',
+                                isEqualTo: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(AuthService().currentUser!.uid),
+                              )
+                              .get(),
+                          builder: (application) {
+                            DocumentSnapshot? document =
+                                application.docs.isNotEmpty
+                                ? application.docs.first
+                                : null;
+                            String status = '';
+                            if (document != null) {
+                              status = document['status'] ?? 'Join';
+                            }
                             return ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  createSlideRoute(VolunteerApplicationPage(uid: widget.uid, ngoName: ngo?['ngoName'], ngoID: ngo?['uid'],)),
-                                );
+                                status == 'Approved' || status == 'Pending'
+                                    ? null
+                                    : Navigator.push(
+                                        context,
+                                        createSlideRoute(
+                                          VolunteerApplicationPage(
+                                            eventID: widget.uid,
+                                            ngoRef: event?['organizedBy'],
+                                          ),
+                                        ),
+                                      );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.secondary.withValues(
@@ -374,20 +409,22 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                 ),
                                 foregroundColor: AppColors.primary,
                                 elevation: 0,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                               ),
-                              child: const Text(
-                                'Join',
+                              child: Text(
+                                status.isNotEmpty ? status == 'Approved' ? 'Joined' : status : 'Join',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             );
-                          }
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),

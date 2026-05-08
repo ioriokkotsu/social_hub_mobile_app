@@ -5,15 +5,13 @@ import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 
 class VolunteerApplicationPage extends StatefulWidget {
-  final String uid;
-  final String ngoName;
-  final String ngoID;
+  final dynamic eventID;
+  final DocumentReference ngoRef;
 
   const VolunteerApplicationPage({
     super.key,
-    required this.uid,
-    required this.ngoName,
-    required this.ngoID,
+    required this.eventID,
+    required this.ngoRef,
   });
 
   @override
@@ -26,14 +24,16 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
   bool _agreedToTerms = false;
 
   late Future<dynamic> eventFuture;
+  late Future<dynamic> ngoData;
 
   @override
   void initState() {
     super.initState();
     eventFuture = AuthService().getCollectionData(
-      widget.uid,
+      widget.eventID,
       "communityEvents",
     );
+    ngoData = AuthService().getCollectionData(widget.ngoRef, "ngo");
   }
 
   @override
@@ -87,12 +87,17 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            widget.ngoName,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textMuted,
-                            ),
+                          FirestoreFutureBuilder(
+                            future: ngoData,
+                            builder: (ngo) {
+                              return Text(
+                                ngo?['ngoName'] ?? 'Organizing NGO',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textMuted,
+                                ),
+                              );
+                            }
                           ),
                         ],
                       ),
@@ -196,23 +201,33 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
 
                     try {
                       var data = {
-                        'ngoID': FirebaseFirestore.instance.collection('ngo').doc(widget.ngoID),
-                        'eventID': FirebaseFirestore.instance.collection('communityEvents').doc(widget.uid),
+                        'ngoID': widget.ngoRef,
+                        'eventID': FirebaseFirestore.instance
+                            .collection('communityEvents')
+                            .doc(widget.eventID),
                         'roleApplied': _selectedRole,
                         'status': 'Pending',
                         'submittedAt': FieldValue.serverTimestamp(),
-                        'userID': FirebaseFirestore.instance.collection('users').doc(AuthService().currentUser?.uid),
+                        'userID': FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(AuthService().currentUser?.uid),
                       };
-                      AuthService().addDataToCollection(
+                      AuthService().addDocToCollection(
                         'volunteerApplication',
                         data,
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Successfully submitted application.'),
-                          backgroundColor: const Color.fromARGB(255, 154, 239, 68),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            154,
+                            239,
+                            68,
+                          ),
                         ),
                       );
+                      Navigator.of(context).pop();
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
