@@ -18,7 +18,7 @@ class ProjectDetailPage extends StatefulWidget {
 }
 
 class _ProjectDetailPageState extends State<ProjectDetailPage> {
-  String selectedAmt = 'RM25';
+  String selectedAmt = '';
   final formatter = NumberFormat.currency(
     locale: 'en_MY',
     symbol: 'RM',
@@ -417,7 +417,11 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                 ),
                               ),
                               child: Text(
-                                status.isNotEmpty ? status == 'Approved' ? 'Joined' : status : 'Join',
+                                status.isNotEmpty
+                                    ? status == 'Approved'
+                                          ? 'Joined'
+                                          : status
+                                    : 'Join',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -464,6 +468,43 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
     String selectedAmtLocal = selectedAmt;
     FocusNode textFocus = FocusNode();
     TextEditingController textController = TextEditingController();
+
+    void paymentAction(double amount) async {
+      try {
+        DocumentReference ngoRef = await eventRef.get().then((doc) {
+          if (doc.exists) {
+            return doc['organizedBy'] as DocumentReference;
+          } else {
+            throw Exception('Event not found');
+          }
+        });
+        AuthService().addDocToCollection('donations', {
+          'amount': amount,
+          'eventID': eventRef,
+          'userID': FirebaseFirestore.instance
+              .collection('users')
+              .doc(AuthService().currentUser!.uid),
+          'createdAt': FieldValue.serverTimestamp(),
+          'currency': 'myr',
+          'status': 'Successful',
+          'ngoID': ngoRef
+        });
+        await eventRef.update({'amountRaised': FieldValue.increment(amount)});
+        AuthService().updateCollection(AuthService().currentUser!.uid, {
+          'totalDonated': FieldValue.increment(amount),
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment successful! Thank you for your donation.'),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Payment failed: ${e.toString()}')),
+        );
+      }
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -579,7 +620,11 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () => paymentAction(
+                            textController.text.isNotEmpty
+                                ? double.parse(textController.text)
+                                : 0,
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.textMain,
                             padding: const EdgeInsets.symmetric(vertical: 16),

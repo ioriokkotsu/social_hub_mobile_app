@@ -4,8 +4,7 @@ import 'package:social_hub/pages/chat_page.dart';
 import 'package:social_hub/pages/feed_page.dart';
 import 'package:social_hub/pages/home_page.dart';
 import 'package:social_hub/pages/profile_page.dart';
-import 'package:social_hub/pages/project_detail_page.dart';
-import 'package:social_hub/services/auth_service.dart';
+
 import 'package:social_hub/theme/theme.dart';
 
 class BottomNavBar extends StatefulWidget {

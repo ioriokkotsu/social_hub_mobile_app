@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
             header(),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
                 physics: const BouncingScrollPhysics(),
                 children: [
                   //Section Title
@@ -110,38 +110,43 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  FirestoreStreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: AuthService().getCollectionStream(
-                      'communityEvents',
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 30.0),
+                    child: FirestoreStreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      stream: AuthService().getCollectionStream(
+                        'communityEvents',
+                      ),
+                      builder: (snapshot) {
+                        final docs = snapshot.docs;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: docs.length,
+                          itemBuilder: (context, index) {
+                            final doc = docs[index].data();
+                            return Column(
+                              children: [
+                                card(
+                                  context,
+                                  doc['eventTitle'] ?? 'No Title',
+                                  doc['eventDescription'] ??
+                                      'No description available',
+                                  doc['amountRaised'] ?? 0,
+                                  doc['amountTarget'] ?? 0,
+                                  docs[index].id,
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      width: 363.4,
+                      height: 306,
                     ),
-                    builder: (snapshot) {
-                      final docs = snapshot.docs;
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: docs.length,
-                        itemBuilder: (context, index) {
-                          final doc = docs[index].data();
-                          return card(
-                            context,
-                            doc['eventTitle'] ?? 'No Title',
-                            doc['eventDescription'] ??
-                                'No description available',
-                            doc['amountRaised'] ?? 0,
-                            doc['amountTarget'] ?? 0,
-                            docs[index].id,
-                          );
-                        },
-                      );
-                    },
-                    width: 363.4,
-                    height: 306,
                   ),
-                  // const SizedBox(height: 16),
-                  // card(context),
-                  // const SizedBox(height: 24),
-                  // card(context),
-                  // const SizedBox(height: 24),
-                  // card(context),
                 ],
               ),
             ),
