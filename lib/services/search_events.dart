@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 
 Future<List<DocumentSnapshot>> searchEvents(
   String keyword,
-  // DocumentReference? currentUser,
   String searchBy,
   BuildContext context,
+  String? eventCategory
 ) async {
+  bool isAll = eventCategory == 'All';
   if (keyword.trim().isEmpty) {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('communityEvents')
+        .where('eventCategory', isEqualTo: isAll ? null : eventCategory)
         .get();
     return snapshot.docs;
   }
@@ -18,6 +20,7 @@ Future<List<DocumentSnapshot>> searchEvents(
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('communityEvents')
+        .where('eventCategory', isEqualTo: isAll ? null : eventCategory)
         .get();
 
     List<DocumentSnapshot> matchedEvents = [];
@@ -37,14 +40,7 @@ Future<List<DocumentSnapshot>> searchEvents(
         case 'title':
           fieldValue = data['eventTitle'] as String?;
           break;
-        case 'username':
-          fieldValue = data['username'] as String?;
-          break;
-        case 'email':
-          fieldValue = data['email'] as String?;
-          break;
         default:
-          // Default to eventTitle if invalid searchBy value
           fieldValue = data['eventTitle'] as String?;
           break;
       }
@@ -65,14 +61,6 @@ Future<List<DocumentSnapshot>> searchEvents(
         case 'title':
           aField = a.get('eventTitle')?.toString().toLowerCase() ?? '';
           bField = b.get('eventTitle')?.toString().toLowerCase() ?? '';
-          break;
-        case 'username':
-          aField = a.get('username')?.toString().toLowerCase() ?? '';
-          bField = b.get('username')?.toString().toLowerCase() ?? '';
-          break;
-        case 'email':
-          aField = a.get('email')?.toString().toLowerCase() ?? '';
-          bField = b.get('email')?.toString().toLowerCase() ?? '';
           break;
         default:
           aField = a.get('eventTitle')?.toString().toLowerCase() ?? '';

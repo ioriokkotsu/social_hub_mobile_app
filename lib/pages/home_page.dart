@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => searchEvents('', 'title', context),
+          onPressed: () => searchEvents('', 'title', context,''),
           backgroundColor: AppColors.primary,
           child: const Icon(Icons.add, color: AppColors.surface),
         ),

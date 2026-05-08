@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:social_hub/pages/home_page.dart';
 import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/services/search_events.dart';
@@ -14,6 +15,9 @@ class CommunityProjectsPage extends StatefulWidget {
 
 class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
   String keyword = '';
+  bool isExtendedSearch = false;
+  List<String> filters = ['All', 'Technology', 'Education', 'Healthcare'];
+  List<bool> isSelectedFilters = [true, false, false, false];
   TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -35,10 +39,82 @@ class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(80),
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+          // bottom: PreferredSize(
+          //   preferredSize: const Size.fromHeight(80),
+          //   child: AnimatedContainer(
+          //     padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+          //     decoration: BoxDecoration(
+          //       color: AppColors.surface,
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: Colors.black.withOpacity(0.02),
+          //           offset: const Offset(0, 4),
+          //           blurRadius: 10,
+          //         ),
+          //       ],
+          //     ),
+          //     duration: const Duration(milliseconds: 1000),
+          //     child: Column(
+          //       children: [
+          //         Row(
+          //           children: [
+          //             Expanded(
+          //               child: Container(
+          //                 decoration: BoxDecoration(
+          //                   color: AppColors.appBg,
+          //                   borderRadius: BorderRadius.circular(12),
+          //                   boxShadow: [
+          //                     BoxShadow(
+          //                       color: Colors.black.withOpacity(0.05),
+          //                       blurRadius: 2,
+          //                       offset: const Offset(0, 1),
+          //                     ),
+          //                   ],
+          //                 ),
+          //                 padding: const EdgeInsets.symmetric(
+          //                   horizontal: 16,
+          //                   vertical: 2,
+          //                 ),
+          //                 child: TextField(
+          //                   controller: searchController,
+          //                   onChanged: (value) {
+          //                     setState(() {
+          //                       keyword = value;
+          //                     });
+          //                   },
+          //                   decoration: InputDecoration(
+          //                     hintText: 'Search all projects...',
+          //                     hintStyle: TextStyle(
+          //                       color: AppColors.textMuted,
+          //                       fontSize: 14,
+          //                     ),
+          //                     border: InputBorder.none,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //             const SizedBox(width: 8),
+          //             Container(
+          //               width: 48,
+          //               height: 48,
+          //               decoration: BoxDecoration(
+          //                 color: AppColors.primary.withOpacity(0.1),
+          //                 borderRadius: BorderRadius.circular(12),
+          //               ),
+          //               child: const Icon(Icons.tune, color: AppColors.primary),
+          //             ),
+          //           ],
+          //         ),
+          //         // SizedBox(height: 30),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+        ),
+        body: Column(
+          children: [
+            AnimatedContainer(
+              padding: EdgeInsets.fromLTRB(24, 0, 24, 16),
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 boxShadow: [
@@ -49,92 +125,142 @@ class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
                   ),
                 ],
               ),
-              child: Row(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.appBg,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 2,
-                            offset: const Offset(0, 1),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.appBg,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 2,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 2,
-                      ),
-                      child: TextField(
-                        controller: searchController,
-                        onChanged: (value) {
-                          setState(() {
-                            keyword = value;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Search all projects...',
-                          hintStyle: TextStyle(
-                            color: AppColors.textMuted,
-                            fontSize: 14,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2,
                           ),
-                          border: InputBorder.none,
+                          child: TextField(
+                            controller: searchController,
+                            onChanged: (value) {
+                              setState(() {
+                                keyword = value;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search all projects...',
+                              hintStyle: TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 14,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.tune),
+                          color: AppColors.primary,
+                          onPressed: () {
+                            setState(() {
+                              isExtendedSearch = !isExtendedSearch;
+                              for (int i = 1; i < isSelectedFilters.length; i++) {
+                                isSelectedFilters[i] = false;
+                              }
+                              isSelectedFilters[0] = true;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            if (isExtendedSearch) ...[
+                              // Container(
+                              //   padding: const EdgeInsets.symmetric(
+                              //     horizontal: 12,
+                              //     vertical: 6,
+                              //   ),
+                              //   decoration: BoxDecoration(
+                              //     color: AppColors.primary,
+                              //     borderRadius: BorderRadius.circular(12),
+                              //   ),
+                              //   child: Text(
+                              //     'SDG 1: No Poverty',
+                              //     style: GoogleFonts.poppins(
+                              //       color: AppColors.surface,
+                              //       fontSize: 14,
+                              //       fontWeight: FontWeight.bold,
+                              //     ),
+                              //   ),
+                              // ),
+
+                              // const SizedBox(width: 8),
+                              boxFilterOptions(isSelectedFilters, filters),
+                            ],
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.tune, color: AppColors.primary),
-                  ),
                 ],
               ),
             ),
-          ),
-        ),
-        body: FirestoreFutureBuilder(
-          future: searchEvents(keyword, 'title', context),
-          builder: (snapshot) {
-            return ListView.builder(
-              itemCount: snapshot.length,
-              itemBuilder: (context, index) {
-                var event = snapshot[index].data() as Map<String, dynamic>;
-                return card(
-                  context,
-                  event['eventTitle'] ?? 'No Title',
-                  event['eventDescription'] ?? 'No description available',
-                  event['amountRaised']?.toDouble() ?? 0,
-                  event['amountTarget']?.toDouble() ?? 0,
-                  snapshot[index].id,
-                );
-              },
-            );
-          },
-          empty: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('assets/images/no_results.png', width: 150),
-                const SizedBox(height: 16),
-                Text(
-                  'No projects found',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+            Expanded(
+              child: FirestoreFutureBuilder(
+                loading: const Center(child: CircularProgressIndicator()),
+                future: searchEvents(keyword, 'title', context,filters[isSelectedFilters.indexWhere((value) => value == true)]),
+                builder: (snapshot) {
+                  return ListView.builder(
+                    itemCount: snapshot.length,
+                    itemBuilder: (context, index) {
+                      var event =
+                          snapshot[index].data() as Map<String, dynamic>;
+                      return Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          card(
+                            context,
+                            event['eventTitle'] ?? 'No Title',
+                            event['eventDescription'] ??
+                                'No description available',
+                            event['amountRaised']?.toDouble() ?? 0,
+                            event['amountTarget']?.toDouble() ?? 0,
+                            snapshot[index].id,
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
+          ],
         ),
 
         // body: ListView(
@@ -202,132 +328,57 @@ class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
     );
   }
 
-  Widget _buildProjectCard({
-    required BuildContext context,
-    required String title,
-    required String desc,
-    required String imageUrl,
-    required String badgeText,
-    required Color badgeColor,
-    required Color badgeTextColor,
-    required double progress,
-    required String progressText,
-  }) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        createSlideRoute(const ProjectDetailPage(uid: 'QzMtSxmpzlPR0VP5qwIc')),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: softShadow,
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image Area
-            Container(
-              height: 160,
-              width: double.infinity,
+  Widget boxFilterOptions(List<bool> selected, List<String> filters) {
+    return Row(
+      children: List.generate(filters.length, (index) {
+        bool isSelected = selected[index];
+
+        return Padding(
+          padding: const EdgeInsets.only(right: 8),
+
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                for (int i = 0; i < selected.length; i++) {
+                  selected[i] = false;
+                }
+
+                selected[index] = true;
+              });
+            },
+
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.grey[300],
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: Stack(
-                children: [
-                  Image.network(
-                    imageUrl,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          Colors.black.withOpacity(0.6),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 12,
-                    left: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: badgeColor,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: badgeTextColor.withOpacity(0.2),
-                        ),
-                      ),
-                      child: Text(
-                        badgeText,
-                        style: TextStyle(
-                          color: badgeTextColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              desc,
-              style: const TextStyle(color: AppColors.textMuted, fontSize: 14),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 16),
-            // Progress Area
-            Row(
-              children: [
-                Expanded(
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: Colors.grey[200],
-                    color: AppColors.primary,
-                    minHeight: 6,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.primary.withOpacity(0.1),
+
+                borderRadius: BorderRadius.circular(12),
+
+                border: Border.all(
+                  color: AppColors.primary,
+                  width: isSelected ? 2 : 1,
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  progressText,
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+              ),
+
+              child: Text(
+                filters[index],
+
+                style: GoogleFonts.poppins(
+                  color: isSelected ? Colors.white : AppColors.primary,
+
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
+              ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 }

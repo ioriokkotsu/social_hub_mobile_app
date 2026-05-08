@@ -43,7 +43,13 @@ class FirestoreFutureBuilder<T> extends StatelessWidget {
           return empty ?? const Center(child: Text("No data"));
         }
 
-        return builder(snapshot.data as T);
+        final data = snapshot.data as T;
+
+        if (data is List && data.isEmpty) {
+          return empty ?? const Center(child: Text("No data"));
+        }
+
+        return builder(data);
       },
     );
   }
