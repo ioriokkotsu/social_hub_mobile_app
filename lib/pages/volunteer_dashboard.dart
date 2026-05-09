@@ -14,7 +14,7 @@ class VolunteerDashboardPage extends StatefulWidget {
 }
 
 class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
-  bool _isTasksTab = false;
+  bool _isTasksTab = true;
 
   @override
   Widget build(BuildContext context) {
@@ -153,8 +153,6 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               ),
             ),
           ),
-
-          // Content Area with Fade Transition
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
@@ -310,38 +308,74 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
           ),
         ),
         const SizedBox(height: 12),
-
+        FirestoreStreamBuilder<QuerySnapshot>(
+          width: 363.4,
+          height: 72,
+          radius: 12,
+          stream: FirebaseFirestore.instance
+              .collection('volunteerLogs')
+              .where(
+                'userID',
+                isEqualTo: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(AuthService().currentUser!.uid),
+              )
+              .orderBy('submittedAt', descending: true)
+              .snapshots(),
+          builder: (logs) {
+            return ListView.builder(
+              itemCount: logs.docs.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                Map<String, dynamic> log =
+                    logs.docs[index].data() as Map<String, dynamic>;
+                return Column(
+                  children: [
+                    _buildActivityItem(
+                      eventRef: log['eventID'],
+                      status: log['status'],
+                      hours: log['hoursClaimed'],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              },
+            );
+          },
+        ),
         // Pending Log
-        _buildActivityItem(
-          icon: Icons.schedule,
-          iconColor: AppColors.accent,
-          title: 'Ocean Cleanup Drive',
-          subtitle: '4 Hours • ',
-          statusText: 'Pending Approval',
-          statusColor: AppColors.accent,
-        ),
-        const SizedBox(height: 12),
-        // Approved Log
-        _buildActivityItem(
-          icon: Icons.check_circle,
-          iconColor: AppColors.primary,
-          title: 'Rural Tech Education',
-          subtitle: '3 Hours • ',
-          statusText: 'Approved & Added to Profile',
-          statusColor: AppColors.primary,
-        ),
+        // _buildActivityItem(
+        //   eventRef: FirebaseFirestore.instance.collection('communityEvents').doc('QzMtSxmpzlPR0VP5qwIc'),
+        //   status: 'Pending',
+        //   hours: 4,
+        // ),
+
+        // // Approved Log
+        // _buildActivityItem(
+        //   eventRef: FirebaseFirestore.instance.collection('communityEvents').doc('QzMtSxmpzlPR0VP5qwIc'),
+        //   status: 'Approved',
+        //   hours: 3,
+        // ),
       ],
     );
   }
 
   Widget _buildActivityItem({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required String statusText,
-    required Color statusColor,
+    required DocumentReference eventRef,
+    required String status,
+    required int hours,
   }) {
+    Color statusColor = status == 'Approved'
+        ? AppColors.primary
+        : status == 'Pending'
+        ? AppColors.accent
+        : Colors.red;
+    Color iconColor = status == 'Approved'
+        ? AppColors.primary
+        : status == 'Pending'
+        ? AppColors.accent
+        : Colors.red;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -359,19 +393,44 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               color: iconColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 20),
+            child: Builder(
+              builder: (context) {
+                switch (status) {
+                  case 'Approved':
+                    return Icon(Icons.check_circle, color: iconColor, size: 20);
+
+                  case 'Pending':
+                    return Icon(Icons.schedule, color: iconColor, size: 20);
+
+                  case 'Rejected':
+                    return Icon(Icons.cancel, color: iconColor, size: 20);
+
+                  default:
+                    return Icon(
+                      Icons.help,
+                      color: AppColors.textMuted,
+                      size: 20,
+                    );
+                }
+              },
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                FirestoreFutureBuilder(
+                  future: eventRef.get(),
+                  builder: (event) {
+                    return Text(
+                      event['eventTitle'] ?? 'Unknown Event',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    );
+                  },
                 ),
                 RichText(
                   text: TextSpan(
@@ -381,9 +440,9 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
                       color: AppColors.textMuted,
                     ),
                     children: [
-                      TextSpan(text: subtitle),
+                      TextSpan(text: '$hours Hours  •  '),
                       TextSpan(
-                        text: statusText,
+                        text: status,
                         style: TextStyle(
                           color: statusColor,
                           fontWeight: FontWeight.bold,

@@ -12,6 +12,8 @@ class FirestoreStreamBuilder<T> extends StatelessWidget {
 
   final double? width;
   final double? height;
+  
+  final double? radius;
 
   const FirestoreStreamBuilder({
     super.key,
@@ -21,7 +23,7 @@ class FirestoreStreamBuilder<T> extends StatelessWidget {
     this.height,
     this.loading,
     this.errorBuilder,
-    this.empty,
+    this.empty, this.radius,
   });
 
   @override
@@ -53,7 +55,6 @@ class FirestoreStreamBuilder<T> extends StatelessWidget {
         if (data is QuerySnapshot && data.docs.isEmpty) {
           return empty ?? const Center(child: Text("No data"));
         }
-
         /// 🔹 SUCCESS
         return builder(data);
       },
@@ -68,7 +69,10 @@ class FirestoreStreamBuilder<T> extends StatelessWidget {
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
         child: Container(
-          color: Colors.grey[300],
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(radius ?? 10),
+            color: Colors.grey[300],
+          )
         ),
       ),
     );
