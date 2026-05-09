@@ -221,7 +221,6 @@ Widget navItem(
               // const SizedBox(height: 4),
               Text(
                 label,
-
                 style: TextStyle(
                   color: color,
                   fontSize: 12,

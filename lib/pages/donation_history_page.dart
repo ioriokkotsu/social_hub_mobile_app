@@ -29,6 +29,7 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
             backgroundColor: AppColors.surface,
             elevation: 0,
             iconTheme: const IconThemeData(color: AppColors.textMuted),
+            centerTitle: true,
             title: const Text(
               'My Impact',
               style: TextStyle(
@@ -78,16 +79,39 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
           ),
           body: Column(
             children: [
-              const Text(
-                'Recent Transactions',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 1,
+                    decoration: BoxDecoration(
+                      color: AppColors.textMain,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const Text(
+                    'Recent Transactions',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 1,
+                    decoration: BoxDecoration(
+                      color: AppColors.textMain,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ],
               ),
               Expanded(
                 child: FirestoreFutureBuilder(
+                  loading: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
                   future: FirebaseFirestore.instance
                       .collection('donations')
                       .where(
@@ -108,7 +132,7 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
                         return _buildTransaction(
                           ngoRef: transaction['ngoID'] as DocumentReference,
                           date: transaction['createdAt'] != null
-                              ? DateFormat.yMMMd().format(
+                              ? DateFormat.yMMMd().add_jm().format(
                                   transaction['createdAt'].toDate(),
                                 )
                               : 'Unknown Date',
@@ -155,7 +179,7 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
                       fontSize: 14,
                     ),
                   );
-                }
+                },
               ),
               const SizedBox(height: 4),
               Text(
@@ -179,12 +203,11 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'View Report',
-                style: TextStyle(
+              Text(
+                date,
+                style: const TextStyle(
                   fontSize: 10,
-                  color: AppColors.blue500,
-                  decoration: TextDecoration.underline,
+                  color: AppColors.textMuted,
                 ),
               ),
             ],
@@ -193,61 +216,4 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
       ),
     );
   }
-}
-
-Widget _buildTransaction({
-  required String org,
-  required String date,
-  required String amount,
-}) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: softShadow,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              org,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              date,
-              style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
-            ),
-          ],
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              amount,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'View Report',
-              style: TextStyle(
-                fontSize: 10,
-                color: AppColors.blue500,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
 }
