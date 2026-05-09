@@ -123,7 +123,7 @@ class DrawerSideBar extends StatelessWidget {
                   iconColor: Colors.orangeAccent,
                   label: 'Log Hours',
                   onTap: () {
-                    Navigator.push(context, createSlideRoute(LogHoursPage()));
+                    // Navigator.push(context, createSlideRoute(LogHoursPage()));
                   },
                 ),
                 Padding(

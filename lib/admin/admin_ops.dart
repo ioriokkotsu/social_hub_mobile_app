@@ -50,7 +50,6 @@ Future<void> submitLogHours(
   DateTime? logsDate,
 ) async {
   try {
-
     await AuthService().addDocToCollection('volunteerLogs', {
       'userID': userRef,
       'eventID': eventRef,
@@ -61,34 +60,52 @@ Future<void> submitLogHours(
       'status': 'Pending',
       'taskCompleted': taskCompleted,
     });
-    //User
-    DocumentSnapshot userDoc = await userRef.get();
-    List listJoinedEvents = List.from(userDoc['listJoinedEvents'] ?? []);
-
-
-    for (int i = 0; i < listJoinedEvents.length; i++) {
-      if (listJoinedEvents[i]['eventID'] == eventRef) {
-        listJoinedEvents[i]['totalLogHours'] += hours;
-        break;
-      }
-    }
-
-    await userRef.update({'listJoinedEvents': listJoinedEvents});
-
-    //Event
-    DocumentSnapshot eventDoc = await eventRef.get();
-    List listJoinedVolunteers = List.from(eventDoc['listJoinedVolunteers'] ?? []);
-
-    for (int i = 0; i < listJoinedVolunteers.length; i++) {
-      if (listJoinedVolunteers[i]['userID'] == userRef) {
-        listJoinedVolunteers[i]['totalLogHours'] += hours;
-        break;
-      }
-    }
-
-    await eventRef.update({'listJoinedVolunteers': listJoinedVolunteers});
-
   } catch (e) {
     throw Exception('Failed to submit log hours: ${e.toString()}');
+  }
+}
+
+Future<void> updateStatusLogHours(String logID, String newStatus) async {
+  try {
+    DocumentReference logRef = FirebaseFirestore.instance
+        .collection('volunteerLogs')
+        .doc(logID);
+
+    DocumentSnapshot logDoc = await logRef.get();
+
+    await logRef.update({'status': newStatus});
+
+    if (newStatus == 'Approved') {
+
+      //User
+      DocumentSnapshot userDoc = await logDoc['userID'].get();
+      List listJoinedEvents = List.from(userDoc['listJoinedEvents'] ?? []);
+
+      for (int i = 0; i < listJoinedEvents.length; i++) {
+        if (listJoinedEvents[i]['eventID'] == logDoc['eventID']) {
+          listJoinedEvents[i]['totalLogHours'] += logDoc['hoursClaimed'];
+          break;
+        }
+      }
+
+      await logDoc['userID'].update({'listJoinedEvents': listJoinedEvents});
+
+      //Event
+      DocumentSnapshot eventDoc = await logDoc['eventID'].get();
+      List listJoinedVolunteers = List.from(
+        eventDoc['listJoinedVolunteers'] ?? [],
+      );
+
+      for (int i = 0; i < listJoinedVolunteers.length; i++) {
+        if (listJoinedVolunteers[i]['userID'] == logDoc['userID']) {
+          listJoinedVolunteers[i]['totalLogHours'] += logDoc['hoursClaimed'];
+          break;
+        }
+      }
+
+      await logDoc['eventID'].update({'listJoinedVolunteers': listJoinedVolunteers});
+    }
+  } catch (e) {
+    throw Exception('Failed to approve log hours: ${e.toString()}');
   }
 }

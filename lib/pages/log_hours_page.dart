@@ -1,14 +1,55 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:social_hub/admin/admin_ops.dart';
+import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/theme/theme.dart';
 
 class LogHoursPage extends StatefulWidget {
-  const LogHoursPage({super.key});
+  final String eventID;
+  final String eventTitle;
+  final bool? isFromEventDetails;
+
+  const LogHoursPage({
+    super.key,
+    required this.eventID,
+    required this.eventTitle,
+    this.isFromEventDetails = false,
+  });
 
   @override
   State<LogHoursPage> createState() => _LogHoursPageState();
 }
 
 class _LogHoursPageState extends State<LogHoursPage> {
+  String? selectedEvent;
+  TextEditingController hoursController = TextEditingController();
+  TextEditingController taskController = TextEditingController();
+
+  DateTime? dateTime = DateTime.now();
+
+  void _showDialog(Widget child) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(top: false, child: child),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    selectedEvent = widget.eventTitle;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,8 +84,54 @@ class _LogHoursPageState extends State<LogHoursPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel('Date'),
-                          _buildTextField(hint: '2023-10-24'),
+                          _buildLabel('Date and Time'),
+                          InkWell(
+                            onTap: () {
+                              _showDialog(
+                                CupertinoDatePicker(
+                                  // backgroundColor: AppColors.primary.withValues(alpha: 0.06),
+                                  use24hFormat: true,
+                                  mode: CupertinoDatePickerMode.dateAndTime,
+                                  initialDateTime: dateTime,
+                                  onDateTimeChanged: (DateTime newDateTime) {
+                                    setState(() {
+                                      dateTime = newDateTime;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 174,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.appBg,
+                                border: Border.all(color: AppColors.gray100),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${dateTime!.day}-${dateTime!.month}-${dateTime!.year} , ${dateTime!.hour}:${dateTime!.minute.toString().padLeft(2, '0')}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: AppColors.textMuted,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -54,7 +141,33 @@ class _LogHoursPageState extends State<LogHoursPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildLabel('Hours Spent'),
-                          _buildTextField(hint: 'e.g. 4', isNumber: true),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.appBg,
+                              border: Border.all(color: AppColors.gray100),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TextField(
+                              controller: hoursController,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: 'e.g. 4',
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(
+                                  color: AppColors.textMuted,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -62,9 +175,29 @@ class _LogHoursPageState extends State<LogHoursPage> {
                 ),
                 const SizedBox(height: 20),
                 _buildLabel('Tasks Completed'),
-                _buildTextField(
-                  hint: 'Briefly describe what you worked on...',
-                  maxLines: 4,
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.appBg,
+                    border: Border.all(color: AppColors.gray100),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: TextField(
+                    controller: taskController,
+                    maxLines: 4,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: const InputDecoration(
+                      hintText: 'Briefly describe what you worked on...',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        color: AppColors.textMuted,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 _buildLabel('Proof / Photo (Optional)'),
@@ -104,7 +237,38 @@ class _LogHoursPageState extends State<LogHoursPage> {
               border: Border(top: BorderSide(color: AppColors.gray100)),
             ),
             child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (hoursController.text.isEmpty ||
+                    taskController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      duration: Duration(seconds: 2),
+                      content: Text('Please fill in all required fields.'),
+                    ),
+                  );
+                  return;
+                }
+                submitLogHours(
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(AuthService().currentUser!.uid),
+                  FirebaseFirestore.instance
+                      .collection('communityEvents')
+                      .doc(widget.eventID),
+                  int.tryParse(hoursController.text) ?? 0,
+                  taskController.text,
+                  dateTime,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text(
+                      'Log hours submitted successfully! Awaiting approval.',
+                    ),
+                  ),
+                );
+                Navigator.pop(context);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -154,53 +318,28 @@ class _LogHoursPageState extends State<LogHoursPage> {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
-          value: 'Ocean Cleanup Drive',
+          value: selectedEvent,
           style: const TextStyle(
             fontFamily: 'Inter',
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: AppColors.textMain,
           ),
-          items:
-              <String>[
-                'Rural Tech Education',
-                'Ocean Cleanup Drive',
-                'City Park Reforestation',
-              ].map((String value) {
+          items: <String>['Test Event 1', 'Test Event 2', widget.eventTitle]
+              .map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
                 );
-              }).toList(),
-          onChanged: (_) {},
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String hint,
-    int maxLines = 1,
-    bool isNumber = false,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.appBg,
-        border: Border.all(color: AppColors.gray100),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextField(
-        maxLines: maxLines,
-        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: hint,
-          border: InputBorder.none,
-          hintStyle: const TextStyle(
-            color: AppColors.textMuted,
-            fontWeight: FontWeight.normal,
-          ),
+              })
+              .toList(),
+          onChanged: widget.isFromEventDetails == false
+              ? (value) {
+                  setState(() {
+                    selectedEvent = value;
+                  });
+                }
+              : null,
         ),
       ),
     );
