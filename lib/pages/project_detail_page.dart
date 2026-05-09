@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:social_hub/admin/admin_ops.dart';
 import 'package:social_hub/pages/ngo_profile_page.dart';
 import 'package:social_hub/pages/volunteer_application_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
+import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 import 'package:intl/intl.dart';
 
@@ -356,16 +358,10 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: FirestoreFutureBuilder<QuerySnapshot>(
+                        child: FirestoreStreamBuilder<QuerySnapshot>(
                           width: 175.7,
                           height: 55,
-                          // future: FirebaseFirestore.instance
-                          // .collection('volunteerApplication')
-                          // .where('eventID', isEqualTo: FirebaseFirestore.instance.collection('communityEvents').doc('QzMtSxmpzlPR0VP5qwIc'))
-                          // .where('userID',
-                          //     isEqualTo: AuthService().currentUser?.uid)
-                          // .get(),
-                          future: FirebaseFirestore.instance
+                          stream: FirebaseFirestore.instance
                               .collection('volunteerApplication')
                               .where(
                                 'eventID',
@@ -379,7 +375,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                     .collection('users')
                                     .doc(AuthService().currentUser!.uid),
                               )
-                              .get(),
+                              .snapshots(),
                           builder: (application) {
                             DocumentSnapshot? document =
                                 application.docs.isNotEmpty
@@ -403,6 +399,29 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                         ),
                                       );
                               },
+                              // onLongPress: document != null
+                              //     ? () {
+                              //         try {
+                              //           submitLogHours(
+                              //             document['userID'],
+                              //             document['eventID'],
+                              //             2,
+                              //             'Test Task Completed',
+                              //             null,
+                              //           );
+                              //         } catch (e) {
+                              //           ScaffoldMessenger.of(
+                              //             context,
+                              //           ).showSnackBar(
+                              //             SnackBar(
+                              //               content: Text(
+                              //                 'Failed Test: ${e.toString()}',
+                              //               ),
+                              //             ),
+                              //           );
+                              //         }
+                              //       }
+                              //     : null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.secondary.withValues(
                                   alpha: 0.1,
@@ -419,8 +438,10 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                               child: Text(
                                 status.isNotEmpty
                                     ? status == 'Approved'
-                                          ? 'Joined'
-                                          : status
+                                        ? 'Joined'
+                                        : status == 'Pending'
+                                            ? 'Pending'
+                                            : 'Join'
                                     : 'Join',
                                 style: TextStyle(
                                   fontSize: 16,
@@ -487,7 +508,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
           'createdAt': FieldValue.serverTimestamp(),
           'currency': 'myr',
           'status': 'Successful',
-          'ngoID': ngoRef
+          'ngoID': ngoRef,
         });
         await eventRef.update({'amountRaised': FieldValue.increment(amount)});
         AuthService().updateCollection(AuthService().currentUser!.uid, {

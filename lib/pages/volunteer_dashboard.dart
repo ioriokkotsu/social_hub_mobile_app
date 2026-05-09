@@ -9,6 +9,8 @@ class VolunteerDashboardPage extends StatefulWidget {
 }
 
 class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
+  bool _isTasksTab = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,262 +21,116 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
         iconTheme: const IconThemeData(color: AppColors.textMuted),
         title: const Text(
           'My Volunteer Dash',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            color: AppColors.textMain,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontFamily: 'Poppins', color: AppColors.textMain, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
+          preferredSize: const Size.fromHeight(60),
           child: Container(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
             alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                _buildBadgePreview(
-                  Icons.workspace_premium,
-                  'Top 10%',
-                  AppColors.accent,
-                ),
-                const SizedBox(width: 12),
-                _buildBadgePreview(Icons.schedule, '50 Hrs', AppColors.primary),
-              ],
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: _buildBadgePreview(Icons.workspace_premium, 'Top 10%', AppColors.accent),
+                  ),
+                  const SizedBox(width: 12),
+                  GestureDetector(
+                    onTap: () {},
+                    child: _buildBadgePreview(Icons.schedule, '50 Hrs', AppColors.primary),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(24),
-        physics: const BouncingScrollPhysics(),
+      body: Column(
         children: [
-          const Text(
-            'Upcoming Tasks',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: softShadow,
-              border: const Border(
-                left: BorderSide(color: AppColors.primary, width: 4),
+          // Smooth Animated Tab Bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+            child: Container(
+              height: 44,
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.grey[200]?.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(16),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Text(
-                          'Teach HTML Basics',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
+              child: Stack(
+                children: [
+                  // Sliding Indicator
+                  AnimatedAlign(
+                    alignment: _isTasksTab ? Alignment.centerLeft : Alignment.centerRight,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOutQuart,
+                    child: FractionallySizedBox(
+                      widthFactor: 0.5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondary.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'Tomorrow',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: const [
-                        Icon(
-                          Icons.location_on,
-                          size: 12,
-                          color: AppColors.textMuted,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'Rural Tech Edu Hub',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    'View',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-          const Text(
-            'Recent Activity',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: softShadow,
-              border: const Border(
-                left: BorderSide(color: AppColors.accent, width: 4),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.schedule,
-                    color: AppColors.accent,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  // Tab Buttons
+                  Row(
                     children: [
-                      const Text(
-                        'Ocean Cleanup Drive',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _isTasksTab = true),
+                          behavior: HitTestBehavior.opaque,
+                          child: Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 200),
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: _isTasksTab ? AppColors.textMain : AppColors.textMuted,
+                              ),
+                              child: const Text('Tasks'),
+                            ),
+                          ),
                         ),
                       ),
-                      Row(
-                        children: const [
-                          Text(
-                            '4 Hours • ',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: AppColors.textMuted,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _isTasksTab = false),
+                          behavior: HitTestBehavior.opaque,
+                          child: Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 200),
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: !_isTasksTab ? AppColors.textMain : AppColors.textMuted,
+                              ),
+                              child: const Text('Projects'),
                             ),
                           ),
-                          Text(
-                            'Pending Approval',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
-          const SizedBox(height: 24),
-          const Text(
-            'Joined Projects',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: softShadow,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: const DecorationImage(
-                      image: NetworkImage(
-                        'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=100&q=80',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Ocean Cleanup',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        'Active • 12 hrs logged',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.chevron_right, color: AppColors.primary),
-              ],
+          // Content Area with Fade Transition
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _isTasksTab ? _buildTasksSection() : _buildProjectsSection(),
             ),
           ),
         ],
@@ -294,15 +150,198 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
         children: [
           Icon(icon, color: color, size: 16),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold)),
         ],
+      ),
+    );
+  }
+
+  // --- SECTION 1: Tasks ---
+  Widget _buildTasksSection() {
+    return ListView(
+      key: const ValueKey('tasks'),
+      padding: const EdgeInsets.all(24),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        const Text('Upcoming Tasks', style: TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: softShadow,
+            border: const Border(left: BorderSide(color: AppColors.primary, width: 4)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text('Teach HTML Basics', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(color: AppColors.secondary.withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
+                        child: const Text('Tomorrow', style: TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: const [
+                      Icon(Icons.location_on, size: 12, color: AppColors.textMuted),
+                      SizedBox(width: 4),
+                      Text('Rural Tech Edu Hub', style: TextStyle(fontSize: 12, color: AppColors.textMuted))
+                    ],
+                  )
+                ],
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                  child: const Text('View', style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: 24),
+        const Text('Recent Activity', style: TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        
+        // Pending Log
+        _buildActivityItem(
+          icon: Icons.schedule,
+          iconColor: AppColors.accent,
+          title: 'Ocean Cleanup Drive',
+          subtitle: '4 Hours • ',
+          statusText: 'Pending Approval',
+          statusColor: AppColors.accent,
+        ),
+        const SizedBox(height: 12),
+        // Approved Log
+        _buildActivityItem(
+          icon: Icons.check_circle,
+          iconColor: AppColors.primary,
+          title: 'Rural Tech Education',
+          subtitle: '3 Hours • ',
+          statusText: 'Approved & Added to Profile',
+          statusColor: AppColors.primary,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActivityItem({
+    required IconData icon, required Color iconColor, required String title, required String subtitle, required String statusText, required Color statusColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: softShadow,
+        border: Border(left: BorderSide(color: iconColor, width: 4)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40, height: 40,
+            decoration: BoxDecoration(color: iconColor.withOpacity(0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.textMuted),
+                    children: [
+                      TextSpan(text: subtitle),
+                      TextSpan(text: statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  // --- SECTION 2: Projects ---
+  Widget _buildProjectsSection() {
+    return ListView(
+      key: const ValueKey('projects'),
+      padding: const EdgeInsets.all(24),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        const Text('Joined Projects', style: TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        _buildJoinedProjectCard(
+          title: 'Ocean Cleanup',
+          hours: '12 hrs logged',
+          imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=100&q=80',
+        ),
+        const SizedBox(height: 16),
+        _buildJoinedProjectCard(
+          title: 'Rural Tech Education',
+          hours: '45 hrs logged',
+          imageUrl: 'https://images.unsplash.com/photo-1497645851419-f06bcaeb1525?w=100&q=80',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildJoinedProjectCard({required String title, required String hours, required String imageUrl}) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: softShadow,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48, height: 48,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  Row(
+                    children: [
+                      Container(width: 8, height: 8, decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle)),
+                      const SizedBox(width: 4),
+                      Text('Active • $hours', style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: AppColors.primary),
+          ],
+        ),
       ),
     );
   }
