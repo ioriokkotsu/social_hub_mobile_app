@@ -88,6 +88,9 @@ Future<void> updateStatusLogHours(String logID, String newStatus) async {
         }
       }
 
+      int currentHoursLogged = userDoc['hoursLogged'] ?? 0;
+      await userDoc.reference.update({'hoursLogged': currentHoursLogged + logDoc['hoursClaimed']});
+
       await logDoc['userID'].update({'listJoinedEvents': listJoinedEvents});
 
       //Event

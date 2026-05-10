@@ -26,9 +26,6 @@ Future<List<DocumentSnapshot>> searchEvents(
     List<DocumentSnapshot> matchedEvents = [];
 
     for (var doc in querySnapshot.docs) {
-      // if (currentUser != null && doc.reference.path == currentUser.path) {
-      //   continue;
-      // }
 
       Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
 
@@ -77,10 +74,8 @@ Future<List<DocumentSnapshot>> searchEvents(
       return aField.compareTo(bField);
     });
 
-    print("Search completed successfully");
     return matchedEvents;
   } catch (e) {
-    print('Error in search: $e');
     return [];
   }
 }

@@ -43,22 +43,24 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               physics: const BouncingScrollPhysics(),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: _buildBadgePreview(
-                      Icons.workspace_premium,
-                      'Top 10%',
-                      AppColors.accent,
-                    ),
+                  _buildBadgePreview(
+                    Icons.workspace_premium,
+                    'Top 10%',
+                    AppColors.accent,
                   ),
                   const SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: () {},
-                    child: _buildBadgePreview(
-                      Icons.schedule,
-                      '50 Hrs',
-                      AppColors.primary,
-                    ),
+                  FirestoreFutureBuilder(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(AuthService().currentUser!.uid)
+                        .get(),
+                    builder: (user) {
+                      return _buildBadgePreview(
+                        Icons.schedule,
+                        '${user['hoursLogged'] ?? 0} Hours',
+                        AppColors.primary,
+                      );
+                    }
                   ),
                 ],
               ),

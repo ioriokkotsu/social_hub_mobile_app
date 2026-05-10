@@ -134,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                                   doc['amountRaised'] ?? 0,
                                   doc['amountTarget'] ?? 0,
                                   docs[index].id,
+                                  doc['eventCategory'] ?? 'Uncategorized',
                                 ),
                                 const SizedBox(
                                   height: 16,
@@ -163,7 +164,8 @@ Widget card(
   String eventDescription,
   double amountRaised,
   double amountTarget,
-  String uid,
+  String uid, 
+  String eventCategory,
 ) {
   return GestureDetector(
     onTap: () {
@@ -223,7 +225,7 @@ Widget card(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'SDG 1: No Poverty',
+                      eventCategory,
                       style: GoogleFonts.poppins(
                         color: AppColors.surface,
                         fontSize: 14,

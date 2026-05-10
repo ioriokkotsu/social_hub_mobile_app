@@ -20,8 +20,9 @@ class VolunteerApplicationPage extends StatefulWidget {
 }
 
 class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
-  String _selectedRole = 'General Volunteer';
+  String _selectedRole = '';
   bool _agreedToTerms = false;
+  final TextEditingController _motivationTextController = TextEditingController();
 
   late Future<dynamic> eventFuture;
   late Future<dynamic> ngoData;
@@ -109,12 +110,13 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
                     _buildTextField(
                       hint: 'Why do you want to join this project?',
                       maxLines: 3,
+                      controller: _motivationTextController,
                     ),
                     const SizedBox(height: 20),
 
                     // Role Selection
                     _buildLabel('Available Roles'),
-                    _buildDropdown(),
+                    _buildDropdown(_getRequiredRoles(event)),
                     const SizedBox(height: 24),
 
                     // Terms and Conditions Checkbox
@@ -200,17 +202,21 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
                     }
 
                     try {
+                      final availableRoles = _getRequiredRoles(event);
+                      final roleApplied = _getSelectedRole(availableRoles);
+
                       var data = {
                         'ngoID': widget.ngoRef,
                         'eventID': FirebaseFirestore.instance
                             .collection('communityEvents')
                             .doc(widget.eventID),
-                        'roleApplied': _selectedRole,
+                        'roleApplied': roleApplied,
                         'status': 'Pending',
                         'submittedAt': FieldValue.serverTimestamp(),
                         'userID': FirebaseFirestore.instance
                             .collection('users')
                             .doc(AuthService().currentUser?.uid),
+                        'motivationText': _motivationTextController.text,
                       };
                       AuthService().addDocToCollection(
                         'volunteerApplication',
@@ -278,7 +284,35 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
     );
   }
 
-  Widget _buildDropdown() {
+  List<String> _getRequiredRoles(dynamic event) {
+    final requiredRoles = event?['requiredRoles'];
+
+    if (requiredRoles is! List) {
+      return [];
+    }
+
+    return requiredRoles
+        .whereType<Object>()
+        .map((role) => role.toString().trim())
+        .where((role) => role.isNotEmpty)
+        .toList();
+  }
+
+  String _getSelectedRole(List<String> availableRoles) {
+    if (availableRoles.isEmpty) {
+      return '';
+    }
+
+    if (_selectedRole.isNotEmpty && availableRoles.contains(_selectedRole)) {
+      return _selectedRole;
+    }
+
+    return availableRoles.first;
+  }
+
+  Widget _buildDropdown(List<String> availableRoles) {
+    final selectedRole = _getSelectedRole(availableRoles);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -289,7 +323,7 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
-          value: _selectedRole,
+          value: availableRoles.isEmpty ? null : selectedRole,
           icon: const Icon(
             Icons.keyboard_arrow_down,
             color: AppColors.textMuted,
@@ -300,20 +334,15 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
             fontWeight: FontWeight.w500,
             color: AppColors.textMain,
           ),
-          items:
-              <String>[
-                'Coding Instructor',
-                'Logistics Coordinator',
-                'General Volunteer',
-              ].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+          items: availableRoles.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
           onChanged: (String? newValue) {
             setState(() {
-              _selectedRole = newValue!;
+              _selectedRole = newValue ?? '';
             });
           },
         ),
@@ -321,7 +350,7 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
     );
   }
 
-  Widget _buildTextField({required String hint, int maxLines = 1}) {
+  Widget _buildTextField({required String hint, int maxLines = 1, required TextEditingController controller}) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.appBg,
@@ -330,6 +359,7 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: TextField(
+        controller: controller,
         maxLines: maxLines,
         style: const TextStyle(
           fontSize: 14,

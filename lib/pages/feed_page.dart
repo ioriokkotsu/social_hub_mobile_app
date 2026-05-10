@@ -1,30 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_hub/services/auth_service.dart';
+import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
-
-// --- Data Model for Posts ---
-class _PostData {
-  final String name;
-  final String role;
-  final String? avatarUrl;
-  final bool isPartner;
-  final String content;
-  final String? imageUrl;
-  int likes;
-  int comments;
-  bool isLiked;
-
-  _PostData({
-    required this.name,
-    required this.role,
-    this.avatarUrl,
-    this.isPartner = false,
-    required this.content,
-    this.imageUrl,
-    required this.likes,
-    required this.comments,
-    this.isLiked = false,
-  });
-}
 
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key});
@@ -34,31 +12,12 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  // Initial dummy data
-  final List<_PostData> _posts = [
-    _PostData(
-      name: 'Sarah Jenkins',
-      role: 'Volunteer • 2 hrs ago',
-      avatarUrl: 'https://i.pravatar.cc/150?img=12',
-      content: 'Just wrapped up an amazing weekend at the City Park Tree Planting event! We managed to plant over 200 saplings. 🌳💚 #SDG13 #ClimateAction',
-      imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80',
-      likes: 24,
-      comments: 5,
-    ),
-    _PostData(
-      name: 'EduGlobal NGO',
-      role: 'Partner • 5 hrs ago',
-      isPartner: true,
-      content: 'A huge thank you to all the donors! We just hit 60% of our funding goal for the Rural Tech Education Initiative. We are so close to bringing these labs to life. 💻🚀',
-      likes: 112,
-      comments: 18,
-    ),
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // --- Show Bottom Sheet to Create Post ---
   void _showCreatePostSheet() {
     final TextEditingController postController = TextEditingController();
     bool hasImage = false;
+    String? imageUrl;
 
     showModalBottomSheet(
       context: context,
@@ -105,15 +64,15 @@ class _FeedPageState extends State<FeedPage> {
                         ),
                       ],
                     ),
-                    if (hasImage)
+                    if (hasImage && imageUrl != null)
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 12),
                         height: 150,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          image: const DecorationImage(
-                            image: NetworkImage('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80'),
+                          image: DecorationImage(
+                            image: NetworkImage(imageUrl!),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -121,7 +80,10 @@ class _FeedPageState extends State<FeedPage> {
                           alignment: Alignment.topRight,
                           child: IconButton(
                             icon: const Icon(Icons.cancel, color: Colors.white),
-                            onPressed: () => setStateSheet(() => hasImage = false),
+                            onPressed: () => setStateSheet(() {
+                              hasImage = false;
+                              imageUrl = null;
+                            }),
                           ),
                         ),
                       ),
@@ -130,25 +92,40 @@ class _FeedPageState extends State<FeedPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton.icon(
-                          onPressed: () => setStateSheet(() => hasImage = true),
+                          onPressed: () => setStateSheet(() {
+                            hasImage = true;
+                            imageUrl = 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80';
+                          }),
                           icon: const Icon(Icons.image_outlined, color: AppColors.primary),
                           label: const Text('Add Image', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (postController.text.isNotEmpty || hasImage) {
-                              setState(() {
-                                _posts.insert(0, _PostData(
-                                  name: 'Alex Volunteer',
-                                  role: 'Volunteer • Just now',
-                                  avatarUrl: 'https://i.pravatar.cc/150?img=32',
-                                  content: postController.text,
-                                  imageUrl: hasImage ? 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80' : null,
-                                  likes: 0,
-                                  comments: 0,
-                                ));
-                              });
-                              Navigator.pop(context);
+                              try {
+                                final currentUser = AuthService().currentUser;
+                                if (currentUser == null) return;
+
+                                await _firestore.collection('feedPosts').add({
+                                  'contentMessage': postController.text,
+                                  'imageURL': imageUrl,
+                                  'createdAt': FieldValue.serverTimestamp(),
+                                  'userID': _firestore.collection('users').doc(currentUser.uid),
+                                  'likesCount': 0,
+                                  'likedBy': <DocumentReference>[],
+                                });
+
+                                if (!context.mounted) return;
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Post created successfully!'), backgroundColor: AppColors.primary),
+                                );
+                              } catch (e) {
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                );
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -169,8 +146,7 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
-  // --- Show Bottom Sheet for Comments ---
-  void _showCommentsSheet(int index) {
+  void _showCommentsSheet(DocumentSnapshot postDoc) {
     final TextEditingController commentController = TextEditingController();
 
     showModalBottomSheet(
@@ -195,45 +171,71 @@ class _FeedPageState extends State<FeedPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Comments (${_posts[index].comments})', style: const TextStyle(fontFamily: 'Poppins', fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text('Comments', style: const TextStyle(fontFamily: 'Poppins', fontSize: 18, fontWeight: FontWeight.bold)),
                         IconButton(icon: const Icon(Icons.close, color: AppColors.textMuted), onPressed: () => Navigator.pop(context)),
                       ],
                     ),
                     const Divider(color: AppColors.gray100),
                     Expanded(
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        children: [
-                          if (_posts[index].comments > 0)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const CircleAvatar(backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=44'), radius: 16),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.appBg,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: const [
-                                          Text('Jane Doe', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textMain)),
-                                          SizedBox(height: 4),
-                                          Text('This is amazing! Great work everyone 👏', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
-                                        ],
-                                      ),
+                      child: FirestoreStreamBuilder<QuerySnapshot>(
+                        stream: postDoc.reference.collection('comments').orderBy('createdAt', descending: true).snapshots(),
+                        builder: (querySnapshot) {
+                          final comments = querySnapshot.docs;
+                          
+                          if (comments.isEmpty) {
+                            return const Center(
+                              child: Text('No comments yet. Be the first!', style: TextStyle(color: AppColors.textMuted)),
+                            );
+                          }
+                          
+                          return ListView(
+                            physics: const BouncingScrollPhysics(),
+                            children: comments.map((commentDoc) {
+                              final commentData = commentDoc.data() as Map<String, dynamic>;
+                              final userRef = commentData['userID'] as DocumentReference?;
+
+                              return FutureBuilder<DocumentSnapshot>(
+                                future: userRef?.get(),
+                                builder: (context, userSnapshot) {
+                                  final userName = userSnapshot.data?['displayName'] ?? 'Unknown User';
+                                  final userAvatar = userSnapshot.data?['profileURL'] ?? 'https://i.pravatar.cc/150?img=32';
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: NetworkImage(userAvatar),
+                                          radius: 16,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.appBg,
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textMain)),
+                                                const SizedBox(height: 4),
+                                                Text(commentData['commentMessage'] ?? '', style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Simulated dynamic comments could be added here
-                        ],
+                                  );
+                                }
+                              );
+                            }).toList(),
+                          );
+                        },
+                        empty: const Center(child: Text('No comments yet', style: TextStyle(color: AppColors.textMuted))),
                       ),
                     ),
                     Row(
@@ -260,14 +262,26 @@ class _FeedPageState extends State<FeedPage> {
                         const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.send, color: AppColors.primary),
-                          onPressed: () {
+                          onPressed: () async {
                             if (commentController.text.isNotEmpty) {
-                              setState(() {
-                                _posts[index].comments++;
-                              });
-                              setStateSheet(() {
+                              try {
+                                final currentUser = AuthService().currentUser;
+                                if (currentUser == null) return;
+
+                                await postDoc.reference.collection('comments').add({
+                                  'commentMessage': commentController.text,
+                                  'createdAt': FieldValue.serverTimestamp(),
+                                  'userID': _firestore.collection('users').doc(currentUser.uid),
+                                });
+
                                 commentController.clear();
-                              });
+                                setStateSheet(() {});
+                              } catch (e) {
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                );
+                              }
                             }
                           },
                         ),
@@ -294,45 +308,100 @@ class _FeedPageState extends State<FeedPage> {
         title: const Text('Community Feed', style: TextStyle(fontFamily: 'Poppins', color: AppColors.textMain, fontSize: 20, fontWeight: FontWeight.bold)),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), bottomRight: Radius.circular(32))),
       ),
-      body: ListView(
-        padding: const EdgeInsets.only(top: 16, bottom: 24),
-        physics: const BouncingScrollPhysics(),
-        children: [
-          // Create Post Input area
-          GestureDetector(
-            onTap: _showCreatePostSheet,
-            child: Container(
-              color: AppColors.surface,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              margin: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                children: [
-                  const CircleAvatar(backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32'), radius: 20),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      decoration: BoxDecoration(color: AppColors.appBg, borderRadius: BorderRadius.circular(24)),
-                      child: const Text('Share an update or milestone...', style: TextStyle(color: AppColors.textMuted, fontSize: 14)),
-                    ),
+      body: FirestoreStreamBuilder<QuerySnapshot>(
+        stream: _firestore
+            .collection('feedPosts')
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (querySnapshot) {
+          final posts = querySnapshot.docs;
+
+          return ListView(
+            padding: const EdgeInsets.only(top: 16, bottom: 24),
+            physics: const BouncingScrollPhysics(),
+            children: [
+              GestureDetector(
+                onTap: _showCreatePostSheet,
+                child: Container(
+                  color: AppColors.surface,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32'), radius: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(color: AppColors.appBg, borderRadius: BorderRadius.circular(24)),
+                          child: const Text('Share an update or milestone...', style: TextStyle(color: AppColors.textMuted, fontSize: 14)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Icon(Icons.image_outlined, color: AppColors.primary),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  const Icon(Icons.image_outlined, color: AppColors.primary),
-                ],
+                ),
               ),
-            ),
+              ...posts.map((postDoc) => _buildPostCard(postDoc as DocumentSnapshot<Map<String, dynamic>>)).toList(),
+            ],
+          );
+        },
+        empty: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.feed, size: 64, color: AppColors.textMuted),
+              const SizedBox(height: 16),
+              const Text('No posts yet', style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
+              const SizedBox(height: 8),
+              const Text('Be the first to share!', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _showCreatePostSheet,
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                child: const Text('Create Post', style: TextStyle(color: Colors.white)),
+              ),
+            ],
           ),
-          
-          // Dynamically rendering posts
-          ...List.generate(_posts.length, (index) => _buildPostCard(index)),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildPostCard(int index) {
-    final post = _posts[index];
-    
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return 'just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${dateTime.month}/${dateTime.day}/${dateTime.year}';
+    }
+  }
+
+  Widget _buildPostCard(DocumentSnapshot<Map<String, dynamic>> postDoc) {
+    final postData = postDoc.data() ?? {};
+    final userRef = postData['userID'] as DocumentReference?;
+    final likedByRefs = (postData['likedBy'] as List<dynamic>?)
+            ?.whereType<DocumentReference>()
+            .toList() ??
+        <DocumentReference>[];
+    final likesCount = postData['likesCount'] as int? ?? 0;
+    final createdAt = postData['createdAt'] as Timestamp?;
+    final currentUser = AuthService().currentUser;
+    final currentUserRef = currentUser != null
+        ? _firestore.collection('users').doc(currentUser.uid)
+        : null;
+    final isLiked = currentUserRef != null &&
+        likedByRefs.any((ref) => ref.path == currentUserRef.path);
+
     return Container(
       color: AppColors.surface,
       margin: const EdgeInsets.only(bottom: 16),
@@ -342,43 +411,61 @@ class _FeedPageState extends State<FeedPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+            child: FutureBuilder<DocumentSnapshot>(
+              future: userRef?.get(),
+              builder: (context, snapshot) {
+                final userData = snapshot.data?.data() as Map<String, dynamic>? ?? {};
+                final displayName = userData['displayName'] ?? 'Unknown User';
+                final occupation = userData['occupation'] ?? 'Volunteer';
+                final profileURL = userData['profileURL'] ?? 'https://i.pravatar.cc/150?img=32';
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (post.avatarUrl != null) 
-                      CircleAvatar(backgroundImage: NetworkImage(post.avatarUrl!), radius: 20)
-                    else 
-                      Container(width: 40, height: 40, decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.2), shape: BoxShape.circle), child: const Center(child: Text('EG', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)))),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Row(
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(profileURL),
+                          radius: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(post.name, style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 14)), 
-                            if (post.isPartner) 
-                              const Padding(padding: EdgeInsets.only(left: 4), child: Icon(Icons.check_circle, color: AppColors.secondary, size: 14))
+                            Text(
+                              displayName,
+                              style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                            Text(
+                              '$occupation • ${createdAt != null ? _getTimeAgo(createdAt.toDate()) : 'Unknown time'}',
+                              style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
+                            ),
                           ],
                         ),
-                        Text(post.role, style: const TextStyle(color: AppColors.textMuted, fontSize: 10)),
                       ],
                     ),
+                    const Icon(Icons.more_horiz, color: AppColors.textMuted),
                   ],
-                ),
-                const Icon(Icons.more_horiz, color: AppColors.textMuted),
-              ],
+                );
+              },
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24), 
-            child: Text(post.content, style: const TextStyle(fontSize: 14, height: 1.5, color: AppColors.textMain))
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              postData['contentMessage'] ?? '',
+              style: const TextStyle(fontSize: 14, height: 1.5, color: AppColors.textMain),
+            ),
           ),
-          if (post.imageUrl != null) 
+          if (postData['imageURL'] != null && (postData['imageURL'] as String).isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 12), 
-              child: Image.network(post.imageUrl!, height: 200, width: double.infinity, fit: BoxFit.cover)
+              padding: const EdgeInsets.only(top: 12),
+              child: Image.network(
+                postData['imageURL'],
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
           const SizedBox(height: 12),
           const Divider(color: AppColors.gray100, height: 1),
@@ -387,32 +474,53 @@ class _FeedPageState extends State<FeedPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Interactive Like Button
                 GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      post.isLiked = !post.isLiked;
-                      post.likes += post.isLiked ? 1 : -1;
-                    });
+                  onTap: () async {
+                    if (currentUserRef == null) return;
+                    
+                    try {
+                      final updatedLikedBy = List<DocumentReference>.from(likedByRefs);
+                      
+                      if (isLiked) {
+                        updatedLikedBy.removeWhere((ref) => ref.path == currentUserRef.path);
+                      } else {
+                        updatedLikedBy.add(currentUserRef);
+                      }
+
+                      await postDoc.reference.update({
+                        'likedBy': updatedLikedBy,
+                        'likesCount': isLiked ? likesCount - 1 : likesCount + 1,
+                      });
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                      );
+                    }
                   },
                   child: _buildInteractionBtn(
-                    post.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined, 
-                    '${post.likes}',
-                    color: post.isLiked ? AppColors.primary : AppColors.textMuted,
+                    isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
+                    '$likesCount',
+                    color: isLiked ? AppColors.primary : AppColors.textMuted,
                   ),
                 ),
-                
-                // Interactive Comment Button
                 GestureDetector(
-                  onTap: () => _showCommentsSheet(index),
-                  child: _buildInteractionBtn(Icons.chat_bubble_outline, '${post.comments}'),
+                  onTap: () => _showCommentsSheet(postDoc),
+                  child: FirestoreStreamBuilder<QuerySnapshot>(
+                    stream: postDoc.reference.collection('comments').snapshots(),
+                    builder: (querySnapshot) {
+                      return _buildInteractionBtn(
+                        Icons.chat_bubble_outline,
+                        '${querySnapshot.docs.length}',
+                      );
+                    },
+                    empty: _buildInteractionBtn(Icons.chat_bubble_outline, '0'),
+                  ),
                 ),
-                
-                // Share Button
                 _buildInteractionBtn(Icons.share_outlined, 'Share'),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

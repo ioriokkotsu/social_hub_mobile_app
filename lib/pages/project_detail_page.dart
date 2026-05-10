@@ -75,16 +75,16 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                         children: [
                           const SizedBox(height: 20),
                           Row(
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Icons.menu_book,
                                 color: AppColors.primary,
                                 size: 14,
                               ),
-                              SizedBox(width: 4),
+                              const SizedBox(width: 4),
                               Text(
-                                'QUALITY EDUCATION',
-                                style: TextStyle(
+                                (event?['eventCategory'] ?? 'Uncategorized').toUpperCase(),
+                                style: const TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -358,98 +358,95 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: FirestoreStreamBuilder<QuerySnapshot>(
-                          width: 175.7,
-                          height: 55,
-                          stream: FirebaseFirestore.instance
-                              .collection('volunteerApplication')
-                              .where(
-                                'eventID',
-                                isEqualTo: FirebaseFirestore.instance
-                                    .collection('communityEvents')
-                                    .doc(widget.uid),
-                              )
-                              .where(
-                                'userID',
-                                isEqualTo: FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(AuthService().currentUser!.uid),
-                              )
-                              .snapshots(),
-                          builder: (application) {
-                            DocumentSnapshot? document =
-                                application.docs.isNotEmpty
-                                ? application.docs.first
-                                : null;
-                            String status = '';
-                            if (document != null) {
-                              status = document['status'] ?? 'Join';
-                            }
-                            return ElevatedButton(
-                              onPressed: () {
-                                status == 'Approved' || status == 'Pending'
-                                    ? null
-                                    : Navigator.push(
-                                        context,
-                                        createSlideRoute(
-                                          VolunteerApplicationPage(
-                                            eventID: widget.uid,
-                                            ngoRef: event?['organizedBy'],
+                        child: Expanded(
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('volunteerApplication')
+                                .where(
+                                  'eventID',
+                                  isEqualTo: FirebaseFirestore.instance
+                                      .collection('communityEvents')
+                                      .doc(widget.uid),
+                                )
+                                .where(
+                                  'userID',
+                                  isEqualTo: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(AuthService().currentUser!.uid),
+                                )
+                                .where('status', isNotEqualTo: 'Rejected')
+                                .snapshots(),
+
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+
+                              if (snapshot.hasError) {
+                                return const Text('Something went wrong');
+                              }
+
+                              final docs = snapshot.data?.docs ?? [];
+
+                              DocumentSnapshot? document = docs.isNotEmpty
+                                  ? docs.first
+                                  : null;
+
+                              String status = '';
+
+                              if (document != null) {
+                                status = document['status'] ?? '';
+                              }
+
+                              bool canApply =
+                                  status != 'Approved' && status != 'Pending';
+
+                              return ElevatedButton(
+                                onPressed: canApply
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          createSlideRoute(
+                                            VolunteerApplicationPage(
+                                              eventID: widget.uid,
+                                              ngoRef: event?['organizedBy'],
+                                            ),
                                           ),
-                                        ),
-                                      );
-                              },
-                              // onLongPress: document != null
-                              //     ? () {
-                              //         try {
-                              //           submitLogHours(
-                              //             document['userID'],
-                              //             document['eventID'],
-                              //             2,
-                              //             'Test Task Completed',
-                              //             null,
-                              //           );
-                              //         } catch (e) {
-                              //           ScaffoldMessenger.of(
-                              //             context,
-                              //           ).showSnackBar(
-                              //             SnackBar(
-                              //               content: Text(
-                              //                 'Failed Test: ${e.toString()}',
-                              //               ),
-                              //             ),
-                              //           );
-                              //         }
-                              //       }
-                              //     : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.secondary.withValues(
-                                  alpha: 0.1,
+                                        );
+                                      }
+                                    : null,
+
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.secondary
+                                      .withValues(alpha: 0.1),
+                                  foregroundColor: AppColors.primary,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                 ),
-                                foregroundColor: AppColors.primary,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
+
+                                child: Text(
+                                  status == 'Approved'
+                                      ? 'Joined'
+                                      : status == 'Pending'
+                                      ? 'Pending'
+                                      : 'Join',
+
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: Text(
-                                status.isNotEmpty
-                                    ? status == 'Approved'
-                                        ? 'Joined'
-                                        : status == 'Pending'
-                                            ? 'Pending'
-                                            : 'Join'
-                                    : 'Join',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),

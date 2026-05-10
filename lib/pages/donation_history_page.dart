@@ -31,7 +31,7 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
             iconTheme: const IconThemeData(color: AppColors.textMuted),
             centerTitle: true,
             title: const Text(
-              'My Impact',
+              'My Donations',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 color: AppColors.textMain,
@@ -130,6 +130,7 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
                       itemBuilder: (context, index) {
                         final transaction = donation.docs[index];
                         return _buildTransaction(
+                          eventRef: transaction['eventID'] as DocumentReference,
                           ngoRef: transaction['ngoID'] as DocumentReference,
                           date: transaction['createdAt'] != null
                               ? DateFormat.yMMMd().add_jm().format(
@@ -154,6 +155,7 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
     required DocumentReference ngoRef,
     required String date,
     required String amount,
+    required DocumentReference eventRef,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -170,10 +172,10 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FirestoreFutureBuilder(
-                future: ngoRef.get(),
-                builder: (ngo) {
+                future: eventRef.get(),
+                builder: (event) {
                   return Text(
-                    ngo.exists ? ngo['ngoName'] : 'Align with NGO Name',
+                    event.exists ? event['eventTitle'] : 'Align with Event Name',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -182,12 +184,19 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
                 },
               ),
               const SizedBox(height: 4),
-              Text(
-                date,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: AppColors.textMuted,
-                ),
+              FirestoreFutureBuilder(
+                future: ngoRef.get(),
+                builder: (ngo) {
+                  return Text(
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    ngo.exists ? ngo['ngoName'] : 'Align with NGO Name',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13,
+                    ),
+                  );
+                },
               ),
             ],
           ),

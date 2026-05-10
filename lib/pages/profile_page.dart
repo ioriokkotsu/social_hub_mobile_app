@@ -61,9 +61,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   shape: BoxShape.circle,
                                   border: Border.all(color: Colors.white, width: 4),
                                   boxShadow: softShadow,
-                                  image: const DecorationImage(
+                                  image: DecorationImage(
                                     image: NetworkImage(
-                                      'https://i.pravatar.cc/150?img=32',
+                                      user['profileURL'] ?? 'https://i.pravatar.cc/150?img=32',
                                     ),
                                     fit: BoxFit.cover,
                                   ),
