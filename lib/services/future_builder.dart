@@ -55,23 +55,31 @@ class FirestoreFutureBuilder<T> extends StatelessWidget {
   }
 
   Widget _defaultShimmer() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-      child: Shimmer.fromColors(
-        // loop: 2,
-        // period: const Duration(seconds: 2),
-        baseColor: Colors.grey.shade300,
-        highlightColor: Colors.grey.shade100,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.grey[300],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final fallbackWidth = constraints.hasBoundedWidth && constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MediaQuery.sizeOf(context).width;
+        final fallbackHeight = constraints.hasBoundedHeight && constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : 48.0;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey[300],
+              ),
+              width: width ?? fallbackWidth,
+              height: height ?? fallbackHeight,
+            ),
           ),
-          width: width ?? double.infinity,
-          height: height ?? double.infinity,
-          
-        ),
-      ),
+        );
+      },
     );
   }
 }

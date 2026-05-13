@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_hub/services/auth_service.dart';
+import 'package:social_hub/services/future_builder.dart';
+import 'package:social_hub/services/upload_cloudinary.dart';
 import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 
@@ -13,11 +17,25 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  var  currentProfileURL = 'https://i.pravatar.cc/150?img=32';
 
   void _showCreatePostSheet() {
     final TextEditingController postController = TextEditingController();
-    bool hasImage = false;
+    String? selectedImagePath;
     String? imageUrl;
+    bool isPosting = false;
+    bool isUploadingImage = false;
+
+    Future<void> pickAndPreviewImage(StateSetter setStateSheet) async {
+      final image = await pickImage();
+      if (image == null) return;
+
+      setStateSheet(() {
+        selectedImagePath = image.path;
+        imageUrl = null;
+      });
+    }
 
     showModalBottomSheet(
       context: context,
@@ -49,7 +67,15 @@ class _FeedPageState extends State<FeedPage> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const CircleAvatar(backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32'), radius: 20),
+                        FirestoreFutureBuilder(
+                          width: 40,
+                          height: 40,
+                          future: _firestore.collection('users').doc(AuthService().currentUser?.uid).get(),
+                          builder: (user) {
+                            currentProfileURL = user['profileURL'] ?? 'https://i.pravatar.cc/150?img=32';
+                            return CircleAvatar(backgroundImage: NetworkImage(currentProfileURL), radius: 20);
+                          }
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: TextField(
@@ -64,27 +90,34 @@ class _FeedPageState extends State<FeedPage> {
                         ),
                       ],
                     ),
-                    if (hasImage && imageUrl != null)
+                    if (selectedImagePath != null)
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 12),
                         height: 150,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          image: DecorationImage(
-                            image: NetworkImage(imageUrl!),
-                            fit: BoxFit.cover,
-                          ),
                         ),
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.cancel, color: Colors.white),
-                            onPressed: () => setStateSheet(() {
-                              hasImage = false;
-                              imageUrl = null;
-                            }),
-                          ),
+                        clipBehavior: Clip.hardEdge,
+                        child: Stack(
+                          children: [
+                            Image.file(
+                              File(selectedImagePath!),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: const Icon(Icons.cancel, color: Colors.white),
+                                onPressed: () => setStateSheet(() {
+                                  selectedImagePath = null;
+                                  imageUrl = null;
+                                }),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     const Divider(color: AppColors.gray100),
@@ -92,47 +125,83 @@ class _FeedPageState extends State<FeedPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton.icon(
-                          onPressed: () => setStateSheet(() {
-                            hasImage = true;
-                            imageUrl = 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80';
-                          }),
+                          onPressed: () => pickAndPreviewImage(setStateSheet),
                           icon: const Icon(Icons.image_outlined, color: AppColors.primary),
                           label: const Text('Add Image', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                         ),
                         ElevatedButton(
-                          onPressed: () async {
-                            if (postController.text.isNotEmpty || hasImage) {
-                              try {
-                                final currentUser = AuthService().currentUser;
-                                if (currentUser == null) return;
+                          onPressed: isPosting
+                              ? null
+                              : () async {
+                                  if (postController.text.isNotEmpty || selectedImagePath != null) {
+                                    try {
+                                      final currentUser = AuthService().currentUser;
+                                      if (currentUser == null) return;
 
-                                await _firestore.collection('feedPosts').add({
-                                  'contentMessage': postController.text,
-                                  'imageURL': imageUrl,
-                                  'createdAt': FieldValue.serverTimestamp(),
-                                  'userID': _firestore.collection('users').doc(currentUser.uid),
-                                  'likesCount': 0,
-                                  'likedBy': <DocumentReference>[],
-                                });
+                                      setStateSheet(() {
+                                        isPosting = true;
+                                      });
 
-                                if (!context.mounted) return;
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Post created successfully!'), backgroundColor: AppColors.primary),
-                                );
-                              } catch (e) {
-                                if (!context.mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-                                );
-                              }
-                            }
-                          },
+                                      final postRef = await _firestore.collection('feedPosts').add({
+                                        'contentMessage': postController.text,
+                                        'imageURL': null,
+                                        'createdAt': FieldValue.serverTimestamp(),
+                                        'userID': _firestore.collection('users').doc(currentUser.uid),
+                                        'likesCount': 0,
+                                        'likedBy': <DocumentReference>[],
+                                      });
+
+                                      if (selectedImagePath != null) {
+                                        setStateSheet(() {
+                                          isUploadingImage = true;
+                                        });
+
+                                        final uploadedImageUrl = await uploadToCloudinary(selectedImagePath!);
+                                        if (uploadedImageUrl != null) {
+                                          await postRef.update({'imageURL': uploadedImageUrl});
+                                        }
+                                      }
+
+                                      if (!context.mounted) return;
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Post created successfully!'), backgroundColor: AppColors.primary),
+                                      );
+                                    } catch (e) {
+                                      if (!context.mounted) return;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                      );
+                                    }
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text('Post', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          child: isPosting
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      isUploadingImage ? 'Uploading...' : 'Posting...',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const Text('Post', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -297,6 +366,16 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
+  Future<void> _deletePost(DocumentReference postRef) async {
+    final commentsSnapshot = await postRef.collection('comments').get();
+
+    for (final commentDoc in commentsSnapshot.docs) {
+      await commentDoc.reference.delete();
+    }
+
+    await postRef.delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -309,15 +388,28 @@ class _FeedPageState extends State<FeedPage> {
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), bottomRight: Radius.circular(32))),
       ),
       body: FirestoreStreamBuilder<QuerySnapshot>(
-        stream: _firestore
-            .collection('feedPosts')
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
+        loading: const Center(child: CircularProgressIndicator()),
+        stream: _firestore.collection('feedPosts').snapshots(),
         builder: (querySnapshot) {
-          final posts = querySnapshot.docs;
+          final posts = querySnapshot.docs.toList()
+            ..sort((a, b) {
+              final aData = a.data() as Map<String, dynamic>? ?? {};
+              final bData = b.data() as Map<String, dynamic>? ?? {};
+
+              final aTimestamp = aData['createdAt'] as Timestamp?;
+              final bTimestamp = bData['createdAt'] as Timestamp?;
+
+              final aDateTime = aTimestamp?.toDate() ?? DateTime.fromMillisecondsSinceEpoch(0);
+              final bDateTime = bTimestamp?.toDate() ?? DateTime.fromMillisecondsSinceEpoch(0);
+
+              return bDateTime.compareTo(aDateTime);
+            });
 
           return ListView(
-            padding: const EdgeInsets.only(top: 16, bottom: 24),
+            padding: EdgeInsets.only(
+              top: 16,
+              bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight + 12,
+            ),
             physics: const BouncingScrollPhysics(),
             children: [
               GestureDetector(
@@ -328,7 +420,15 @@ class _FeedPageState extends State<FeedPage> {
                   margin: const EdgeInsets.only(bottom: 16),
                   child: Row(
                     children: [
-                      const CircleAvatar(backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32'), radius: 20),
+                      FirestoreFutureBuilder(
+                        width: 40,
+                        height: 40,
+                        future: _firestore.collection('users').doc(AuthService().currentUser?.uid).get(),
+                        builder: (user) {
+                          currentProfileURL = user['profileURL'] ?? 'https://i.pravatar.cc/150?img=32'; 
+                          return CircleAvatar(backgroundImage: NetworkImage(user['profileURL']), radius: 20);
+                        }
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Container(
@@ -401,6 +501,9 @@ class _FeedPageState extends State<FeedPage> {
         : null;
     final isLiked = currentUserRef != null &&
         likedByRefs.any((ref) => ref.path == currentUserRef.path);
+    final isOwner = currentUserRef != null &&
+      userRef != null &&
+      userRef.path == currentUserRef.path;
 
     return Container(
       color: AppColors.surface,
@@ -444,7 +547,82 @@ class _FeedPageState extends State<FeedPage> {
                         ),
                       ],
                     ),
-                    const Icon(Icons.more_horiz, color: AppColors.textMuted),
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_horiz, color: AppColors.textMuted),
+                      onSelected: (value) async {
+                        if (value == 'copy') {
+                          final contentMessage = postData['contentMessage'] ?? '';
+                          final imageLink = postData['imageURL'] as String?;
+                          final shareText = imageLink == null || imageLink.isEmpty
+                              ? contentMessage
+                              : '$contentMessage\n\n$imageLink';
+
+                          await Clipboard.setData(ClipboardData(text: shareText));
+
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Post copied to clipboard.'),
+                              backgroundColor: AppColors.primary,
+                            ),
+                          );
+                        }
+
+                        if (value == 'delete') {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (dialogContext) {
+                              return AlertDialog(
+                                title: const Text('Delete Post'),
+                                content: const Text('Are you sure you want to delete this post?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(dialogContext, false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(dialogContext, true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmed != true) return;
+
+                          try {
+                            await _deletePost(postDoc.reference);
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Post deleted successfully.'),
+                                backgroundColor: AppColors.primary,
+                              ),
+                            );
+                          } catch (e) {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error deleting post: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem<String>(
+                          value: 'copy',
+                          child: Text('Copy text'),
+                        ),
+                        if (isOwner)
+                          const PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Text('Delete'),
+                          ),
+                      ],
+                    ),
                   ],
                 );
               },
@@ -477,10 +655,10 @@ class _FeedPageState extends State<FeedPage> {
                 GestureDetector(
                   onTap: () async {
                     if (currentUserRef == null) return;
-                    
+
                     try {
                       final updatedLikedBy = List<DocumentReference>.from(likedByRefs);
-                      
+
                       if (isLiked) {
                         updatedLikedBy.removeWhere((ref) => ref.path == currentUserRef.path);
                       } else {
@@ -507,6 +685,9 @@ class _FeedPageState extends State<FeedPage> {
                 GestureDetector(
                   onTap: () => _showCommentsSheet(postDoc),
                   child: FirestoreStreamBuilder<QuerySnapshot>(
+                    width: 18,
+                    height: 18,
+                    radius: 1,
                     stream: postDoc.reference.collection('comments').snapshots(),
                     builder: (querySnapshot) {
                       return _buildInteractionBtn(
@@ -517,7 +698,26 @@ class _FeedPageState extends State<FeedPage> {
                     empty: _buildInteractionBtn(Icons.chat_bubble_outline, '0'),
                   ),
                 ),
-                _buildInteractionBtn(Icons.share_outlined, 'Share'),
+                GestureDetector(
+                  onTap: () async {
+                    final contentMessage = postData['contentMessage'] ?? '';
+                    final imageLink = postData['imageURL'] as String?;
+                    final shareText = imageLink == null || imageLink.isEmpty
+                        ? contentMessage
+                        : '$contentMessage\n\n$imageLink';
+
+                    await Clipboard.setData(ClipboardData(text: shareText));
+
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Post copied to clipboard.'),
+                        backgroundColor: AppColors.primary,
+                      ),
+                    );
+                  },
+                  child: _buildInteractionBtn(Icons.share_outlined, 'Share'),
+                ),
               ],
             ),
           ),

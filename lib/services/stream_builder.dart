@@ -62,19 +62,28 @@ class FirestoreStreamBuilder<T> extends StatelessWidget {
   }
 
   Widget _defaultShimmer() {
-    return SizedBox(
-      width: width ?? double.infinity,
-      height: height ?? double.infinity,
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: Colors.grey.shade100,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(radius ?? 10),
-            color: Colors.grey[300],
-          )
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final resolvedWidth = width ??
+            (constraints.hasBoundedWidth ? constraints.maxWidth : 120.0);
+        final resolvedHeight = height ??
+            (constraints.hasBoundedHeight ? constraints.maxHeight : 40.0);
+
+        return SizedBox(
+          width: resolvedWidth.isFinite ? resolvedWidth : 120.0,
+          height: resolvedHeight.isFinite ? resolvedHeight : 40.0,
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(radius ?? 10),
+                color: Colors.grey[300],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

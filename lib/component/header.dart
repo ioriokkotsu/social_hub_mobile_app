@@ -131,38 +131,6 @@ class _HeaderState extends State<Header> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.appBg,
-                    borderRadius: BorderRadius.circular(16),
-                    border: _focused
-                        ? Border.all(color: Colors.green, width: 1)
-                        : null,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 3,
-                  ),
-                  child: TextField(
-                    style: TextStyle(
-                      color: AppColors.textMain,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    focusNode: _focusNode,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.search, color: AppColors.textMuted),
-                      hintText: 'Search',
-                      hintStyle: TextStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
