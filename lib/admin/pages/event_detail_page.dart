@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:social_hub/admin/pages/edit_event_page.dart';
 import 'package:social_hub/admin/pages/volunteer_list_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
@@ -58,8 +59,10 @@ class _EventDetailPageState extends State<EventDetailPage> {
                             size: 16,
                           ),
                         ),
-                        onPressed: () {},
-                        // onPressed: () => Navigator.push(context, createSlideRoute(const EditEventPage())),
+                        onPressed: () => Navigator.push(
+                          context,
+                          createSlideRoute(EditEventPage(eventID: widget.eventID)),
+                        ),
                       ),
                       const SizedBox(width: 16),
                     ],
@@ -130,7 +133,8 @@ class _EventDetailPageState extends State<EventDetailPage> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                event?['eventCategory'].toUpperCase() ?? 'No Category',
+                                event?['eventCategory'].toUpperCase() ??
+                                    'No Category',
                                 style: const TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 10,
@@ -376,7 +380,12 @@ class _EventDetailPageState extends State<EventDetailPage> {
                     boxShadow: floatingShadow,
                   ),
                   child: ElevatedButton.icon(
-                    onPressed: () => Navigator.push(context, createSlideRoute(VolunteerListPage(eventID: widget.eventID))),
+                    onPressed: () => Navigator.push(
+                      context,
+                      createSlideRoute(
+                        VolunteerListPage(eventID: widget.eventID),
+                      ),
+                    ),
                     icon: const Icon(Icons.people, size: 20),
                     label: const Text(
                       'Manage Volunteers',

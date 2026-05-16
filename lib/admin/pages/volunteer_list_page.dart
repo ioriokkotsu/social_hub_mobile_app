@@ -135,41 +135,41 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.email),
-                      label: const Text('Email'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textMain,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: const BorderSide(color: AppColors.gray100),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.chat_bubble_outline),
-                      label: const Text('Message'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.textMain,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: OutlinedButton.icon(
+              //         onPressed: () => Navigator.pop(context),
+              //         icon: const Icon(Icons.email),
+              //         label: const Text('Email'),
+              //         style: OutlinedButton.styleFrom(
+              //           foregroundColor: AppColors.textMain,
+              //           padding: const EdgeInsets.symmetric(vertical: 16),
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(12),
+              //           ),
+              //           side: const BorderSide(color: AppColors.gray100),
+              //         ),
+              //       ),
+              //     ),
+              //     const SizedBox(width: 12),
+              //     Expanded(
+              //       child: ElevatedButton.icon(
+              //         onPressed: () => Navigator.pop(context),
+              //         icon: const Icon(Icons.chat_bubble_outline),
+              //         label: const Text('Message'),
+              //         style: ElevatedButton.styleFrom(
+              //           backgroundColor: AppColors.textMain,
+              //           foregroundColor: Colors.white,
+              //           padding: const EdgeInsets.symmetric(vertical: 16),
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(12),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         );
@@ -284,7 +284,8 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
                   padding: const EdgeInsets.all(24),
                   physics: const BouncingScrollPhysics(),
                   itemCount: users.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final user = users[index]['user'];
 
@@ -292,74 +293,15 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
 
                     return _buildVolunteerCard(
                       user['displayName'] ?? 'No Name',
-
                       user['occupation'] ?? 'Volunteer',
-
                       '$logHours hrs',
-
-                      user['profileURL'] ??
-                          'https://i.pravatar.cc/100?img=1',
-
+                      user['profileURL'] ?? 'https://i.pravatar.cc/100?img=1',
                       user['email'] ?? 'No Email',
-
                       user['contactNumber'] ?? 'No Phone',
-
                       user['occupation'] ?? 'No Occupation',
                     );
                   },
                 );
-
-          // return ListView(
-          //   padding: const EdgeInsets.all(24),
-          //   physics: const BouncingScrollPhysics(),
-          //   children: [
-          //     _buildVolunteerCard(
-          //       'Alex V.',
-          //       'Coding Instructor',
-          //       '50 hrs',
-          //       'https://i.pravatar.cc/100?img=32',
-          //       'alex@example.com',
-          //       '+1 234 567 890',
-          //       'Student / Web Dev',
-          //     ),
-          //     _buildVolunteerCard(
-          //       'Sarah J.',
-          //       'Logistics Coordinator',
-          //       '12 hrs',
-          //       'https://i.pravatar.cc/100?img=12',
-          //       'sarah.j@example.com',
-          //       '+1 987 654 321',
-          //       'Operations Manager',
-          //     ),
-          //     _buildVolunteerCard(
-          //       'David C.',
-          //       'General Volunteer',
-          //       '24 hrs',
-          //       'https://i.pravatar.cc/100?img=68',
-          //       'david.c@email.com',
-          //       '+1 555 444 333',
-          //       'Freelancer',
-          //     ),
-          //     _buildVolunteerCard(
-          //       'Emily R.',
-          //       'Marketing Vol',
-          //       '8 hrs',
-          //       'https://i.pravatar.cc/100?img=5',
-          //       'emilyr@example.com',
-          //       '+1 222 333 444',
-          //       'Marketing Specialist',
-          //     ),
-          //     _buildVolunteerCard(
-          //       'Michael T.',
-          //       'Coding Instructor',
-          //       '35 hrs',
-          //       'https://i.pravatar.cc/100?img=11',
-          //       'michael.teach@edu.com',
-          //       '+1 999 888 777',
-          //       'Software Engineer',
-          //     ),
-          //   ],
-          // );
         },
       ),
     );
