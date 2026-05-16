@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/pages/community_project_page.dart';
 import 'package:social_hub/pages/log_hours_page.dart';
 import 'package:social_hub/pages/map_page.dart';
 import 'package:social_hub/pages/news_page.dart';
+import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/theme/theme.dart';
 
 class DrawerSideBar extends StatelessWidget {
   const DrawerSideBar({super.key});
+
+  Future<void> signOut(BuildContext context) async {
+    await AuthService().signOut();
+    Navigator.push(
+      context,
+      createSlideRoute(const RoleSelectionPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +156,7 @@ class DrawerSideBar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: drawerItem(
+              onTap: () => signOut(context),
               icon: Icons.logout,
               iconColor: Color(0xFFEF4444),
               label: 'Logout',

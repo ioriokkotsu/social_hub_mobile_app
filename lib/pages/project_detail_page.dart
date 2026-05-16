@@ -511,6 +511,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
         AuthService().updateCollection(AuthService().currentUser!.uid, {
           'totalDonated': FieldValue.increment(amount),
         });
+        await ngoRef.update({
+          'overallStats.totalRaised': FieldValue.increment(amount),
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Payment successful! Thank you for your donation.'),

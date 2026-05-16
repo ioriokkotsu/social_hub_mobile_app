@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:social_hub/auth/sign_up_page.dart';
+import 'package:social_hub/admin/pages/admin_dashboard_page.dart';
+import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/pages/main_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/theme/theme.dart';
@@ -21,6 +22,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final AuthService _authService = AuthService();
+
+  Future<String> _resolveRole(String uid) async {
+    final userDoc = await _authService.getCollectionData(uid, 'users');
+    if (userDoc != null) return 'user';
+
+    final ngoDoc = await _authService.getCollectionData(uid, 'ngo');
+    if (ngoDoc != null) return 'ngo';
+
+    return 'unknown';
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,13 +50,31 @@ class _MyAppState extends State<MyApp> {
             );
           }
           
-          // If a user is currently logged in, skip Login and go to Main App Shell
+          // If a user is currently logged in, route by Firestore profile role.
           if (snapshot.hasData) {
-            return const MainPage(); // This holds your Bottom Nav & Home Screen
+            return FutureBuilder<String>(
+              future: _resolveRole(snapshot.data!.uid),
+              builder: (context, roleSnapshot) {
+                if (roleSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(
+                    backgroundColor: AppColors.appBg,
+                    body: Center(
+                      child: CircularProgressIndicator(color: AppColors.primary),
+                    ),
+                  );
+                }
+
+                if (roleSnapshot.data == 'ngo') {
+                  return const AdminDashboardPage();
+                }
+
+                return const MainPage();
+              },
+            );
           }
           
-          // If NO user is logged in, show the Login Screen
-          return const SignUpPage();
+          // If NO user is logged in, start from role selection first.
+          return const RoleSelectionPage();
         },
       ),
     );

@@ -172,6 +172,8 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FirestoreFutureBuilder(
+                width: 184.3,
+                height: 20,
                 future: eventRef.get(),
                 builder: (event) {
                   return Text(
@@ -185,6 +187,8 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
               ),
               const SizedBox(height: 4),
               FirestoreFutureBuilder(
+                width: 92.3,
+                height: 19,
                 future: ngoRef.get(),
                 builder: (ngo) {
                   return Text(

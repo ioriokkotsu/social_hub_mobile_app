@@ -9,6 +9,9 @@ import 'package:social_hub/services/search_events.dart';
 import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 import 'package:social_hub/component/header.dart';
+import 'package:social_hub/test/collection_test.dart';
+import 'package:social_hub/test/collection_test.dart';
+
 
 class HomePage extends StatefulWidget {
   final Function(bool) onDrawerChanged;
@@ -58,7 +61,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => searchEvents('', 'title', context,''),
+          onPressed: () => AuthService().signOut(),
           backgroundColor: AppColors.primary,
           child: const Icon(Icons.add, color: AppColors.surface),
         ),
@@ -113,6 +116,8 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 30.0),
                     child: FirestoreStreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      width: 331.4,
+                      height: 160,
                       stream: AuthService().getCollectionStream(
                         'communityEvents',
                       ),
@@ -144,8 +149,6 @@ class _HomePageState extends State<HomePage> {
                           },
                         );
                       },
-                      width: 363.4,
-                      height: 306,
                     ),
                   ),
                 ],

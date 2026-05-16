@@ -51,6 +51,40 @@ class AuthService {
     }
   }
 
+  // --- Sign Up NGO with Email & Password ---
+  Future<UserCredential> signUpNgoWithEmail(
+    String email,
+    String password, {
+    String? name,
+  }) async {
+    try {
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      if (userCredential.user != null) {
+        await _firestore.collection('ngo').doc(userCredential.user!.uid).set({
+          'uid': userCredential.user!.uid,
+          'email': email,
+          'organizationName': name ?? '',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        throw Exception('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        throw Exception('An account already exists for that email.');
+      } else if (e.code == 'invalid-email') {
+        throw Exception('The email address is not valid.');
+      }
+      throw Exception(e.message ?? 'An unknown error occurred.');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   // --- Log In with Email & Password ---
   Future<UserCredential> loginWithEmail(String email, String password) async {
     try {
@@ -207,7 +241,6 @@ class AuthService {
 
       return null;
     } catch (e) {
-      print(e);
       return null;
     }
   }

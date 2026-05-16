@@ -8,7 +8,7 @@ class FirestoreFutureBuilder<T> extends StatelessWidget {
   final Widget? loading;
   final Widget Function(Object error)? errorBuilder;
   final Widget? empty;
-  
+
   final double? width;
   final double? height;
 
@@ -28,7 +28,6 @@ class FirestoreFutureBuilder<T> extends StatelessWidget {
     return FutureBuilder<T>(
       future: future,
       builder: (context, snapshot) {
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return loading ?? _defaultShimmer();
         }
@@ -55,31 +54,20 @@ class FirestoreFutureBuilder<T> extends StatelessWidget {
   }
 
   Widget _defaultShimmer() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final fallbackWidth = constraints.hasBoundedWidth && constraints.maxWidth.isFinite
-            ? constraints.maxWidth
-            : MediaQuery.sizeOf(context).width;
-        final fallbackHeight = constraints.hasBoundedHeight && constraints.maxHeight.isFinite
-            ? constraints.maxHeight
-            : 48.0;
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-          child: Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey[300],
-              ),
-              width: width ?? fallbackWidth,
-              height: height ?? fallbackHeight,
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: IntrinsicWidth(
+        child: IntrinsicHeight(
+          child: Container(
+            constraints: BoxConstraints(minWidth: width ?? 50, minHeight: height ?? 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey[300],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
