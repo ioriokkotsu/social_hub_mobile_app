@@ -1,0 +1,71 @@
+.no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .screen { display: none; animation: fadeIn 0.3s ease-out; }
+        .screen.active { display: flex; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .bg-map-pattern {
+            background-color: #e5f0e6;
+            background-image: radial-gradient(#66BB6A 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Message Bubbles */
+        .msg-sent { background: #2E7D32; color: white; border-radius: 1rem 1rem 0 1rem; }
+        .msg-recv { background: #FFFFFF; color: #1B1B1B; border-radius: 1rem 1rem 1rem 0; border: 1px solid #eee; }
+
+:root {
+  --app-bg: #F5F7F5;
+  --surface: #FFFFFF;
+  --text-main: #1B1B1B;
+}
+
+#app-shell {
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+  body {
+    background: linear-gradient(180deg, #eef4ee 0%, #f8faf8 100%);
+    padding: 1.5rem;
+  }
+
+  #app-shell {
+    max-width: min(1120px, 100%);
+    width: 100%;
+    height: min(920px, calc(100vh - 3rem));
+    background: transparent;
+    border-radius: 2rem;
+    padding: 0;
+    box-shadow: none;
+    margin: 0 auto;
+  }
+
+  #app-root {
+    border-radius: 2rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 50px -25px rgba(15, 23, 42, 0.35);
+  }
+
+  .app-notch {
+    display: none;
+  }
+
+  #sidebar {
+    width: min(320px, 30%);
+    max-width: none;
+    border-top-left-radius: 2rem;
+    border-bottom-left-radius: 2rem;
+  }
+}
