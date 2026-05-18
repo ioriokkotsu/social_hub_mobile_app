@@ -3,6 +3,7 @@ import 'package:social_hub/component/bottom_nav_bar.dart';
 import 'package:social_hub/pages/chat_page.dart';
 import 'package:social_hub/pages/feed_page.dart';
 import 'package:social_hub/pages/home_page.dart';
+import 'package:social_hub/pages/news_page.dart';
 import 'package:social_hub/pages/profile_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _MainPageState extends State<MainPage> {
       },
     ),
     const FeedPage(),
-    const ChatScreen(),
+    const NewsPage(),
     const ProfilePage(),
   ];
 

@@ -3,8 +3,6 @@ import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/auth/sign_in_page.dart';
 import 'package:social_hub/theme/theme.dart';
 import '../services/auth_service.dart';
-import 'package:social_hub/pages/main_page.dart';
-import 'package:social_hub/admin/pages/admin_dashboard_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.selectedRole});
@@ -20,7 +18,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
-  
+
   bool _isLoading = false;
 
   Future<void> _signUp() async {
@@ -43,56 +41,16 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: AppColors.red500),
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: AppColors.red500,
+        ),
       );
       debugPrint(e.toString());
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
-  Future<void> _loginForSelectedRole() async {
-    final messenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
-
-    setState(() => _isLoading = true);
-
-    try {
-      final credential = await _authService.loginWithEmail(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-
-      final uid = credential.user?.uid;
-      if (uid == null) throw Exception('Failed to retrieve user id');
-
-      if (widget.selectedRole == 'ngo') {
-        final ngoDoc = await _authService.getCollectionData(uid, 'ngo');
-        if (ngoDoc != null) {
-          if (mounted) navigator.pushReplacement(createSlideRoute(const AdminDashboardPage()));
-          return;
-        }
-        await _authService.signOut();
-        throw Exception('No NGO profile found for this account.');
-      }
-
-      final userDoc = await _authService.getCollectionData(uid, 'users');
-      if (userDoc != null) {
-        if (mounted) navigator.pushReplacement(createSlideRoute(const MainPage()));
-        return;
-      }
-      await _authService.signOut();
-      throw Exception('No volunteer profile found for this account.');
-    } catch (e) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: AppColors.red500),
-      );
-      debugPrint(e.toString());
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textMain),
           onPressed: () => Navigator.push(
             context,
-            createSlideRoute(
-              const RoleSelectionPage()
-            ),
+            createSlideRoute(const RoleSelectionPage()),
           ),
         ),
       ),
@@ -118,27 +74,42 @@ class _SignUpPageState extends State<SignUpPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 48, height: 48,
-                decoration: BoxDecoration(color: AppColors.secondary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: const Icon(Icons.person_add, color: AppColors.primary),
               ),
               const SizedBox(height: 16),
-              const Text('Create Account', style: TextStyle(fontFamily: 'Poppins', fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.textMain)),
+              const Text(
+                'Create Account',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textMain,
+                ),
+              ),
               Text(
                 widget.selectedRole == 'ngo'
                     ? 'NGO account selected. Create or log in as NGO.'
                     : 'Volunteer account selected. Create or log in as volunteer.',
-                style: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+                style: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 32),
-              
+
               _buildTextField('Full Name', _nameController, false),
               const SizedBox(height: 16),
               _buildTextField('Email Address', _emailController, false),
               const SizedBox(height: 16),
               _buildTextField('Password', _passwordController, true),
               const SizedBox(height: 32),
-              
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -146,33 +117,61 @@ class _SignUpPageState extends State<SignUpPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     elevation: 5,
                     shadowColor: AppColors.primary.withValues(alpha: 0.5),
                   ),
-                  child: _isLoading 
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : const Text('Sign Up', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Poppins')),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
                 ),
               ),
-              
+
               const SizedBox(height: 48),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Already have an account? ", style: TextStyle(color: AppColors.textMuted, fontSize: 14)),
+                  const Text(
+                    "Already have an account? ",
+                    style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                  ),
                   GestureDetector(
                     // onTap: _isLoading ? null : _loginForSelectedRole,
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LogInPage(selectedRole: widget.selectedRole)
+                        builder: (context) =>
+                            LogInPage(selectedRole: widget.selectedRole),
                       ),
                     ),
-                    child: const Text('Log In', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 14)),
+                    child: const Text(
+                      'Log In',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -180,7 +179,11 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildTextField(String hint, TextEditingController controller, bool isPassword) {
+  Widget _buildTextField(
+    String hint,
+    TextEditingController controller,
+    bool isPassword,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,

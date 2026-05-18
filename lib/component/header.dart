@@ -1,41 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:social_hub/pages/chat_page.dart';
-import 'package:social_hub/pages/notifications_page.dart';
-import 'package:social_hub/pages/test_nav_bar.dart';
 import 'package:social_hub/services/auth_service.dart';
-import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 
 Widget header() => const Header();
 
 class Header extends StatefulWidget {
-  const Header({Key? key}) : super(key: key);
+  const Header({super.key});
 
   @override
   _HeaderState createState() => _HeaderState();
 }
 
 class _HeaderState extends State<Header> {
-  FocusNode _focusNode = FocusNode();
-  bool _focused = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(() {
-      setState(() {
-        _focused = _focusNode.hasFocus;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
-
   Future<void> signOut() async {
     await AuthService().signOut();
   }
@@ -74,7 +51,7 @@ class _HeaderState extends State<Header> {
                       constraints: BoxConstraints(),
                     ),
                     const SizedBox(width: 12),
-                    Container(
+                    SizedBox(
                       width: 262,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +65,9 @@ class _HeaderState extends State<Header> {
                             ),
                           ),
                           FirestoreStreamBuilder(
-                            stream: AuthService().getUserDataSnapshot(user!.uid),
+                            stream: AuthService().getUserDataSnapshot(
+                              user!.uid,
+                            ),
                             builder: (user) {
                               return Text(
                                 user['displayName'] ?? 'Guest',
@@ -99,7 +78,9 @@ class _HeaderState extends State<Header> {
                                   fontFamily: 'Poppins',
                                 ),
                               );
-                            }, width: 80, height: 26,
+                            },
+                            width: 80,
+                            height: 26,
                           ),
                         ],
                       ),

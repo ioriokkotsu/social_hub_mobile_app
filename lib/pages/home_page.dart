@@ -5,13 +5,9 @@ import 'package:social_hub/component/drawer.dart';
 import 'package:social_hub/pages/community_project_page.dart';
 import 'package:social_hub/pages/project_detail_page.dart';
 import 'package:social_hub/services/auth_service.dart';
-import 'package:social_hub/services/search_events.dart';
 import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 import 'package:social_hub/component/header.dart';
-import 'package:social_hub/test/collection_test.dart';
-import 'package:social_hub/test/collection_test.dart';
-
 
 class HomePage extends StatefulWidget {
   final Function(bool) onDrawerChanged;
@@ -35,27 +31,8 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _testFirebase() async {
-    try {
-      String? result = await AuthService().getFieldOfCollectionFromPath(
-        'users/admin',
-        'fullName',
-      );
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Result: $result')));
-      print(result);
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error fetching data: $e')));
-      print('Error fetching data: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final user = AuthService().currentUser;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -115,41 +92,42 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 30.0),
-                    child: FirestoreStreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      width: 331.4,
-                      height: 160,
-                      stream: AuthService().getCollectionStream(
-                        'communityEvents',
-                      ),
-                      builder: (snapshot) {
-                        final docs = snapshot.docs;
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: docs.length,
-                          itemBuilder: (context, index) {
-                            final doc = docs[index].data();
-                            return Column(
-                              children: [
-                                card(
-                                  context,
-                                  doc['eventTitle'] ?? 'No Title',
-                                  doc['eventDescription'] ??
-                                      'No description available',
-                                  doc['amountRaised'] ?? 0,
-                                  doc['amountTarget'] ?? 0,
-                                  docs[index].id,
-                                  doc['eventCategory'] ?? 'Uncategorized',
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                              ],
+                    child:
+                        FirestoreStreamBuilder<
+                          QuerySnapshot<Map<String, dynamic>>
+                        >(
+                          width: 331.4,
+                          height: 160,
+                          stream: AuthService().getCollectionStream(
+                            'communityEvents',
+                          ),
+                          builder: (snapshot) {
+                            final docs = snapshot.docs;
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: docs.length,
+                              itemBuilder: (context, index) {
+                                final doc = docs[index].data();
+                                return Column(
+                                  children: [
+                                    card(
+                                      context,
+                                      doc['eventTitle'] ?? 'No Title',
+                                      doc['eventDescription'] ??
+                                          'No description available',
+                                      doc['amountRaised'] ?? 0,
+                                      doc['amountTarget'] ?? 0,
+                                      docs[index].id,
+                                      doc['eventCategory'] ?? 'Uncategorized',
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                    ),
+                        ),
                   ),
                 ],
               ),
@@ -167,7 +145,7 @@ Widget card(
   String eventDescription,
   double amountRaised,
   double amountTarget,
-  String uid, 
+  String uid,
   String eventCategory,
 ) {
   return GestureDetector(

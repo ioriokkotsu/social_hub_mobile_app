@@ -17,13 +17,12 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
-  var  currentProfileURL = 'https://i.pravatar.cc/150?img=32';
+
+  var currentProfileURL = 'https://i.pravatar.cc/150?img=32';
 
   void _showCreatePostSheet() {
     final TextEditingController postController = TextEditingController();
     String? selectedImagePath;
-    String? imageUrl;
     bool isPosting = false;
     bool isUploadingImage = false;
 
@@ -33,7 +32,6 @@ class _FeedPageState extends State<FeedPage> {
 
       setStateSheet(() {
         selectedImagePath = image.path;
-        imageUrl = null;
       });
     }
 
@@ -45,11 +43,16 @@ class _FeedPageState extends State<FeedPage> {
         return StatefulBuilder(
           builder: (context, setStateSheet) {
             return Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
               child: Container(
                 decoration: const BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
                 ),
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -59,8 +62,21 @@ class _FeedPageState extends State<FeedPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Create Post', style: TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.bold)),
-                        IconButton(icon: const Icon(Icons.close, color: AppColors.textMuted), onPressed: () => Navigator.pop(context)),
+                        const Text(
+                          'Create Post',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            color: AppColors.textMuted,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -70,11 +86,19 @@ class _FeedPageState extends State<FeedPage> {
                         FirestoreFutureBuilder(
                           width: 40,
                           height: 40,
-                          future: _firestore.collection('users').doc(AuthService().currentUser?.uid).get(),
+                          future: _firestore
+                              .collection('users')
+                              .doc(AuthService().currentUser?.uid)
+                              .get(),
                           builder: (user) {
-                            currentProfileURL = user['profileURL'] ?? 'https://i.pravatar.cc/150?img=32';
-                            return CircleAvatar(backgroundImage: NetworkImage(currentProfileURL), radius: 20);
-                          }
+                            currentProfileURL =
+                                user['profileURL'] ??
+                                'https://i.pravatar.cc/150?img=32';
+                            return CircleAvatar(
+                              backgroundImage: NetworkImage(currentProfileURL),
+                              radius: 20,
+                            );
+                          },
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -84,7 +108,10 @@ class _FeedPageState extends State<FeedPage> {
                             decoration: const InputDecoration(
                               hintText: 'What do you want to share?',
                               border: InputBorder.none,
-                              hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                              hintStyle: TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         ),
@@ -110,10 +137,12 @@ class _FeedPageState extends State<FeedPage> {
                             Align(
                               alignment: Alignment.topRight,
                               child: IconButton(
-                                icon: const Icon(Icons.cancel, color: Colors.white),
+                                icon: const Icon(
+                                  Icons.cancel,
+                                  color: Colors.white,
+                                ),
                                 onPressed: () => setStateSheet(() {
                                   selectedImagePath = null;
-                                  imageUrl = null;
                                 }),
                               ),
                             ),
@@ -126,58 +155,94 @@ class _FeedPageState extends State<FeedPage> {
                       children: [
                         TextButton.icon(
                           onPressed: () => pickAndPreviewImage(setStateSheet),
-                          icon: const Icon(Icons.image_outlined, color: AppColors.primary),
-                          label: const Text('Add Image', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                          icon: const Icon(
+                            Icons.image_outlined,
+                            color: AppColors.primary,
+                          ),
+                          label: const Text(
+                            'Add Image',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: isPosting
                               ? null
                               : () async {
-                                  if (postController.text.isNotEmpty || selectedImagePath != null) {
+                                  if (postController.text.isNotEmpty ||
+                                      selectedImagePath != null) {
                                     try {
-                                      final currentUser = AuthService().currentUser;
+                                      final currentUser =
+                                          AuthService().currentUser;
                                       if (currentUser == null) return;
 
                                       setStateSheet(() {
                                         isPosting = true;
                                       });
 
-                                      final postRef = await _firestore.collection('feedPosts').add({
-                                        'contentMessage': postController.text,
-                                        'imageURL': null,
-                                        'createdAt': FieldValue.serverTimestamp(),
-                                        'userID': _firestore.collection('users').doc(currentUser.uid),
-                                        'likesCount': 0,
-                                        'likedBy': <DocumentReference>[],
-                                      });
+                                      final postRef = await _firestore
+                                          .collection('feedPosts')
+                                          .add({
+                                            'contentMessage':
+                                                postController.text,
+                                            'imageURL': null,
+                                            'createdAt':
+                                                FieldValue.serverTimestamp(),
+                                            'userID': _firestore
+                                                .collection('users')
+                                                .doc(currentUser.uid),
+                                            'likesCount': 0,
+                                            'likedBy': <DocumentReference>[],
+                                          });
 
                                       if (selectedImagePath != null) {
                                         setStateSheet(() {
                                           isUploadingImage = true;
                                         });
 
-                                        final uploadedImageUrl = await uploadToCloudinary(selectedImagePath!);
+                                        final uploadedImageUrl =
+                                            await uploadToCloudinary(
+                                              selectedImagePath!,
+                                            );
                                         if (uploadedImageUrl != null) {
-                                          await postRef.update({'imageURL': uploadedImageUrl});
+                                          await postRef.update({
+                                            'imageURL': uploadedImageUrl,
+                                          });
                                         }
                                       }
 
                                       if (!context.mounted) return;
                                       Navigator.pop(context);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Post created successfully!'), backgroundColor: AppColors.primary),
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Post created successfully!',
+                                          ),
+                                          backgroundColor: AppColors.primary,
+                                        ),
                                       );
                                     } catch (e) {
                                       if (!context.mounted) return;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Error: $e'),
+                                          backgroundColor: Colors.red,
+                                        ),
                                       );
                                     }
                                   }
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           child: isPosting
                               ? Row(
@@ -188,12 +253,17 @@ class _FeedPageState extends State<FeedPage> {
                                       height: 18,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                       ),
                                     ),
                                     const SizedBox(width: 10),
                                     Text(
-                                      isUploadingImage ? 'Uploading...' : 'Posting...',
+                                      isUploadingImage
+                                          ? 'Uploading...'
+                                          : 'Posting...',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -201,7 +271,13 @@ class _FeedPageState extends State<FeedPage> {
                                     ),
                                   ],
                                 )
-                              : const Text('Post', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              : const Text(
+                                  'Post',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
                       ],
                     ),
@@ -209,7 +285,7 @@ class _FeedPageState extends State<FeedPage> {
                 ),
               ),
             );
-          }
+          },
         );
       },
     );
@@ -226,12 +302,17 @@ class _FeedPageState extends State<FeedPage> {
         return StatefulBuilder(
           builder: (context, setStateSheet) {
             return Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.6,
                 decoration: const BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
                 ),
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                 child: Column(
@@ -240,42 +321,70 @@ class _FeedPageState extends State<FeedPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Comments', style: const TextStyle(fontFamily: 'Poppins', fontSize: 18, fontWeight: FontWeight.bold)),
-                        IconButton(icon: const Icon(Icons.close, color: AppColors.textMuted), onPressed: () => Navigator.pop(context)),
+                        Text(
+                          'Comments',
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            color: AppColors.textMuted,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
                       ],
                     ),
                     const Divider(color: AppColors.gray100),
                     Expanded(
                       child: FirestoreStreamBuilder<QuerySnapshot>(
-                        stream: postDoc.reference.collection('comments').orderBy('createdAt', descending: true).snapshots(),
+                        stream: postDoc.reference
+                            .collection('comments')
+                            .orderBy('createdAt', descending: true)
+                            .snapshots(),
                         builder: (querySnapshot) {
                           final comments = querySnapshot.docs;
-                          
+
                           if (comments.isEmpty) {
                             return const Center(
-                              child: Text('No comments yet. Be the first!', style: TextStyle(color: AppColors.textMuted)),
+                              child: Text(
+                                'No comments yet. Be the first!',
+                                style: TextStyle(color: AppColors.textMuted),
+                              ),
                             );
                           }
-                          
+
                           return ListView(
                             physics: const BouncingScrollPhysics(),
                             children: comments.map((commentDoc) {
-                              final commentData = commentDoc.data() as Map<String, dynamic>;
-                              final userRef = commentData['userID'] as DocumentReference?;
+                              final commentData =
+                                  commentDoc.data() as Map<String, dynamic>;
+                              final userRef =
+                                  commentData['userID'] as DocumentReference?;
 
                               return FutureBuilder<DocumentSnapshot>(
                                 future: userRef?.get(),
                                 builder: (context, userSnapshot) {
-                                  final userName = userSnapshot.data?['displayName'] ?? 'Unknown User';
-                                  final userAvatar = userSnapshot.data?['profileURL'] ?? 'https://i.pravatar.cc/150?img=32';
+                                  final userName =
+                                      userSnapshot.data?['displayName'] ??
+                                      'Unknown User';
+                                  final userAvatar =
+                                      userSnapshot.data?['profileURL'] ??
+                                      'https://i.pravatar.cc/150?img=32';
 
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 16),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         CircleAvatar(
-                                          backgroundImage: NetworkImage(userAvatar),
+                                          backgroundImage: NetworkImage(
+                                            userAvatar,
+                                          ),
                                           radius: 16,
                                         ),
                                         const SizedBox(width: 12),
@@ -284,14 +393,30 @@ class _FeedPageState extends State<FeedPage> {
                                             padding: const EdgeInsets.all(12),
                                             decoration: BoxDecoration(
                                               color: AppColors.appBg,
-                                              borderRadius: BorderRadius.circular(16),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
                                             ),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Text(userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textMain)),
+                                                Text(
+                                                  userName,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
+                                                    color: AppColors.textMain,
+                                                  ),
+                                                ),
                                                 const SizedBox(height: 4),
-                                                Text(commentData['commentMessage'] ?? '', style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                                                Text(
+                                                  commentData['commentMessage'] ??
+                                                      '',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.textMuted,
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -299,17 +424,27 @@ class _FeedPageState extends State<FeedPage> {
                                       ],
                                     ),
                                   );
-                                }
+                                },
                               );
                             }).toList(),
                           );
                         },
-                        empty: const Center(child: Text('No comments yet', style: TextStyle(color: AppColors.textMuted))),
+                        empty: const Center(
+                          child: Text(
+                            'No comments yet',
+                            style: TextStyle(color: AppColors.textMuted),
+                          ),
+                        ),
                       ),
                     ),
                     Row(
                       children: [
-                        const CircleAvatar(backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32'), radius: 18),
+                        const CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            'https://i.pravatar.cc/150?img=32',
+                          ),
+                          radius: 18,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Container(
@@ -322,7 +457,10 @@ class _FeedPageState extends State<FeedPage> {
                               controller: commentController,
                               decoration: const InputDecoration(
                                 hintText: 'Add a comment...',
-                                hintStyle: TextStyle(fontSize: 14, color: AppColors.textMuted),
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.textMuted,
+                                ),
                                 border: InputBorder.none,
                               ),
                             ),
@@ -330,25 +468,35 @@ class _FeedPageState extends State<FeedPage> {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.send, color: AppColors.primary),
+                          icon: const Icon(
+                            Icons.send,
+                            color: AppColors.primary,
+                          ),
                           onPressed: () async {
                             if (commentController.text.isNotEmpty) {
                               try {
                                 final currentUser = AuthService().currentUser;
                                 if (currentUser == null) return;
 
-                                await postDoc.reference.collection('comments').add({
-                                  'commentMessage': commentController.text,
-                                  'createdAt': FieldValue.serverTimestamp(),
-                                  'userID': _firestore.collection('users').doc(currentUser.uid),
-                                });
+                                await postDoc.reference
+                                    .collection('comments')
+                                    .add({
+                                      'commentMessage': commentController.text,
+                                      'createdAt': FieldValue.serverTimestamp(),
+                                      'userID': _firestore
+                                          .collection('users')
+                                          .doc(currentUser.uid),
+                                    });
 
                                 commentController.clear();
                                 setStateSheet(() {});
                               } catch (e) {
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                  SnackBar(
+                                    content: Text('Error: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
                                 );
                               }
                             }
@@ -360,7 +508,7 @@ class _FeedPageState extends State<FeedPage> {
                 ),
               ),
             );
-          }
+          },
         );
       },
     );
@@ -384,8 +532,21 @@ class _FeedPageState extends State<FeedPage> {
         backgroundColor: AppColors.surface,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text('Community Feed', style: TextStyle(fontFamily: 'Poppins', color: AppColors.textMain, fontSize: 20, fontWeight: FontWeight.bold)),
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), bottomRight: Radius.circular(32))),
+        title: const Text(
+          'Community Feed',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            color: AppColors.textMain,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(32),
+            bottomRight: Radius.circular(32),
+          ),
+        ),
       ),
       body: FirestoreStreamBuilder<QuerySnapshot>(
         loading: const Center(child: CircularProgressIndicator()),
@@ -399,8 +560,12 @@ class _FeedPageState extends State<FeedPage> {
               final aTimestamp = aData['createdAt'] as Timestamp?;
               final bTimestamp = bData['createdAt'] as Timestamp?;
 
-              final aDateTime = aTimestamp?.toDate() ?? DateTime.fromMillisecondsSinceEpoch(0);
-              final bDateTime = bTimestamp?.toDate() ?? DateTime.fromMillisecondsSinceEpoch(0);
+              final aDateTime =
+                  aTimestamp?.toDate() ??
+                  DateTime.fromMillisecondsSinceEpoch(0);
+              final bDateTime =
+                  bTimestamp?.toDate() ??
+                  DateTime.fromMillisecondsSinceEpoch(0);
 
               return bDateTime.compareTo(aDateTime);
             });
@@ -408,7 +573,10 @@ class _FeedPageState extends State<FeedPage> {
           return ListView(
             padding: EdgeInsets.only(
               top: 16,
-              bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight + 12,
+              bottom:
+                  MediaQuery.of(context).padding.bottom +
+                  kBottomNavigationBarHeight +
+                  12,
             ),
             physics: const BouncingScrollPhysics(),
             children: [
@@ -416,34 +584,64 @@ class _FeedPageState extends State<FeedPage> {
                 onTap: _showCreatePostSheet,
                 child: Container(
                   color: AppColors.surface,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   margin: const EdgeInsets.only(bottom: 16),
                   child: Row(
                     children: [
                       FirestoreFutureBuilder(
                         width: 40,
                         height: 40,
-                        future: _firestore.collection('users').doc(AuthService().currentUser?.uid).get(),
+                        future: _firestore
+                            .collection('users')
+                            .doc(AuthService().currentUser?.uid)
+                            .get(),
                         builder: (user) {
-                          currentProfileURL = user['profileURL'] ?? 'https://i.pravatar.cc/150?img=32'; 
-                          return CircleAvatar(backgroundImage: NetworkImage(user['profileURL']), radius: 20);
-                        }
+                          currentProfileURL =
+                              user['profileURL'] ??
+                              'https://i.pravatar.cc/150?img=32';
+                          return CircleAvatar(
+                            backgroundImage: NetworkImage(user['profileURL']),
+                            radius: 20,
+                          );
+                        },
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                          decoration: BoxDecoration(color: AppColors.appBg, borderRadius: BorderRadius.circular(24)),
-                          child: const Text('Share an update or milestone...', style: TextStyle(color: AppColors.textMuted, fontSize: 14)),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.appBg,
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          child: const Text(
+                            'Share an update or milestone...',
+                            style: TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Icon(Icons.image_outlined, color: AppColors.primary),
+                      const Icon(
+                        Icons.image_outlined,
+                        color: AppColors.primary,
+                      ),
                     ],
                   ),
                 ),
               ),
-              ...posts.map((postDoc) => _buildPostCard(postDoc as DocumentSnapshot<Map<String, dynamic>>)).toList(),
+              ...posts.map(
+                (postDoc) => _buildPostCard(
+                  postDoc as DocumentSnapshot<Map<String, dynamic>>,
+                ),
+              ),
             ],
           );
         },
@@ -453,14 +651,25 @@ class _FeedPageState extends State<FeedPage> {
             children: [
               const Icon(Icons.feed, size: 64, color: AppColors.textMuted),
               const SizedBox(height: 16),
-              const Text('No posts yet', style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
+              const Text(
+                'No posts yet',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 16),
+              ),
               const SizedBox(height: 8),
-              const Text('Be the first to share!', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+              const Text(
+                'Be the first to share!',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+              ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _showCreatePostSheet,
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-                child: const Text('Create Post', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                ),
+                child: const Text(
+                  'Create Post',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -489,7 +698,8 @@ class _FeedPageState extends State<FeedPage> {
   Widget _buildPostCard(DocumentSnapshot<Map<String, dynamic>> postDoc) {
     final postData = postDoc.data() ?? {};
     final userRef = postData['userID'] as DocumentReference?;
-    final likedByRefs = (postData['likedBy'] as List<dynamic>?)
+    final likedByRefs =
+        (postData['likedBy'] as List<dynamic>?)
             ?.whereType<DocumentReference>()
             .toList() ??
         <DocumentReference>[];
@@ -499,11 +709,13 @@ class _FeedPageState extends State<FeedPage> {
     final currentUserRef = currentUser != null
         ? _firestore.collection('users').doc(currentUser.uid)
         : null;
-    final isLiked = currentUserRef != null &&
+    final isLiked =
+        currentUserRef != null &&
         likedByRefs.any((ref) => ref.path == currentUserRef.path);
-    final isOwner = currentUserRef != null &&
-      userRef != null &&
-      userRef.path == currentUserRef.path;
+    final isOwner =
+        currentUserRef != null &&
+        userRef != null &&
+        userRef.path == currentUserRef.path;
 
     return Container(
       color: AppColors.surface,
@@ -517,10 +729,13 @@ class _FeedPageState extends State<FeedPage> {
             child: FutureBuilder<DocumentSnapshot>(
               future: userRef?.get(),
               builder: (context, snapshot) {
-                final userData = snapshot.data?.data() as Map<String, dynamic>? ?? {};
+                final userData =
+                    snapshot.data?.data() as Map<String, dynamic>? ?? {};
                 final displayName = userData['displayName'] ?? 'Unknown User';
                 final occupation = userData['occupation'] ?? 'Volunteer';
-                final profileURL = userData['profileURL'] ?? 'https://i.pravatar.cc/150?img=32';
+                final profileURL =
+                    userData['profileURL'] ??
+                    'https://i.pravatar.cc/150?img=32';
 
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -537,27 +752,41 @@ class _FeedPageState extends State<FeedPage> {
                           children: [
                             Text(
                               displayName,
-                              style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 14),
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
                             Text(
                               '$occupation • ${createdAt != null ? _getTimeAgo(createdAt.toDate()) : 'Unknown time'}',
-                              style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
+                              style: const TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 10,
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_horiz, color: AppColors.textMuted),
+                      icon: const Icon(
+                        Icons.more_horiz,
+                        color: AppColors.textMuted,
+                      ),
                       onSelected: (value) async {
                         if (value == 'copy') {
-                          final contentMessage = postData['contentMessage'] ?? '';
+                          final contentMessage =
+                              postData['contentMessage'] ?? '';
                           final imageLink = postData['imageURL'] as String?;
-                          final shareText = imageLink == null || imageLink.isEmpty
+                          final shareText =
+                              imageLink == null || imageLink.isEmpty
                               ? contentMessage
                               : '$contentMessage\n\n$imageLink';
 
-                          await Clipboard.setData(ClipboardData(text: shareText));
+                          await Clipboard.setData(
+                            ClipboardData(text: shareText),
+                          );
 
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -574,14 +803,18 @@ class _FeedPageState extends State<FeedPage> {
                             builder: (dialogContext) {
                               return AlertDialog(
                                 title: const Text('Delete Post'),
-                                content: const Text('Are you sure you want to delete this post?'),
+                                content: const Text(
+                                  'Are you sure you want to delete this post?',
+                                ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.pop(dialogContext, false),
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext, false),
                                     child: const Text('Cancel'),
                                   ),
                                   TextButton(
-                                    onPressed: () => Navigator.pop(dialogContext, true),
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext, true),
                                     child: const Text('Delete'),
                                   ),
                                 ],
@@ -632,10 +865,15 @@ class _FeedPageState extends State<FeedPage> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               postData['contentMessage'] ?? '',
-              style: const TextStyle(fontSize: 14, height: 1.5, color: AppColors.textMain),
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: AppColors.textMain,
+              ),
             ),
           ),
-          if (postData['imageURL'] != null && (postData['imageURL'] as String).isNotEmpty)
+          if (postData['imageURL'] != null &&
+              (postData['imageURL'] as String).isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 12),
               child: Image.network(
@@ -657,10 +895,14 @@ class _FeedPageState extends State<FeedPage> {
                     if (currentUserRef == null) return;
 
                     try {
-                      final updatedLikedBy = List<DocumentReference>.from(likedByRefs);
+                      final updatedLikedBy = List<DocumentReference>.from(
+                        likedByRefs,
+                      );
 
                       if (isLiked) {
-                        updatedLikedBy.removeWhere((ref) => ref.path == currentUserRef.path);
+                        updatedLikedBy.removeWhere(
+                          (ref) => ref.path == currentUserRef.path,
+                        );
                       } else {
                         updatedLikedBy.add(currentUserRef);
                       }
@@ -672,7 +914,10 @@ class _FeedPageState extends State<FeedPage> {
                     } catch (e) {
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                        SnackBar(
+                          content: Text('Error: $e'),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                     }
                   },
@@ -688,7 +933,9 @@ class _FeedPageState extends State<FeedPage> {
                     width: 18,
                     height: 18,
                     radius: 1,
-                    stream: postDoc.reference.collection('comments').snapshots(),
+                    stream: postDoc.reference
+                        .collection('comments')
+                        .snapshots(),
                     builder: (querySnapshot) {
                       return _buildInteractionBtn(
                         Icons.chat_bubble_outline,

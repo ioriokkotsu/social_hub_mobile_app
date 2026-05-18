@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/pages/community_project_page.dart';
-import 'package:social_hub/pages/log_hours_page.dart';
-import 'package:social_hub/pages/map_page.dart';
 import 'package:social_hub/pages/news_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/theme/theme.dart';
@@ -86,29 +84,29 @@ class DrawerSideBar extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
 
               children: [
-                drawerItem(
-                  icon: Icons.map_outlined,
-                  iconColor: Colors.red,
-                  label: 'Explore Map',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MapPage()),
-                    );
-                  },
-                ),
-                const SizedBox(height: 8),
-                drawerItem(
-                  icon: Icons.newspaper,
-                  iconColor: Colors.blue,
-                  label: 'Global News',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NewsPage()),
-                    );
-                  },
-                ),
+                // drawerItem(
+                //   icon: Icons.map_outlined,
+                //   iconColor: Colors.red,
+                //   label: 'Explore Map',
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => const MapPage()),
+                //     );
+                //   },
+                // ),
+                // const SizedBox(height: 8),
+                // drawerItem(
+                //   icon: Icons.newspaper,
+                //   iconColor: Colors.blue,
+                //   label: 'Global News',
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => NewsPage()),
+                //     );
+                //   },
+                // ),
                 const SizedBox(height: 8),
                 drawerItem(
                   icon: Icons.event_outlined,
@@ -125,13 +123,13 @@ class DrawerSideBar extends StatelessWidget {
                 drawerItem(
                   icon: Icons.badge_outlined,
                   iconColor: Colors.green,
-                  label: 'My Badges',
+                  label: 'My Volunteer Dashboard',
                 ),
                 const SizedBox(height: 8),
                 drawerItem(
-                  icon: Icons.hourglass_bottom_outlined,
+                  icon: Icons.money_outlined,
                   iconColor: Colors.orangeAccent,
-                  label: 'Log Hours',
+                  label: 'My Donation History',
                   onTap: () {
                     // Navigator.push(context, createSlideRoute(LogHoursPage()));
                   },
@@ -140,16 +138,16 @@ class DrawerSideBar extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 8),
                   child: Divider(color: Colors.grey[300], thickness: 1),
                 ),
-                drawerItem(
-                  icon: Icons.settings,
-                  iconColor: AppColors.textMuted,
-                  label: 'Settings',
-                ),
-                drawerItem(
-                  icon: Icons.question_mark_rounded,
-                  iconColor: AppColors.textMuted,
-                  label: "Help & Support",
-                ),
+                // drawerItem(
+                //   icon: Icons.settings,
+                //   iconColor: AppColors.textMuted,
+                //   label: 'Settings',
+                // ),
+                // drawerItem(
+                //   icon: Icons.question_mark_rounded,
+                //   iconColor: AppColors.textMuted,
+                //   label: "Help & Support",
+                // ),
               ],
             ),
           ),

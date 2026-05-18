@@ -1,9 +1,4 @@
-import 'package:fan_floating_menu/fan_floating_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:social_hub/pages/chat_page.dart';
-import 'package:social_hub/pages/feed_page.dart';
-import 'package:social_hub/pages/home_page.dart';
-import 'package:social_hub/pages/profile_page.dart';
 
 import 'package:social_hub/theme/theme.dart';
 
@@ -26,21 +21,6 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   bool _isActive(int index) => index == widget.currentIndex;
-
-  late final List<Widget> _pages = [
-    HomePage(
-      onDrawerChanged: (isOpen) {
-        setState(() {
-          isDrawerOpen = isOpen;
-        });
-      },
-    ),
-    const FeedPage(),
-    const ChatScreen(),
-    const ProfilePage(),
-  ];
-
-  bool isDrawerOpen = false;
 
   void _onTabTapped(int index) {
     widget.onTap(index);
@@ -91,12 +71,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       active: _isActive(1),
                     ),
 
-                    const SizedBox(width: 50), // space for FAB
-
+                    // const SizedBox(width: 50), // space for FAB
                     navItem(
                       3,
-                      Icons.chat_bubble_outline,
-                      "Chat",
+                      Icons.newspaper_outlined,
+                      "News",
                       ontap: () => _onTabTapped(2),
                       active: _isActive(2),
                     ),
@@ -114,59 +93,59 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
           ),
 
-          if (!widget.isDrawerOpen)
-            Positioned(
-              top: -15,
+          // if (!widget.isDrawerOpen)
+          //   Positioned(
+          //     top: -15,
 
-              child: GestureDetector(
-                onTap: () {},
+          //     child: GestureDetector(
+          //       onTap: () {},
 
-                child: Container(
-                  width: 60,
-                  height: 60,
+          //       child: Container(
+          //         width: 60,
+          //         height: 60,
 
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primary,
-                    boxShadow: floatingShadow,
-                  ),
+          //         decoration: BoxDecoration(
+          //           shape: BoxShape.circle,
+          //           color: AppColors.primary,
+          //           boxShadow: floatingShadow,
+          //         ),
 
-                  child: const Icon(Icons.add, color: Colors.white, size: 28),
-                ),
-              ),
-            ),
-          if (!widget.isDrawerOpen)
-            Positioned(
-              bottom: 32,
-              right: 20,
-              child: SizedBox(
-                width: 200,
-                height: 300,
-                child: FanFloatingMenu(
-                  menuItems: [
-                    FanMenuItem(
-                      onTap: () {},
-                      icon: Icons.edit_rounded,
-                      title: 'Test Firebase',
-                    ),
-                    FanMenuItem(
-                      onTap: () {
-                        print("object");
-                      },
-                      icon: Icons.edit_rounded,
-                      title: 'Edit Texts',
-                    ),
-                    FanMenuItem(
-                      onTap: () {},
-                      icon: Icons.edit_rounded,
-                      title: 'Edit Texts',
-                    ),
-                  ],
-                  toggleButtonColor: AppColors.primary,
-                  buttonSize: 60,
-                ),
-              ),
-            ),
+          //         child: const Icon(Icons.add, color: Colors.white, size: 28),
+          //       ),
+          //     ),
+          //   ),
+          // if (!widget.isDrawerOpen)
+          //   Positioned(
+          //     bottom: 32,
+          //     right: 20,
+          //     child: SizedBox(
+          //       width: 200,
+          //       height: 300,
+          //       child: FanFloatingMenu(
+          //         menuItems: [
+          //           FanMenuItem(
+          //             onTap: () {},
+          //             icon: Icons.edit_rounded,
+          //             title: 'Test Firebase',
+          //           ),
+          //           FanMenuItem(
+          //             onTap: () {
+          //               print("object");
+          //             },
+          //             icon: Icons.edit_rounded,
+          //             title: 'Edit Texts',
+          //           ),
+          //           FanMenuItem(
+          //             onTap: () {},
+          //             icon: Icons.edit_rounded,
+          //             title: 'Edit Texts',
+          //           ),
+          //         ],
+          //         toggleButtonColor: AppColors.primary,
+          //         buttonSize: 60,
+          //       ),
+          //     ),
+          //   ),
         ],
       ),
     );

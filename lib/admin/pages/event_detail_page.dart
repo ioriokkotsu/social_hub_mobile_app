@@ -61,7 +61,9 @@ class _EventDetailPageState extends State<EventDetailPage> {
                         ),
                         onPressed: () => Navigator.push(
                           context,
-                          createSlideRoute(EditEventPage(eventID: widget.eventID)),
+                          createSlideRoute(
+                            EditEventPage(eventID: widget.eventID),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -235,7 +237,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'RM ${event?['amountRaised'].toStringAsFixed(2) ?? '0.00'} Raised',
+                                        'RM ${event['amountRaised'].toStringAsFixed(2) ?? '0.00'} Raised',
                                         style: TextStyle(
                                           fontSize: 10,
                                           color: AppColors.primary,
@@ -269,54 +271,31 @@ class _EventDetailPageState extends State<EventDetailPage> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
+                                      const SizedBox(height: 12),
                                       RichText(
                                         text: TextSpan(
                                           style: const TextStyle(
                                             fontFamily: 'Inter',
                                             color: AppColors.textMain,
-                                            fontSize: 18,
+                                            fontSize: 24,
                                             fontWeight: FontWeight.bold,
                                           ),
                                           children: [
                                             TextSpan(
-                                              text:
-                                                  event?['targetVolunteers']
-                                                      .toString() ??
-                                                  '0',
+                                              text: (event['listJoinedVolunteers'] ?? const []).length.toString()
                                             ),
                                             const TextSpan(
-                                              text: '  Needed',
+                                              text: '  Approved',
                                               style: TextStyle(
-                                                color: AppColors.textMuted,
+                                                color: AppColors.primary,
                                                 fontSize: 10,
-                                                fontWeight: FontWeight.normal,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                       const SizedBox(height: 8),
-                                      LinearProgressIndicator(
-                                        value:
-                                            (event['listJoinedVolunteers'] ??
-                                                    [])
-                                                .length /
-                                            (event['targetVolunteers'] ?? 1),
-                                        backgroundColor: Colors.grey[200],
-                                        color: AppColors.secondary,
-                                        minHeight: 6,
-                                        borderRadius: BorderRadius.circular(3),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '${(event['listJoinedVolunteers'] ?? const []).length} Approved',
-                                        style: const TextStyle(
-                                          fontSize: 10,
-                                          color: AppColors.secondary,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ),
@@ -335,7 +314,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            event?['eventDescription'] ??
+                            event['eventDescription'] ??
                                 'No description available.',
                             style: TextStyle(
                               fontSize: 12,

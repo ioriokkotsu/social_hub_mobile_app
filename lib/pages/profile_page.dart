@@ -5,7 +5,6 @@ import 'package:social_hub/pages/edit_profile_page.dart';
 import 'package:social_hub/pages/my_badges_page.dart';
 import 'package:social_hub/pages/volunteer_dashboard.dart';
 import 'package:social_hub/services/auth_service.dart';
-import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 
@@ -17,19 +16,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-  late Future<Map<String, dynamic>?> _userData;
-
-  @override
-  void initState() {
-    super.initState();
-    _userData = AuthService().getUserData(AuthService().currentUser?.uid ?? '');
-  }
-
   @override
   Widget build(BuildContext context) {
     return FirestoreStreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream: AuthService().getUserDataSnapshot(AuthService().currentUser?.uid ?? ''),
+      stream: AuthService().getUserDataSnapshot(
+        AuthService().currentUser?.uid ?? '',
+      ),
       builder: (user) {
         return Scaffold(
           backgroundColor: AppColors.appBg,
@@ -59,11 +51,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 80,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.white, width: 4),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 4,
+                                  ),
                                   boxShadow: softShadow,
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                      user['profileURL'] ?? 'https://i.pravatar.cc/150?img=32',
+                                      user['profileURL'] ??
+                                          'https://i.pravatar.cc/150?img=32',
                                     ),
                                     fit: BoxFit.cover,
                                   ),
@@ -79,9 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  createSlideRoute(
-                                    const EditProfilePage(),
-                                  ),
+                                  createSlideRoute(const EditProfilePage()),
                                 );
                               },
                               style: IconButton.styleFrom(
@@ -92,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          user?['displayName'] ?? 'Display Name',
+                          user['displayName'] ?? 'Display Name',
                           style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 20,
@@ -100,14 +94,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         Text(
-                          '${user?['occupation'] ?? 'Occupation'} | +${user?['contactNumber'] ?? 'Contact Number'}',
+                          '${user['occupation'] ?? 'Occupation'} | +${user['contactNumber'] ?? 'Contact Number'}',
                           style: const TextStyle(
                             fontSize: 12,
                             color: AppColors.textMuted,
                           ),
                         ),
                         Text(
-                          '${user?['email'] ?? 'Email'}',
+                          '${user['email'] ?? 'Email'}',
                           style: const TextStyle(
                             fontSize: 12,
                             color: AppColors.textMuted,
@@ -137,8 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              createSlideRoute(VolunteerDashboardPage()
-                              ),
+                              createSlideRoute(VolunteerDashboardPage()),
                             );
                           },
                         ),
@@ -149,53 +142,29 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              createSlideRoute(DonationHistoryPage()
-                              ),
+                              createSlideRoute(DonationHistoryPage()),
                             );
                           },
                         ),
-                        _buildMenuBtn(
-                          icon: Icons.workspace_premium_outlined,
-                          iconColor: AppColors.secondary,
-                          title: 'My Badges',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              createSlideRoute(MyBadgesPage()
-                              ),
-                            );
-                          },
-                        ),
-                        _buildMenuBtn(
-                          icon: Icons.language_outlined,
-                          iconColor: AppColors.blue500,
-                          title: 'Language & Settings',
-                        ),
+                        // _buildMenuBtn(
+                        //   icon: Icons.workspace_premium_outlined,
+                        //   iconColor: AppColors.secondary,
+                        //   title: 'My Badges',
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       createSlideRoute(MyBadgesPage()),
+                        //     );
+                        //   },
+                        // ),
+                        // _buildMenuBtn(
+                        //   icon: Icons.language_outlined,
+                        //   iconColor: AppColors.blue500,
+                        //   title: 'Language & Settings',
+                        // ),
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 16),
                           child: Divider(color: AppColors.gray100),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.business_center_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          label: const Text(
-                            'Switch to NGO Admin View',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.textMain,
-                            padding: const EdgeInsets.all(16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
                         ),
                       ],
                     ),
@@ -205,7 +174,9 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         );
-      }, width: double.infinity, height: double.infinity,
+      },
+      width: double.infinity,
+      height: double.infinity,
     );
   }
 
