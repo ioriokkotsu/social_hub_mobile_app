@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:social_hub/component/drawer.dart';
 import 'package:social_hub/pages/community_project_page.dart';
+import 'package:social_hub/pages/news_page.dart';
 import 'package:social_hub/pages/project_detail_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/stream_builder.dart';
@@ -38,7 +39,53 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => AuthService().signOut(),
+          onPressed: () async {
+            final data = {
+              "eventTitle": "Code4Future Rural Tech Camp",
+              "eventCategory": "Technology",
+              "eventVenue": "Community Hall, Kuala Selangor",
+
+              "startDate": Timestamp.fromDate(
+                DateTime.parse("2026-06-10T09:00:00"),
+              ),
+
+              "endDate": Timestamp.fromDate(
+                DateTime.parse("2026-06-12T18:00:00"),
+              ),
+
+              "amountTarget": 15000.0,
+              "amountRaised": 0.0,
+
+              "eventDescription":
+                  "This event focuses on teaching basic programming and digital literacy to students from rural communities. Volunteers will conduct hands-on workshops covering mobile apps, internet safety, and beginner coding projects. Donations collected will be used to purchase laptops, internet devices, and learning materials for underprivileged schools.",
+
+              "requiredRoles": [
+                "Flutter Developer",
+                "UI/UX Designer",
+                "Technical Mentor",
+                "Event Coordinator",
+              ],
+
+              "eventImageURL": "https://example.com/images/code4future.jpg",
+
+              "createdAt": FieldValue.serverTimestamp(),
+
+              "listJoinedVolunteers": [],
+
+              "status": "Active",
+
+              // Correct DocumentReference
+              "organizedBy": FirebaseFirestore.instance
+                  .collection('ngo')
+                  .doc('G62tB1ShJfaeQ4jPflziVnQZhTw1'),
+            };
+
+            final id = "customDocumentID";
+
+            await FirebaseFirestore.instance
+                .collection('communityEvents')
+                .add(data);
+          },
           backgroundColor: AppColors.primary,
           child: const Icon(Icons.add, color: AppColors.surface),
         ),
@@ -99,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                           width: 331.4,
                           height: 160,
                           stream: AuthService().getCollectionStream(
-                            'communityEvents',
+                            'communityEvents'
                           ),
                           builder: (snapshot) {
                             final docs = snapshot.docs;
@@ -120,6 +167,8 @@ class _HomePageState extends State<HomePage> {
                                       doc['amountTarget'] ?? 0,
                                       docs[index].id,
                                       doc['eventCategory'] ?? 'Uncategorized',
+                                      doc['eventImageURL'] ??
+                                          'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
                                     ),
                                     const SizedBox(height: 16),
                                   ],
@@ -147,6 +196,7 @@ Widget card(
   double amountTarget,
   String uid,
   String eventCategory,
+  String eventImageURL,
 ) {
   return GestureDetector(
     onTap: () {
@@ -176,7 +226,7 @@ Widget card(
             child: Stack(
               children: [
                 Image.network(
-                  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
+                  eventImageURL,
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: double.infinity,

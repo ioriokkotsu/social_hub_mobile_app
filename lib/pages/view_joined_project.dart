@@ -319,74 +319,74 @@ class _ViewJoinedProjectPageState extends State<ViewJoinedProjectPage> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            //Test Function Approved Log
-                            updateStatusLogHours(
-                              'AF9yiO68sL9vfKQRDLHF',
-                              'Approved',
-                            );
-                          },
-                          icon: const Icon(Icons.message, size: 18),
-                          label: const Text(
-                            'Volunteer Chat',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            side: BorderSide(
-                              color: AppColors.primary.withOpacity(0.2),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            backgroundColor: AppColors.surface,
-                          ),
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: OutlinedButton.icon(
+                      //     onPressed: () {
+                      //       //Test Function Approved Log
+                      //       updateStatusLogHours(
+                      //         'AF9yiO68sL9vfKQRDLHF',
+                      //         'Approved',
+                      //       );
+                      //     },
+                      //     icon: const Icon(Icons.message, size: 18),
+                      //     label: const Text(
+                      //       'Volunteer Chat',
+                      //       style: TextStyle(
+                      //         fontSize: 12,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //     ),
+                      //     style: OutlinedButton.styleFrom(
+                      //       foregroundColor: AppColors.primary,
+                      //       side: BorderSide(
+                      //         color: AppColors.primary.withOpacity(0.2),
+                      //       ),
+                      //       padding: const EdgeInsets.symmetric(vertical: 14),
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(12),
+                      //       ),
+                      //       backgroundColor: AppColors.surface,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
 
-                  const SizedBox(height: 32),
-                  const Text(
-                    'Coordinator Announcements',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                  // const SizedBox(height: 32),
+                  // const Text(
+                  //   'Coordinator Announcements',
+                  //   style: TextStyle(
+                  //     fontFamily: 'Poppins',
+                  //     fontSize: 14,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 12),
 
-                  _buildAnnouncementCard(
-                    timeAgo: '2 days ago',
-                    borderColor: AppColors.blue500,
-                    content:
-                        'Thank you to everyone who showed up for the South Beach sector cleanup! We collected over 500lbs of plastic. Please ensure you log your hours by Friday evening so we can process approvals before the weekend.',
-                  ),
-                  _buildAnnouncementCard(
-                    timeAgo: '1 week ago',
-                    borderColor: AppColors.secondary,
-                    content:
-                        'Welcome to all new volunteers! Please introduce yourselves in the Volunteer Chat. The equipment distribution list has been updated in the pinned messages.',
-                  ),
-                  _buildAnnouncementCard(
-                    timeAgo: '2 days ago',
-                    borderColor: AppColors.blue500,
-                    content:
-                        'Thank you to everyone who showed up for the South Beach sector cleanup! We collected over 500lbs of plastic. Please ensure you log your hours by Friday evening so we can process approvals before the weekend.',
-                  ),
-                  _buildAnnouncementCard(
-                    timeAgo: '1 week ago',
-                    borderColor: AppColors.primary,
-                    content:
-                        'Welcome to all new volunteers! Please introduce yourselves in the Volunteer Chat. The equipment distribution list has been updated in the pinned messages.',
-                  ),
+                  // _buildAnnouncementCard(
+                  //   timeAgo: '2 days ago',
+                  //   borderColor: AppColors.blue500,
+                  //   content:
+                  //       'Thank you to everyone who showed up for the South Beach sector cleanup! We collected over 500lbs of plastic. Please ensure you log your hours by Friday evening so we can process approvals before the weekend.',
+                  // ),
+                  // _buildAnnouncementCard(
+                  //   timeAgo: '1 week ago',
+                  //   borderColor: AppColors.secondary,
+                  //   content:
+                  //       'Welcome to all new volunteers! Please introduce yourselves in the Volunteer Chat. The equipment distribution list has been updated in the pinned messages.',
+                  // ),
+                  // _buildAnnouncementCard(
+                  //   timeAgo: '2 days ago',
+                  //   borderColor: AppColors.blue500,
+                  //   content:
+                  //       'Thank you to everyone who showed up for the South Beach sector cleanup! We collected over 500lbs of plastic. Please ensure you log your hours by Friday evening so we can process approvals before the weekend.',
+                  // ),
+                  // _buildAnnouncementCard(
+                  //   timeAgo: '1 week ago',
+                  //   borderColor: AppColors.primary,
+                  //   content:
+                  //       'Welcome to all new volunteers! Please introduce yourselves in the Volunteer Chat. The equipment distribution list has been updated in the pinned messages.',
+                  // ),
                 ],
               ),
             ),

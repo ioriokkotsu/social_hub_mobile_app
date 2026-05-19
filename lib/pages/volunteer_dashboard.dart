@@ -43,12 +43,12 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               physics: const BouncingScrollPhysics(),
               child: Row(
                 children: [
-                  _buildBadgePreview(
-                    Icons.workspace_premium,
-                    'Top 10%',
-                    AppColors.accent,
-                  ),
-                  const SizedBox(width: 12),
+                  // _buildBadgePreview(
+                  //   Icons.workspace_premium,
+                  //   'Top 10%',
+                  //   AppColors.accent,
+                  // ),
+                  // const SizedBox(width: 12),
                   FirestoreFutureBuilder(
                     future: FirebaseFirestore.instance
                         .collection('users')
@@ -60,7 +60,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
                         '${user['hoursLogged'] ?? 0} Hours',
                         AppColors.primary,
                       );
-                    }
+                    },
                   ),
                 ],
               ),
@@ -200,107 +200,107 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
       padding: const EdgeInsets.all(24),
       physics: const BouncingScrollPhysics(),
       children: [
-        const Text(
-          'Upcoming Tasks',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: softShadow,
-            border: const Border(
-              left: BorderSide(color: AppColors.primary, width: 4),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Text(
-                        'Teach HTML Basics',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          'Tomorrow',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: const [
-                      Icon(
-                        Icons.location_on,
-                        size: 12,
-                        color: AppColors.textMuted,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Rural Tech Edu Hub',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    'View',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // const Text(
+        //   'Upcoming Tasks',
+        //   style: TextStyle(
+        //     fontFamily: 'Poppins',
+        //     fontSize: 16,
+        //     fontWeight: FontWeight.bold,
+        //   ),
+        // ),
+        // const SizedBox(height: 12),
+        // Container(
+        //   padding: const EdgeInsets.all(16),
+        //   decoration: BoxDecoration(
+        //     color: AppColors.surface,
+        //     borderRadius: BorderRadius.circular(16),
+        //     boxShadow: softShadow,
+        //     border: const Border(
+        //       left: BorderSide(color: AppColors.primary, width: 4),
+        //     ),
+        //   ),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       // Column(
+        //       //   crossAxisAlignment: CrossAxisAlignment.start,
+        //       //   children: [
+        //       //     Row(
+        //       //       children: [
+        //       //         const Text(
+        //       //           'Teach HTML Basics',
+        //       //           style: TextStyle(
+        //       //             fontWeight: FontWeight.bold,
+        //       //             fontSize: 14,
+        //       //           ),
+        //       //         ),
+        //       //         const SizedBox(width: 8),
+        //       //         Container(
+        //       //           padding: const EdgeInsets.symmetric(
+        //       //             horizontal: 8,
+        //       //             vertical: 2,
+        //       //           ),
+        //       //           decoration: BoxDecoration(
+        //       //             color: AppColors.secondary.withOpacity(0.2),
+        //       //             borderRadius: BorderRadius.circular(4),
+        //       //           ),
+        //       //           child: const Text(
+        //       //             'Tomorrow',
+        //       //             style: TextStyle(
+        //       //               color: AppColors.primary,
+        //       //               fontSize: 10,
+        //       //               fontWeight: FontWeight.bold,
+        //       //             ),
+        //       //           ),
+        //       //         ),
+        //       //       ],
+        //       //     ),
+        //       //     const SizedBox(height: 4),
+        //       //     Row(
+        //       //       children: const [
+        //       //         Icon(
+        //       //           Icons.location_on,
+        //       //           size: 12,
+        //       //           color: AppColors.textMuted,
+        //       //         ),
+        //       //         SizedBox(width: 4),
+        //       //         Text(
+        //       //           'Rural Tech Edu Hub',
+        //       //           style: TextStyle(
+        //       //             fontSize: 12,
+        //       //             color: AppColors.textMuted,
+        //       //           ),
+        //       //         ),
+        //       //       ],
+        //       //     ),
+        //       //   ],
+        //       // ),
+        //       // GestureDetector(
+        //       //   onTap: () {},
+        //       //   child: Container(
+        //       //     padding: const EdgeInsets.symmetric(
+        //       //       horizontal: 12,
+        //       //       vertical: 6,
+        //       //     ),
+        //       //     decoration: BoxDecoration(
+        //       //       color: AppColors.primary.withOpacity(0.1),
+        //       //       borderRadius: BorderRadius.circular(8),
+        //       //     ),
+        //       //     child: const Text(
+        //       //       'View',
+        //       //       style: TextStyle(
+        //       //         color: AppColors.primary,
+        //       //         fontSize: 12,
+        //       //         fontWeight: FontWeight.bold,
+        //       //       ),
+        //       //     ),
+        //       //   ),
+        //       // ),
+        //     ],
+        //   ),
+        // ),
 
-        const SizedBox(height: 24),
+        // const SizedBox(height: 24),
         const Text(
           'Recent Activity',
           style: TextStyle(
@@ -311,6 +311,15 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
         ),
         const SizedBox(height: 12),
         FirestoreStreamBuilder<QuerySnapshot>(
+          empty: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Center(
+              child: const Text(
+                'You have not created any logs yet.',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+              ),
+            ),
+          ),
           width: 363.4,
           height: 72,
           radius: 12,
@@ -470,7 +479,10 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
 
       List listJoinedEvents = userDoc['listJoinedEvents'] ?? [];
       List<Map<String, dynamic>> projects = [];
-
+      if (listJoinedEvents.isEmpty) {
+        yield [];
+        return;
+      }
       for (var event in listJoinedEvents) {
         DocumentSnapshot eventDoc =
             await (event['eventID'] as DocumentReference).get();
@@ -479,7 +491,9 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
           'uid': eventDoc.id,
           'eventTitle': eventDoc['eventTitle'],
           'totalLogHours': event['totalLogHours'],
-          'eventImageURL': eventDoc['eventImageURL'],
+          'eventImageURL':
+              eventDoc['eventImageURL'] ??
+              'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=100&q=80',
           'status': eventDoc['status'],
         });
       }
@@ -508,9 +522,43 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
         ),
         const SizedBox(height: 12),
         FirestoreStreamBuilder(
+          empty: const Center(
+            child: Text(
+              'You have not joined any projects yet.',
+              style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+            ),
+          ),
           stream: fetchJoinedProjects(),
           builder: (projects) {
-            return Column(
+            return projects.isEmpty
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Center(
+                      child: const Text(
+                        'You have not joined any projects yet.',
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  )
+                : Column(
+                    spacing: 16,
+                    children: projects
+                        .map(
+                          (project) => _buildJoinedProjectCard(
+                            eventTitle: project['eventTitle'],
+                            totalLogHours: '${project['totalLogHours']}',
+                            eventImageURL: project['eventImageURL'],
+                            status: project['status'],
+                            eventID: project['uid'],
+                          ),
+                        )
+                        .toList(),
+                  );
+            Column(
+              spacing: 16,
               children: projects
                   .map(
                     (project) => _buildJoinedProjectCard(

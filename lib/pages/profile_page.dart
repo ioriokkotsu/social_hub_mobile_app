@@ -66,22 +66,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.edit_outlined,
-                                color: AppColors.primary,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  createSlideRoute(const EditProfilePage()),
-                                );
-                              },
-                              style: IconButton.styleFrom(
-                                backgroundColor: AppColors.appBg,
-                              ),
-                            ),
+                            // IconButton(
+                            //   icon: const Icon(
+                            //     Icons.edit_outlined,
+                            //     color: AppColors.primary,
+                            //     size: 20,
+                            //   ),
+                            //   onPressed: () {
+                            //     Navigator.push(
+                            //       context,
+                            //       createSlideRoute(const EditProfilePage()),
+                            //     );
+                            //   },
+                            //   style: IconButton.styleFrom(
+                            //     backgroundColor: AppColors.appBg,
+                            //   ),
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -108,14 +108,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildTag('SDG 4', AppColors.primary),
-                            const SizedBox(width: 8),
-                            _buildTag('SDG 13', AppColors.accent),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     _buildTag('SDG 4', AppColors.primary),
+                        //     const SizedBox(width: 8),
+                        //     _buildTag('SDG 13', AppColors.accent),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
@@ -135,6 +135,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
                           },
                         ),
+                        const SizedBox(
+                          height: 16,
+                        ),
                         _buildMenuBtn(
                           icon: Icons.favorite_outline,
                           iconColor: AppColors.accent,
@@ -146,17 +149,20 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
                           },
                         ),
-                        // _buildMenuBtn(
-                        //   icon: Icons.workspace_premium_outlined,
-                        //   iconColor: AppColors.secondary,
-                        //   title: 'My Badges',
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       createSlideRoute(MyBadgesPage()),
-                        //     );
-                        //   },
-                        // ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        _buildMenuBtn(
+                          icon: Icons.person_outline,
+                          iconColor: AppColors.secondary,
+                          title: 'Edit My Profile',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              createSlideRoute(EditProfilePage()),
+                            );
+                          },
+                        ),
                         // _buildMenuBtn(
                         //   icon: Icons.language_outlined,
                         //   iconColor: AppColors.blue500,
@@ -180,23 +186,23 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildTag(String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
+  // Widget _buildTag(String text, Color color) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+  //     decoration: BoxDecoration(
+  //       color: color.withOpacity(0.1),
+  //       borderRadius: BorderRadius.circular(16),
+  //     ),
+  //     child: Text(
+  //       text,
+  //       style: TextStyle(
+  //         color: color,
+  //         fontSize: 12,
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildMenuBtn({
     required IconData icon,
@@ -205,17 +211,19 @@ class _ProfilePageState extends State<ProfilePage> {
     VoidCallback? onTap,
   }) {
     return Material(
+      borderRadius: BorderRadius.circular(24),
       color: AppColors.surface,
       child: InkWell(
+        borderRadius: BorderRadius.circular(24),
         onTap: onTap,
-        // highlightColor: AppColors.primary.withValues(alpha: 0.5),
+        highlightColor: AppColors.primary.withValues(alpha: 0.5),
         // splashColor: AppColors.primary.withValues(alpha: 0.3),
         // hoverColor: AppColors.surface,
         child: Container(
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.02),

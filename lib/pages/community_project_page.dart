@@ -30,7 +30,7 @@ class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
           iconTheme: const IconThemeData(color: AppColors.textMuted),
           titleSpacing: 0,
           title: const Text(
-            'Community Projects',
+            'Community Events',
             style: TextStyle(
               fontFamily: 'Poppins',
               color: AppColors.textMain,
@@ -84,7 +84,7 @@ class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
                               });
                             },
                             decoration: InputDecoration(
-                              hintText: 'Search all projects...',
+                              hintText: 'Search all events...',
                               hintStyle: TextStyle(
                                 color: AppColors.textMuted,
                                 fontSize: 14,
@@ -170,6 +170,8 @@ class _CommunityProjectsPageState extends State<CommunityProjectsPage> {
                             event['amountTarget']?.toDouble() ?? 0,
                             snapshot[index].id,
                             event['eventCategory'] ?? 'Uncategorized',
+                            event['eventImageURL'] ??
+                                'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
                           ),
                         ],
                       );

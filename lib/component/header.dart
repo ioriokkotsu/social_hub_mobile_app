@@ -101,12 +101,6 @@ class _HeaderState extends State<Header> {
                         ),
                         onPressed: () {
                           signOut();
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => NotificationsPage(),
-                          //   ),
-                          // );
                         },
                       ),
                     ),

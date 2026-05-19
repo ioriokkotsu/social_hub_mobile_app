@@ -5,6 +5,7 @@ import 'package:social_hub/pages/ngo_profile_page.dart';
 import 'package:social_hub/pages/volunteer_application_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
+import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 import 'package:intl/intl.dart';
 
@@ -29,8 +30,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
       .doc(widget.uid);
   @override
   Widget build(BuildContext context) {
-    return FirestoreFutureBuilder(
-      future: AuthService().getCollectionData(widget.uid, 'communityEvents'),
+    return FirestoreStreamBuilder(
+      stream: AuthService().getCollectionDataSnapshot(widget.uid, 'communityEvents'),
       builder: (event) {
         return Scaffold(
           backgroundColor: AppColors.surface,
@@ -49,7 +50,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
+                            event?['eventImageURL'] ?? '',
                             fit: BoxFit.cover,
                           ),
                           Container(color: Colors.black.withValues(alpha: 0.1)),
@@ -517,6 +518,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
             content: Text('Payment successful! Thank you for your donation.'),
           ),
         );
+        Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Payment failed: ${e.toString()}')),

@@ -55,17 +55,13 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final TextEditingController _displayNameController =
-      TextEditingController();
+  final TextEditingController _displayNameController = TextEditingController();
 
-  final TextEditingController _fullNameController =
-      TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
 
-  final TextEditingController _emailController =
-      TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
-  final TextEditingController _numberController =
-      TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
 
   String _occupation = 'Student';
 
@@ -88,9 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: AppColors.textMuted,
-        ),
+        iconTheme: const IconThemeData(color: AppColors.textMuted),
         titleSpacing: 0,
 
         title: const Text(
@@ -102,70 +96,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await AuthService().updateCollection(
-                AuthService().currentUser?.uid ?? '',
-                {
-                  'displayName': _displayNameController.text.trim(),
-                  'fullName': _fullNameController.text.trim(),
-                  'contactNumber': _numberController.text.trim(),
-                  'occupation': _occupation,
-                },
-              );
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: AppColors.primary,
-                  content: Text(
-                    'Profile updated successfully!',
-                  ),
-                ),
-              );
-
-              Navigator.pop(context);
-            },
-
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 8),
-        ],
       ),
 
       body: FirestoreFutureBuilder(
-        future: AuthService().getUserData(
-          AuthService().currentUser?.uid ?? '',
-        ),
+        future: AuthService().getUserData(AuthService().currentUser?.uid ?? ''),
 
         builder: (user) {
           if (!_isInitialized) {
-            _displayNameController.text =
-                user?['displayName'] ?? '';
+            _displayNameController.text = user?['displayName'] ?? '';
 
             _fullNameController.text =
-                user?['fullName'] ??
-                user?['displayName'] ??
-                '';
+                user?['fullName'] ?? user?['displayName'] ?? '';
 
-            _emailController.text =
-                user?['email'] ?? '';
+            _emailController.text = user?['email'] ?? '';
 
             _numberController.text =
                 MalaysiaPhoneNumberFormatter._formatMalaysiaPhone(
                   user?['contactNumber'] ?? '',
                 );
 
-            _occupation =
-                user?['occupation'] ?? 'Student';
+            _occupation = user?['occupation'] ?? 'Student';
 
             _isInitialized = true;
           }
@@ -187,10 +137,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
 
-                        border: Border.all(
-                          color: AppColors.appBg,
-                          width: 4,
-                        ),
+                        border: Border.all(color: AppColors.appBg, width: 4),
 
                         image: DecorationImage(
                           image: NetworkImage(
@@ -207,10 +154,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         print("Opening image picker...");
 
                         await updateProfilePicture(
-                          AuthService()
-                                  .currentUser
-                                  ?.uid ??
-                              '',
+                          AuthService().currentUser?.uid ?? '',
                         );
 
                         print("Profile picture updated");
@@ -252,10 +196,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
               const SizedBox(height: 16),
 
-              _buildFormSection(
-                'Full Name',
-                controller: _fullNameController,
-              ),
+              _buildFormSection('Full Name', controller: _fullNameController),
 
               const SizedBox(height: 16),
 
@@ -275,15 +216,53 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
               const SizedBox(height: 16),
 
-              _buildDropdownSection(
-                'Occupation',
-                [
-                  'Student',
-                  'Professional',
-                  'Community Member',
-                  'Working',
-                ],
-                _occupation,
+              _buildDropdownSection('Occupation', [
+                'Student',
+                'Professional',
+                'Community Member',
+                'Working',
+              
+              ], _occupation),
+
+              const SizedBox(height: 50),
+
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  onPressed: () async {
+                    await AuthService().updateCollection(
+                      AuthService().currentUser?.uid ?? '',
+                      {
+                        'displayName': _displayNameController.text.trim(),
+                        'fullName': _fullNameController.text.trim(),
+                        'contactNumber': _numberController.text.trim(),
+                        'occupation': _occupation,
+                      },
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: AppColors.primary,
+                        content: Text('Profile updated successfully!'),
+                      ),
+                    );
+
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Save Changes',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ],
           );
@@ -316,16 +295,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const SizedBox(height: 8),
 
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
 
           decoration: BoxDecoration(
             color: AppColors.appBg,
 
-            border: Border.all(
-              color: AppColors.gray100,
-            ),
+            border: Border.all(color: AppColors.gray100),
 
             borderRadius: BorderRadius.circular(12),
           ),
@@ -334,9 +309,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             controller: controller,
             readOnly: isReadOnly,
 
-            keyboardType: isPhone
-                ? TextInputType.number
-                : TextInputType.text,
+            keyboardType: isPhone ? TextInputType.number : TextInputType.text,
             inputFormatters: isPhone
                 ? <TextInputFormatter>[MalaysiaPhoneNumberFormatter()]
                 : null,
@@ -345,14 +318,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
               fontSize: 14,
               fontWeight: FontWeight.w500,
 
-              color: isReadOnly
-                  ? AppColors.textMuted
-                  : AppColors.textMain,
+              color: isReadOnly ? AppColors.textMuted : AppColors.textMain,
             ),
 
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
+            decoration: const InputDecoration(border: InputBorder.none),
           ),
         ),
       ],
@@ -382,17 +351,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const SizedBox(height: 8),
 
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 4,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
 
           decoration: BoxDecoration(
             color: AppColors.appBg,
 
-            border: Border.all(
-              color: AppColors.gray100,
-            ),
+            border: Border.all(color: AppColors.gray100),
 
             borderRadius: BorderRadius.circular(12),
           ),
@@ -424,8 +388,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
               onChanged: (String? newValue) {
                 setState(() {
-                  _occupation =
-                      newValue ?? 'Student';
+                  _occupation = newValue ?? 'Student';
                 });
               },
             ),

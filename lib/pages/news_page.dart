@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:social_hub/models/article_model.dart';
+import 'package:social_hub/services/news_service.dart';
 import 'package:social_hub/theme/theme.dart';
 
 class NewsPage extends StatefulWidget {
@@ -9,6 +12,23 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  late Future<List<Article>> futureNews;
+
+  @override
+  void initState() {
+    super.initState();
+    futureNews = NewsService().fetchNews();
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day}/${date.month}/${date.year}';
+    } catch (e) {
+      return 'Unknown date';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,9 +36,9 @@ class _NewsPageState extends State<NewsPage> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textMuted),
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Global News',
+          'News Articles',
           style: TextStyle(
             fontFamily: 'Poppins',
             color: AppColors.textMain,
@@ -26,124 +46,129 @@ class _NewsPageState extends State<NewsPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(32),
+            bottomRight: Radius.circular(32),
+          ),
+        ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(24),
-        physics: const BouncingScrollPhysics(),
-        children: [
-          _buildNewsCard(
-            tag: 'Environment',
-            tagColor: AppColors.primary,
-            title: 'UN Announces New Global Plastic Treaty Negotiations',
-            source: 'Reuters • 2 hours ago',
-            imageUrl:
-                'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=200&q=80',
-          ),
-          _buildNewsCard(
-            tag: 'Education',
-            tagColor: AppColors.accent,
-            title: 'How Tech is Closing the Gap in Rural Communities',
-            source: 'Global Times • 5 hours ago',
-            imageUrl:
-                'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=80',
-          ),
-          _buildNewsCard(
-            tag: 'Innovation',
-            tagColor: AppColors.blue500,
-            title:
-                'Startups Focus on SDG 9: Industry, Innovation, and Infrastructure',
-            source: 'Tech Insider • 1 day ago',
-            iconFallback: Icons.image_outlined,
-          ),
-        ],
-      ),
-    );
-  }
+      body: FutureBuilder<List<Article>>(
+        future: futureNews,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            );
+          }
 
-  Widget _buildNewsCard({
-    required String tag,
-    required Color tagColor,
-    required String title,
-    required String source,
-    String? imageUrl,
-    IconData? iconFallback,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: softShadow,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image or Icon Fallback
-          Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              color: AppColors.gray100,
-              borderRadius: BorderRadius.circular(16),
-              image: imageUrl != null
-                  ? DecorationImage(
-                      image: NetworkImage(imageUrl),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: imageUrl == null && iconFallback != null
-                ? Icon(iconFallback, color: Colors.grey[400], size: 32)
-                : null,
-          ),
-          const SizedBox(width: 12),
-          // Content
-          Expanded(
-            child: SizedBox(
-              height: 96,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error loading news',
+                style: GoogleFonts.poppins(
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
+              ),
+            );
+          }
+
+          final articles = snapshot.data ?? [];
+
+          return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 85),
+            physics: const BouncingScrollPhysics(),
+            itemCount: articles.length,
+            itemBuilder: (context, index) {
+              final article = articles[index];
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: softShadow,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        tag.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: tagColor,
-                          letterSpacing: 0.5,
+                      if (article.imageUrl.isNotEmpty)
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
+                          ),
+                          child: Image.network(
+                            article.imageUrl,
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                height: 200,
+                                color: AppColors.gray100,
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          height: 1.2,
-                          color: AppColors.textMain,
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              article.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textMain,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              article.description,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: AppColors.textMuted,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.5),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                _formatDate(article.publishedAt),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: AppColors.textMain,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
-                  Text(
-                    source,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

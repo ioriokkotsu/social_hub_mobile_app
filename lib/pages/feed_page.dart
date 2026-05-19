@@ -63,7 +63,7 @@ class _FeedPageState extends State<FeedPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Create Post',
+                          'Create Feed Post',
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 20,
@@ -577,16 +577,22 @@ class _FeedPageState extends State<FeedPage> {
                   MediaQuery.of(context).padding.bottom +
                   kBottomNavigationBarHeight +
                   12,
+              left: 16,
+              right: 16,
             ),
             physics: const BouncingScrollPhysics(),
             children: [
               GestureDetector(
                 onTap: _showCreatePostSheet,
                 child: Container(
-                  color: AppColors.surface,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: softShadow,
+                    color: AppColors.surface,
                   ),
                   margin: const EdgeInsets.only(bottom: 16),
                   child: Row(
@@ -718,9 +724,13 @@ class _FeedPageState extends State<FeedPage> {
         userRef.path == currentUserRef.path;
 
     return Container(
-      color: AppColors.surface,
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: softShadow,
+        color: AppColors.surface,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

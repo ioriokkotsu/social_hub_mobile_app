@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_hub/auth/sign_in_page.dart';
 import 'package:social_hub/auth/sign_up_page.dart';
 import 'package:social_hub/theme/theme.dart';
 
@@ -10,6 +11,9 @@ class RoleSelectionPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.appBg,
       appBar: AppBar(
+        leading: const SizedBox(
+          height: 0,
+        ),
         backgroundColor: AppColors.appBg,
         elevation: 0,
         title: const Text(
@@ -49,7 +53,7 @@ class RoleSelectionPage extends StatelessWidget {
                 icon: Icons.volunteer_activism,
                 onTap: () => Navigator.push(
                   context,
-                  createSlideRoute(const SignUpPage(selectedRole: 'volunteer')),
+                  createSlideRoute(const LogInPage(selectedRole: 'volunteer')),
                 ),
               ),
               const SizedBox(height: 16),
@@ -59,7 +63,7 @@ class RoleSelectionPage extends StatelessWidget {
                 icon: Icons.business,
                 onTap: () => Navigator.push(
                   context,
-                  createSlideRoute(const SignUpPage(selectedRole: 'ngo')),
+                  createSlideRoute(const LogInPage(selectedRole: 'ngo')),
                 ),
               ),
             ],

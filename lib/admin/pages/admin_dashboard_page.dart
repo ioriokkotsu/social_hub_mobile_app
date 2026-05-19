@@ -5,6 +5,7 @@ import 'package:social_hub/admin/pages/create_event_page.dart';
 import 'package:social_hub/admin/pages/event_detail_page.dart';
 import 'package:social_hub/admin/pages/pending_volunteer_page.dart';
 import 'package:social_hub/admin/pages/volunteer_list_page.dart';
+import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/services/stream_builder.dart';
@@ -82,7 +83,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () => AuthService().signOut(),
+                      onTap: ()  {
+                        AuthService().signOut(); 
+                        Navigator.push(
+                          context,
+                          createSlideRoute(
+                            RoleSelectionPage(),
+                          ),
+                        );;
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -405,7 +414,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         //     ],
         //   ),
         // ),
-
         const SizedBox(height: 16),
         const Text(
           'Event Impact Summary',

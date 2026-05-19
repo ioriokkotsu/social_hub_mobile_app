@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/pages/community_project_page.dart';
+import 'package:social_hub/pages/donation_history_page.dart';
 import 'package:social_hub/pages/news_page.dart';
+import 'package:social_hub/pages/volunteer_dashboard.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/theme/theme.dart';
 
@@ -11,10 +13,7 @@ class DrawerSideBar extends StatelessWidget {
 
   Future<void> signOut(BuildContext context) async {
     await AuthService().signOut();
-    Navigator.push(
-      context,
-      createSlideRoute(const RoleSelectionPage()),
-    );
+    Navigator.push(context, createSlideRoute(const RoleSelectionPage()));
   }
 
   @override
@@ -114,9 +113,7 @@ class DrawerSideBar extends StatelessWidget {
                   label: 'Community Events',
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => CommunityProjectsPage(),
-                    ),
+                    createSlideRoute(CommunityProjectsPage()),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -124,15 +121,20 @@ class DrawerSideBar extends StatelessWidget {
                   icon: Icons.badge_outlined,
                   iconColor: Colors.green,
                   label: 'My Volunteer Dashboard',
+                  onTap: () => Navigator.push(
+                    context,
+                    createSlideRoute(VolunteerDashboardPage()),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 drawerItem(
                   icon: Icons.money_outlined,
                   iconColor: Colors.orangeAccent,
                   label: 'My Donation History',
-                  onTap: () {
-                    // Navigator.push(context, createSlideRoute(LogHoursPage()));
-                  },
+                  onTap: () => Navigator.push(
+                    context,
+                    createSlideRoute(DonationHistoryPage()),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8),

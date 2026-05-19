@@ -111,7 +111,18 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
               ),
               Expanded(
                 child: FirestoreFutureBuilder(
-                  loading: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+                  empty: const Center(
+                    child: Text(
+                      'No donations made yet.',
+                      style: TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  loading: const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  ),
                   future: FirebaseFirestore.instance
                       .collection('donations')
                       .where(
@@ -123,24 +134,39 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
                       .orderBy('createdAt', descending: true)
                       .get(),
                   builder: (donation) {
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(24),
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: donation.size,
-                      itemBuilder: (context, index) {
-                        final transaction = donation.docs[index];
-                        return _buildTransaction(
-                          eventRef: transaction['eventID'] as DocumentReference,
-                          ngoRef: transaction['ngoID'] as DocumentReference,
-                          date: transaction['createdAt'] != null
-                              ? DateFormat.yMMMd().add_jm().format(
-                                  transaction['createdAt'].toDate(),
-                                )
-                              : 'Unknown Date',
-                          amount: formatter.format(transaction['amount']),
-                        );
-                      },
-                    );
+                    return donation.size == 0
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: Center(
+                              child: const Text(
+                                'You have not made any donations yet.',
+                                style: TextStyle(
+                                  color: AppColors.textMuted,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(24),
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: donation.size,
+                            itemBuilder: (context, index) {
+                              final transaction = donation.docs[index];
+                              return _buildTransaction(
+                                eventRef:
+                                    transaction['eventID'] as DocumentReference,
+                                ngoRef:
+                                    transaction['ngoID'] as DocumentReference,
+                                date: transaction['createdAt'] != null
+                                    ? DateFormat.yMMMd().add_jm().format(
+                                        transaction['createdAt'].toDate(),
+                                      )
+                                    : 'Unknown Date',
+                                amount: formatter.format(transaction['amount']),
+                              );
+                            },
+                          );
                   },
                 ),
               ),
@@ -177,7 +203,9 @@ class _DonationHistoryPageState extends State<DonationHistoryPage> {
                 future: eventRef.get(),
                 builder: (event) {
                   return Text(
-                    event.exists ? event['eventTitle'] : 'Align with Event Name',
+                    event.exists
+                        ? event['eventTitle']
+                        : 'Align with Event Name',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
