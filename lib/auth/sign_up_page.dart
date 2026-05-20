@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/auth/sign_in_page.dart';
+import 'package:social_hub/pages/home_page.dart';
+import 'package:social_hub/pages/main_page.dart';
 import 'package:social_hub/theme/theme.dart';
 import '../services/auth_service.dart';
 
@@ -15,9 +17,25 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
+
+  String _occupation = 'Student';
+  final List<String> _occupationOptions = [
+    'Student',
+    'Part Time Student',
+    'Professional',
+    'Freelancer',
+    'Community Member',
+    'Retired',
+    'Homemaker',
+    'Self-Employed',
+    'Working',
+    'Unemployed',
+    'Others',
+  ];
 
   bool _isLoading = false;
 
@@ -37,8 +55,20 @@ class _SignUpPageState extends State<SignUpPage> {
           _emailController.text.trim(),
           _passwordController.text.trim(),
           name: _nameController.text.trim(),
+          occupation: _occupation,
+          number: _numberController.text.trim(),
         );
       }
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Account created successfully!'),
+          backgroundColor: AppColors.surface,
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        createSlideRoute(const MainPage()),
+      );
     } catch (e) {
       messenger.showSnackBar(
         SnackBar(
@@ -105,9 +135,17 @@ class _SignUpPageState extends State<SignUpPage> {
 
               _buildTextField('Full Name', _nameController, false),
               const SizedBox(height: 16),
+              widget.selectedRole == 'volunteer'
+                  ? _buildDropdownSection('Occupation', _occupationOptions, _occupation)
+                  : SizedBox.shrink(),
+              widget.selectedRole == 'volunteer'
+                  ? const SizedBox(height: 16)
+                  : SizedBox.shrink(),
               _buildTextField('Email Address', _emailController, false),
               const SizedBox(height: 16),
               _buildTextField('Password', _passwordController, true),
+              const SizedBox(height: 16),
+              _buildTextField('Contact Number', _numberController, false),
               const SizedBox(height: 32),
 
               SizedBox(
@@ -201,6 +239,63 @@ class _SignUpPageState extends State<SignUpPage> {
           contentPadding: const EdgeInsets.all(16),
         ),
       ),
+    );
+  }
+
+  Widget _buildDropdownSection(
+    String label,
+    List<String> options,
+    String currentValue,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.appBg,
+            border: Border.all(color: AppColors.gray100),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: currentValue,
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.textMuted,
+              ),
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textMain,
+              ),
+              items: options.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _occupation = newValue ?? 'Student';
+                });
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

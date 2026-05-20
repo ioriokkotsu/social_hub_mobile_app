@@ -271,6 +271,7 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
 
                 return {
                   'user': data,
+                  'userID': doc.id,
                   'logHours': matchedEvent['totalLogHours'] ?? 0,
                 };
               })
@@ -291,6 +292,7 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
                     final logHours = users[index]['logHours'];
 
                     return _buildVolunteerCard(
+                      users[index]['userID'],
                       user['displayName'] ?? 'No Name',
                       user['occupation'] ?? 'Volunteer',
                       '$logHours hrs',
@@ -307,6 +309,7 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
   }
 
   Widget _buildVolunteerCard(
+    String userID,
     String name,
     String role,
     String hours,
@@ -335,30 +338,110 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
           border: Border.all(color: AppColors.gray100),
           boxShadow: softShadow,
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(backgroundImage: NetworkImage(imgUrl), radius: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
+            Row(
+              children: [
+                CircleAvatar(backgroundImage: NetworkImage(imgUrl), radius: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        '$role • $hours',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '$role • $hours',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
+            ),
+            Divider(height: 24, thickness: 1, color: AppColors.gray100),
+            Text(
+              'Tasks Completed: ',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            const Divider(),
+            FirestoreFutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              future: FirebaseFirestore.instance
+                  .collection('volunteerLogs')
+                  .where(
+                    'userID',
+                    isEqualTo: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userID),
+                  )
+                  .where(
+                    'eventID',
+                    isEqualTo: FirebaseFirestore.instance
+                        .collection('communityEvents')
+                        .doc(widget.eventID),
+                  )
+                  .where('status', isEqualTo: 'Approved')
+                  .get(),
+              builder: (snapshot) {
+                final data = snapshot.docs;
+                return ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final log = data[index].data();
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '> ${log['taskCompleted']}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                '${log['hoursClaimed'] ?? 0} hrs',
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),

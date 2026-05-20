@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
@@ -114,54 +115,16 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  ngo?['isVerified'] == true ?
-                                  Icon(
-                                    Icons.check_circle,
-                                    color: AppColors.secondary,
-                                    size: 16,
-                                  )
-                                  : const SizedBox(),
+                                  ngo?['isVerified'] == true
+                                      ? Icon(
+                                          Icons.check_circle,
+                                          color: AppColors.secondary,
+                                          size: 16,
+                                        )
+                                      : const SizedBox(),
                                 ],
                               ),
-                              const Text(
-                                'Focus: SDG 4 & 10',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
                             ],
-                          ),
-                        ),
-                        // Follow Button
-                        GestureDetector(
-                          onTap: _toggleFollow,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _isFollowing
-                                  ? AppColors.primary
-                                  : AppColors.primary.withOpacity(0.1),
-                              border: Border.all(
-                                color: _isFollowing
-                                    ? AppColors.primary
-                                    : AppColors.primary.withOpacity(0.2),
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              _isFollowing ? 'Following' : 'Follow',
-                              style: TextStyle(
-                                color: _isFollowing
-                                    ? Colors.white
-                                    : AppColors.primary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                           ),
                         ),
                       ],
@@ -188,25 +151,58 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildStatCard(
-                            'Projects',
-                            ngo?['overallStats']?['totalProjects'].toString() ?? 'N/A',
-                            AppColors.primary,
+                          child: FirestoreFutureBuilder(
+                            width: 113.1,
+                            height: 70,
+                            future: FirebaseFirestore.instance
+                                .collection('communityEvents')
+                                .where(
+                                  'organizedBy',
+                                  isEqualTo: FirebaseFirestore.instance
+                                      .collection('ngo')
+                                      .doc(widget.ngoId),
+                                )
+                                .get(),
+                            builder: (snapshot) {
+                              final count = snapshot.docs.length;
+                              return _buildStatCard(
+                                'Projects',
+                                count.toString(),
+                                AppColors.primary,
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: _buildStatCard(
-                            'Vols.',
-                            ngo?['overallStats']?['totalVolunteers'].toString() ?? 'N/A',
-                            AppColors.textMain,
+                          child: FirestoreFutureBuilder(
+                            width: 113.1,
+                            height: 70,
+                            future: FirebaseFirestore.instance
+                                .collection('volunteerApplication')
+                                .where(
+                                  'ngoID',
+                                  isEqualTo: FirebaseFirestore.instance
+                                      .collection('ngo')
+                                      .doc(widget.ngoId),
+                                )
+                                .where('status', isEqualTo: 'Approved')
+                                .get(),
+                            builder: (snapshot) {
+                              final count = snapshot.docs.length;
+                              return _buildStatCard(
+                                'Vols',
+                                count.toString(),
+                                AppColors.primary,
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: _buildStatCard(
                             'Raised',
-                            'RM ${ngo?['overallStats']?['totalRaised'].toString() ?? 'N/A'}',
+                            'RM ${ngo?['overallStats']?['totalRaised'].toStringAsFixed(2) ?? 'N/A'}',
                             AppColors.accent,
                           ),
                         ),
@@ -225,8 +221,8 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'EduGlobal NGO is dedicated to bridging the digital divide in rural communities across Southeast Asia. We believe quality education is a universal right and strive to provide modern technological resources to underprivileged schools.',
+                    Text(
+                      ngo?['ngoAboutUs'] ?? 'No description available.',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textMuted,
@@ -238,8 +234,14 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _buildTag(Icons.language, 'eduglobal.org'),
-                        _buildTag(Icons.email_outlined, 'hello@eduglobal.org'),
+                        _buildTag(
+                          Icons.language,
+                          ngo?['ngoWebsite'] ?? 'No website available',
+                        ),
+                        _buildTag(
+                          Icons.email_outlined,
+                          ngo?['ngoEmail'] ?? 'No email available',
+                        ),
                       ],
                     ),
 
@@ -247,7 +249,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
 
                     // Completed Projects
                     const Text(
-                      'Completed Projects',
+                      'Conducted Events',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
@@ -255,17 +257,35 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _buildCompletedProject(
-                      imageUrl:
-                          'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=150&q=80',
-                      title: '2023 Digital Literacy Camp',
-                      subtitle: 'Completed • 500+ students reached',
-                    ),
-                    _buildCompletedProject(
-                      imageUrl:
-                          'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=150&q=80',
-                      title: 'Library Renovation Project',
-                      subtitle: 'Completed • 3 Schools Updated',
+                    FirestoreFutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      future: FirebaseFirestore.instance
+                          .collection('communityEvents')
+                          .where(
+                            'organizedBy',
+                            isEqualTo: FirebaseFirestore.instance
+                                .collection('ngo')
+                                .doc(widget.ngoId),
+                          )
+                          .get(),
+                      builder: (snapshot) {
+                        final docs = snapshot.docs;
+                        print(docs.length);
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: docs.length,
+                          itemBuilder: (context, index) {
+                            final event = docs[index].data();
+                            return _buildCompletedProject(
+                              imageUrl: event['eventImageURL'] ?? '',
+                              title:
+                                  event['eventTitle'] ?? 'No title available',
+                              subtitle:
+                                  event['status'] ?? 'No description available',
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),

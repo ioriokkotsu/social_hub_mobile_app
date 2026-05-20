@@ -21,6 +21,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.appBg,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: AppColors.surface,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.textMuted),
@@ -345,6 +346,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
                   children: [
                     _buildActivityItem(
                       eventRef: log['eventID'],
+                      taskCompleted: log['taskCompleted'],
                       status: log['status'],
                       hours: log['hoursClaimed'],
                     ),
@@ -376,6 +378,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
     required DocumentReference eventRef,
     required String status,
     required int hours,
+    required String taskCompleted,
   }) {
     Color statusColor = status == 'Approved'
         ? AppColors.primary
@@ -443,6 +446,14 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
                     );
                   },
                 ),
+                Text(
+                  taskCompleted,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 RichText(
                   text: TextSpan(
                     style: const TextStyle(

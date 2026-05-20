@@ -16,7 +16,9 @@ class AuthService {
   Future<UserCredential> signUpWithEmail(
     String email,
     String password, {
-    String? name,
+    required String name,
+    required String occupation,
+    required String number,
   }) async {
     try {
       // 1. Create the user in Firebase Auth
@@ -28,10 +30,13 @@ class AuthService {
         await _firestore.collection('users').doc(userCredential.user!.uid).set({
           'uid': userCredential.user!.uid,
           'email': email,
-          'displayName': name ?? '', // Save the name if provided
-          //'role': 'Volunteer', // Default role for new users
+          'displayName': name ,
+          'occupation': occupation, 
           'createdAt': FieldValue.serverTimestamp(),
           'hoursLogged': 0,
+          'profileURL': 'https://res.cloudinary.com/dd7kgf2io/image/upload/v1779262634/empty_profile_cl2y8s.jpg',
+          'contactNumber': number,
+          'listJoinedEvents': [],
         });
       }
 

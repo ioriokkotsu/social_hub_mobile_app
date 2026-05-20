@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
@@ -17,8 +18,9 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? profileURL;
 
-  var currentProfileURL = 'https://i.pravatar.cc/150?img=32';
+  var currentProfileURL = '';
 
   void _showCreatePostSheet() {
     final TextEditingController postController = TextEditingController();
@@ -93,7 +95,7 @@ class _FeedPageState extends State<FeedPage> {
                           builder: (user) {
                             currentProfileURL =
                                 user['profileURL'] ??
-                                'https://i.pravatar.cc/150?img=32';
+                                '';
                             return CircleAvatar(
                               backgroundImage: NetworkImage(currentProfileURL),
                               radius: 20,
@@ -373,7 +375,7 @@ class _FeedPageState extends State<FeedPage> {
                                       'Unknown User';
                                   final userAvatar =
                                       userSnapshot.data?['profileURL'] ??
-                                      'https://i.pravatar.cc/150?img=32';
+                                      '';
 
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 16),
@@ -439,11 +441,19 @@ class _FeedPageState extends State<FeedPage> {
                     ),
                     Row(
                       children: [
-                        const CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            'https://i.pravatar.cc/150?img=32',
-                          ),
-                          radius: 18,
+                        FirestoreFutureBuilder(
+                          future: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(AuthService().currentUser?.uid)
+                              .get(),
+                          builder: (userSnapshot) {
+                            return CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                userSnapshot.data()?['profileURL'] ?? '',
+                              ),
+                              radius: 18,
+                            );
+                          }
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -529,6 +539,7 @@ class _FeedPageState extends State<FeedPage> {
     return Scaffold(
       backgroundColor: AppColors.appBg,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: AppColors.surface,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -604,14 +615,14 @@ class _FeedPageState extends State<FeedPage> {
                             .collection('users')
                             .doc(AuthService().currentUser?.uid)
                             .get(),
-                        builder: (user) {
-                          currentProfileURL =
-                              user['profileURL'] ??
-                              'https://i.pravatar.cc/150?img=32';
-                          return CircleAvatar(
-                            backgroundImage: NetworkImage(user['profileURL']),
-                            radius: 20,
-                          );
+                        builder: (userSnapshot) {
+                            currentProfileURL =
+                                userSnapshot.data()?['profileURL'] ??
+                                '';
+                            return CircleAvatar(
+                              backgroundImage: NetworkImage(currentProfileURL),
+                              radius: 20,
+                            );
                         },
                       ),
                       const SizedBox(width: 12),
@@ -745,7 +756,7 @@ class _FeedPageState extends State<FeedPage> {
                 final occupation = userData['occupation'] ?? 'Volunteer';
                 final profileURL =
                     userData['profileURL'] ??
-                    'https://i.pravatar.cc/150?img=32';
+                    '';
 
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -780,6 +791,7 @@ class _FeedPageState extends State<FeedPage> {
                       ],
                     ),
                     PopupMenuButton<String>(
+                      color: AppColors.surface,
                       icon: const Icon(
                         Icons.more_horiz,
                         color: AppColors.textMuted,
@@ -812,6 +824,7 @@ class _FeedPageState extends State<FeedPage> {
                             context: context,
                             builder: (dialogContext) {
                               return AlertDialog(
+                                backgroundColor: AppColors.surface,
                                 title: const Text('Delete Post'),
                                 content: const Text(
                                   'Are you sure you want to delete this post?',

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:social_hub/auth/role_selection_page.dart';
@@ -6,6 +7,7 @@ import 'package:social_hub/pages/donation_history_page.dart';
 import 'package:social_hub/pages/news_page.dart';
 import 'package:social_hub/pages/volunteer_dashboard.dart';
 import 'package:social_hub/services/auth_service.dart';
+import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/theme/theme.dart';
 
 class DrawerSideBar extends StatelessWidget {
@@ -36,45 +38,56 @@ class DrawerSideBar extends StatelessWidget {
             color: AppColors.primary.withValues(alpha: 0.1),
             padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
 
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  margin: const EdgeInsets.only(bottom: 12),
+            child: FirestoreFutureBuilder(
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(AuthService().currentUser!.uid)
+                  .get(),
+              builder: (user) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      margin: const EdgeInsets.only(bottom: 12),
 
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
 
-                    border: Border.all(color: AppColors.primary, width: 2),
+                        border: Border.all(color: AppColors.primary, width: 2),
 
-                    image: const DecorationImage(
-                      image: NetworkImage('https://i.pravatar.cc/150?img=32'),
-                      fit: BoxFit.cover,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            user['profileURL'] ??
+                                'https://ui-avatars.com/api/?name=F&background=0D8ABC&color=fff&size=128',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
 
-                Text(
-                  'Faiz Volunteer',
-                  style: GoogleFonts.poppins(
-                    color: AppColors.textMain,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    Text(
+                      user['displayName'] ?? 'User Name',
+                      style: GoogleFonts.poppins(
+                        color: AppColors.textMain,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
 
-                const SizedBox(height: 4),
+                    const SizedBox(height: 4),
 
-                Text(
-                  'Student Volunteer',
-                  style: GoogleFonts.poppins(
-                    color: AppColors.textMuted,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+                    Text(
+                      user['occupation'] ?? 'Occupation',
+                      style: GoogleFonts.poppins(
+                        color: AppColors.textMuted,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           Expanded(

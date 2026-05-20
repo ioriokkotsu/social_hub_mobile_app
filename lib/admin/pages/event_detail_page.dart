@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:social_hub/admin/pages/edit_event_page.dart';
 import 'package:social_hub/admin/pages/volunteer_list_page.dart';
+import 'package:social_hub/admin/pages/view_donation.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/theme/theme.dart';
@@ -73,7 +74,8 @@ class _EventDetailPageState extends State<EventDetailPage> {
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            'https://images.unsplash.com/photo-1497645851419-f06bcaeb1525?w=800&q=80',
+                            event?['eventImageURL'] ??
+                                'https://via.placeholder.com/600x400?text=No+Image',
                             fit: BoxFit.cover,
                           ),
                           Container(
@@ -358,30 +360,63 @@ class _EventDetailPageState extends State<EventDetailPage> {
                     ),
                     boxShadow: floatingShadow,
                   ),
-                  child: ElevatedButton.icon(
-                    onPressed: () => Navigator.push(
-                      context,
-                      createSlideRoute(
-                        VolunteerListPage(eventID: widget.eventID),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.push(
+                            context,
+                            createSlideRoute(
+                              VolunteerListPage(eventID: widget.eventID),
+                            ),
+                          ),
+                          icon: const Icon(Icons.people, size: 20),
+                          label: const Text(
+                            'View Volunteers',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    icon: const Icon(Icons.people, size: 20),
-                    label: const Text(
-                      'Manage Volunteers',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.push(
+                            context,
+                            createSlideRoute(
+                              ViewDonation(eventID: widget.eventID),
+                            ),
+                          ),
+                          icon: const Icon(Icons.money, size: 20),
+                          label: const Text(
+                            'View Donators',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.surface,
+                            foregroundColor: AppColors.textMain,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: const BorderSide(color: AppColors.gray100),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      minimumSize: const Size(double.infinity, 0),
-                    ),
+                    ],
                   ),
                 ),
               ),

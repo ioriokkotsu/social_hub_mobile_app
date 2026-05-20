@@ -34,6 +34,7 @@ class _NewsPageState extends State<NewsPage> {
     return Scaffold(
       backgroundColor: AppColors.appBg,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: AppColors.surface,
         elevation: 0,
         automaticallyImplyLeading: false,

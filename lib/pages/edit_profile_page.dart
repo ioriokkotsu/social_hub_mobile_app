@@ -63,7 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   final TextEditingController _numberController = TextEditingController();
 
-  String _occupation = 'Student';
+  String _occupation = '';
 
   bool _isInitialized = false;
 
@@ -82,11 +82,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       backgroundColor: AppColors.surface,
 
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: AppColors.surface,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.textMuted),
         titleSpacing: 0,
-
         title: const Text(
           'Edit Profile',
           style: TextStyle(
@@ -115,7 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   user?['contactNumber'] ?? '',
                 );
 
-            _occupation = user?['occupation'] ?? 'Student';
+            _occupation = user?['occupation'] ?? '';
 
             _isInitialized = true;
           }
@@ -218,10 +218,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
               _buildDropdownSection('Occupation', [
                 'Student',
+                'Part Time Student',
                 'Professional',
+                'Freelancer',
                 'Community Member',
+                'Retired',
+                'Homemaker',
+                'Self-Employed',
                 'Working',
-              
+                'Unemployed',
+                'Others',
               ], _occupation),
 
               const SizedBox(height: 50),
@@ -230,7 +236,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),

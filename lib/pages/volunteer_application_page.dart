@@ -45,6 +45,7 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
         return Scaffold(
           backgroundColor: AppColors.surface,
           appBar: AppBar(
+            centerTitle: true,
             backgroundColor: AppColors.surface,
             elevation: 0,
             iconTheme: const IconThemeData(color: AppColors.textMuted),

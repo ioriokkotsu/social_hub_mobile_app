@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/component/drawer.dart';
 import 'package:social_hub/pages/community_project_page.dart';
 import 'package:social_hub/pages/news_page.dart';
@@ -40,51 +41,52 @@ class _HomePageState extends State<HomePage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            final data = {
-              "eventTitle": "Code4Future Rural Tech Camp",
-              "eventCategory": "Technology",
-              "eventVenue": "Community Hall, Kuala Selangor",
+            AuthService().signOut();
+            // final data = {
+            //   "eventTitle": "Code4Future Rural Tech Camp",
+            //   "eventCategory": "Technology",
+            //   "eventVenue": "Community Hall, Kuala Selangor",
 
-              "startDate": Timestamp.fromDate(
-                DateTime.parse("2026-06-10T09:00:00"),
-              ),
+            //   "startDate": Timestamp.fromDate(
+            //     DateTime.parse("2026-06-10T09:00:00"),
+            //   ),
 
-              "endDate": Timestamp.fromDate(
-                DateTime.parse("2026-06-12T18:00:00"),
-              ),
+            //   "endDate": Timestamp.fromDate(
+            //     DateTime.parse("2026-06-12T18:00:00"),
+            //   ),
 
-              "amountTarget": 15000.0,
-              "amountRaised": 0.0,
+            //   "amountTarget": 15000.0,
+            //   "amountRaised": 0.0,
 
-              "eventDescription":
-                  "This event focuses on teaching basic programming and digital literacy to students from rural communities. Volunteers will conduct hands-on workshops covering mobile apps, internet safety, and beginner coding projects. Donations collected will be used to purchase laptops, internet devices, and learning materials for underprivileged schools.",
+            //   "eventDescription":
+            //       "This event focuses on teaching basic programming and digital literacy to students from rural communities. Volunteers will conduct hands-on workshops covering mobile apps, internet safety, and beginner coding projects. Donations collected will be used to purchase laptops, internet devices, and learning materials for underprivileged schools.",
 
-              "requiredRoles": [
-                "Flutter Developer",
-                "UI/UX Designer",
-                "Technical Mentor",
-                "Event Coordinator",
-              ],
+            //   "requiredRoles": [
+            //     "Flutter Developer",
+            //     "UI/UX Designer",
+            //     "Technical Mentor",
+            //     "Event Coordinator",
+            //   ],
 
-              "eventImageURL": "https://example.com/images/code4future.jpg",
+            //   "eventImageURL": "https://example.com/images/code4future.jpg",
 
-              "createdAt": FieldValue.serverTimestamp(),
+            //   "createdAt": FieldValue.serverTimestamp(),
 
-              "listJoinedVolunteers": [],
+            //   "listJoinedVolunteers": [],
 
-              "status": "Active",
+            //   "status": "Active",
 
-              // Correct DocumentReference
-              "organizedBy": FirebaseFirestore.instance
-                  .collection('ngo')
-                  .doc('G62tB1ShJfaeQ4jPflziVnQZhTw1'),
-            };
+            //   // Correct DocumentReference
+            //   "organizedBy": FirebaseFirestore.instance
+            //       .collection('ngo')
+            //       .doc('G62tB1ShJfaeQ4jPflziVnQZhTw1'),
+            // };
 
-            final id = "customDocumentID";
+            // final id = "customDocumentID";
 
-            await FirebaseFirestore.instance
-                .collection('communityEvents')
-                .add(data);
+            // await FirebaseFirestore.instance
+            //     .collection('communityEvents')
+            //     .add(data);
           },
           backgroundColor: AppColors.primary,
           child: const Icon(Icons.add, color: AppColors.surface),
