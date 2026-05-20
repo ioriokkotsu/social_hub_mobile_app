@@ -85,25 +85,6 @@ class _HeaderState extends State<Header> {
                         ],
                       ),
                     ),
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.appBg,
-                        //boxShadow: softShadow,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.notifications_none,
-                          color: AppColors.textMain,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          signOut();
-                        },
-                      ),
-                    ),
                   ],
                 ),
               ],
