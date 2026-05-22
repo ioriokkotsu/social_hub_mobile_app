@@ -30,16 +30,25 @@ class _ViewJoinedProjectPageState extends State<ViewJoinedProjectPage> {
       backgroundColor: AppColors.appBg,
       body: Column(
         children: [
-          // Header Image Area
+          
           SizedBox(
             height: 200,
             child: Stack(
               children: [
-                Image.network(
-                  'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80',
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
+                FirestoreFutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('communityEvents')
+                      .doc(widget.eventID)
+                      .get(),
+                  builder: (event) {
+                    return Image.network(
+                      event['eventImageURL'] ??
+                          'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80',
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                    );
+                  }
                 ),
                 Container(color: Colors.black.withOpacity(0.4)),
                 SafeArea(
@@ -109,7 +118,7 @@ class _ViewJoinedProjectPageState extends State<ViewJoinedProjectPage> {
             ),
           ),
 
-          // Content Body pulled up slightly to overlap image
+          
           Expanded(
             child: Container(
               transform: Matrix4.translationValues(0.0, -24.0, 0.0),
@@ -134,7 +143,7 @@ class _ViewJoinedProjectPageState extends State<ViewJoinedProjectPage> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Personal Impact Stats
+                  
                   const Text(
                     'Your Impact Here',
                     style: TextStyle(
@@ -282,7 +291,7 @@ class _ViewJoinedProjectPageState extends State<ViewJoinedProjectPage> {
 
                   const SizedBox(height: 24),
 
-                  // Quick Action Buttons
+                  
                   Row(
                     children: [
                       Expanded(
@@ -319,74 +328,74 @@ class _ViewJoinedProjectPageState extends State<ViewJoinedProjectPage> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Expanded(
-                      //   child: OutlinedButton.icon(
-                      //     onPressed: () {
-                      //       //Test Function Approved Log
-                      //       updateStatusLogHours(
-                      //         'AF9yiO68sL9vfKQRDLHF',
-                      //         'Approved',
-                      //       );
-                      //     },
-                      //     icon: const Icon(Icons.message, size: 18),
-                      //     label: const Text(
-                      //       'Volunteer Chat',
-                      //       style: TextStyle(
-                      //         fontSize: 12,
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
-                      //     ),
-                      //     style: OutlinedButton.styleFrom(
-                      //       foregroundColor: AppColors.primary,
-                      //       side: BorderSide(
-                      //         color: AppColors.primary.withOpacity(0.2),
-                      //       ),
-                      //       padding: const EdgeInsets.symmetric(vertical: 14),
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(12),
-                      //       ),
-                      //       backgroundColor: AppColors.surface,
-                      //     ),
-                      //   ),
-                      // ),
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
                     ],
                   ),
 
-                  // const SizedBox(height: 32),
-                  // const Text(
-                  //   'Coordinator Announcements',
-                  //   style: TextStyle(
-                  //     fontFamily: 'Poppins',
-                  //     fontSize: 14,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 12),
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
 
-                  // _buildAnnouncementCard(
-                  //   timeAgo: '2 days ago',
-                  //   borderColor: AppColors.blue500,
-                  //   content:
-                  //       'Thank you to everyone who showed up for the South Beach sector cleanup! We collected over 500lbs of plastic. Please ensure you log your hours by Friday evening so we can process approvals before the weekend.',
-                  // ),
-                  // _buildAnnouncementCard(
-                  //   timeAgo: '1 week ago',
-                  //   borderColor: AppColors.secondary,
-                  //   content:
-                  //       'Welcome to all new volunteers! Please introduce yourselves in the Volunteer Chat. The equipment distribution list has been updated in the pinned messages.',
-                  // ),
-                  // _buildAnnouncementCard(
-                  //   timeAgo: '2 days ago',
-                  //   borderColor: AppColors.blue500,
-                  //   content:
-                  //       'Thank you to everyone who showed up for the South Beach sector cleanup! We collected over 500lbs of plastic. Please ensure you log your hours by Friday evening so we can process approvals before the weekend.',
-                  // ),
-                  // _buildAnnouncementCard(
-                  //   timeAgo: '1 week ago',
-                  //   borderColor: AppColors.primary,
-                  //   content:
-                  //       'Welcome to all new volunteers! Please introduce yourselves in the Volunteer Chat. The equipment distribution list has been updated in the pinned messages.',
-                  // ),
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
                 ],
               ),
             ),

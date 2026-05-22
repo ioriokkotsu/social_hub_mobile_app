@@ -66,22 +66,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ),
-                            // IconButton(
-                            //   icon: const Icon(
-                            //     Icons.edit_outlined,
-                            //     color: AppColors.primary,
-                            //     size: 20,
-                            //   ),
-                            //   onPressed: () {
-                            //     Navigator.push(
-                            //       context,
-                            //       createSlideRoute(const EditProfilePage()),
-                            //     );
-                            //   },
-                            //   style: IconButton.styleFrom(
-                            //     backgroundColor: AppColors.appBg,
-                            //   ),
-                            // ),
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -108,14 +108,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: [
-                        //     _buildTag('SDG 4', AppColors.primary),
-                        //     const SizedBox(width: 8),
-                        //     _buildTag('SDG 13', AppColors.accent),
-                        //   ],
-                        // ),
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                       ],
                     ),
                   ),
@@ -163,11 +163,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
                           },
                         ),
-                        // _buildMenuBtn(
-                        //   icon: Icons.language_outlined,
-                        //   iconColor: AppColors.blue500,
-                        //   title: 'Language & Settings',
-                        // ),
+                        
+                        
+                        
+                        
+                        
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 16),
                           child: Divider(color: AppColors.gray100),
@@ -186,23 +186,23 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildTag(String text, Color color) {
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-  //     decoration: BoxDecoration(
-  //       color: color.withOpacity(0.1),
-  //       borderRadius: BorderRadius.circular(16),
-  //     ),
-  //     child: Text(
-  //       text,
-  //       style: TextStyle(
-  //         color: color,
-  //         fontSize: 12,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //   );
-  // }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   Widget _buildMenuBtn({
     required IconData icon,
@@ -217,8 +217,8 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(24),
         onTap: onTap,
         highlightColor: AppColors.primary.withValues(alpha: 0.5),
-        // splashColor: AppColors.primary.withValues(alpha: 0.3),
-        // hoverColor: AppColors.surface,
+        
+        
         child: Container(
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(

@@ -78,7 +78,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                     const SizedBox(height: 24),
                     Row(
                       children: [
-                        // Avatar
+                        
                         Container(
                           width: 64,
                           height: 64,
@@ -98,7 +98,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        // Info
+                        
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,7 +138,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
                   padding: const EdgeInsets.all(24),
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    // Impact Stats
+                    
                     const Text(
                       'Overall Impact',
                       style: TextStyle(
@@ -211,7 +211,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
 
                     const SizedBox(height: 24),
 
-                    // About Us
+                    
                     const Text(
                       'About Us',
                       style: TextStyle(
@@ -247,7 +247,7 @@ class _NGOProfilePageState extends State<NGOProfilePage> {
 
                     const SizedBox(height: 24),
 
-                    // Completed Projects
+                    
                     const Text(
                       'Conducted Events',
                       style: TextStyle(

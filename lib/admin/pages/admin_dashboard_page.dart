@@ -10,10 +10,10 @@ import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
 import 'package:social_hub/services/stream_builder.dart';
 import 'package:social_hub/theme/theme.dart';
-// import 'create_event_page.dart';
-// import 'event_detail_page.dart';
-// import 'volunteer_list_page.dart';
-// import 'pending_volunteers_page.dart';
+
+
+
+
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -23,8 +23,8 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  int _mainTabIndex = 0; // 0: Overview, 1: Manage, 2: Requests
-  int _reqTabIndex = 0; // 0: Apps, 1: Hours
+  int _mainTabIndex = 0; 
+  int _reqTabIndex = 0; 
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       backgroundColor: AppColors.appBg,
       body: Column(
         children: [
-          // Sticky Top Header
+          
           Container(
             padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
             decoration: const BoxDecoration(
@@ -121,7 +121,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Animated Main Tabs (Pill Design)
+                
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
@@ -140,7 +140,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
           ),
 
-          // Content Area
+          
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
@@ -194,7 +194,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     }
   }
 
-  // ================= 1. OVERVIEW TAB =================
+  
   Widget _buildOverviewTab() {
     return ListView(
       key: const ValueKey('overview'),
@@ -319,101 +319,101 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         ),
         const SizedBox(height: 24),
 
-        // Chart Mockup
-        // Container(
-        //   padding: const EdgeInsets.all(20),
-        //   decoration: BoxDecoration(
-        //     color: AppColors.surface,
-        //     borderRadius: BorderRadius.circular(24),
-        //     boxShadow: softShadow,
-        //   ),
-        //   child: Column(
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children: [
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         children: [
-        //           const Text(
-        //             'Donation Analytics',
-        //             style: TextStyle(
-        //               fontFamily: 'Poppins',
-        //               fontSize: 14,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ),
-        //           Container(
-        //             padding: const EdgeInsets.symmetric(
-        //               horizontal: 8,
-        //               vertical: 4,
-        //             ),
-        //             decoration: BoxDecoration(
-        //               color: AppColors.appBg,
-        //               borderRadius: BorderRadius.circular(8),
-        //             ),
-        //             child: const Text(
-        //               'Last 6 Months',
-        //               style: TextStyle(
-        //                 fontSize: 10,
-        //                 fontWeight: FontWeight.bold,
-        //                 color: AppColors.textMuted,
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //       const SizedBox(height: 24),
-        //       SizedBox(
-        //         height: 100,
-        //         child: Row(
-        //           crossAxisAlignment: CrossAxisAlignment.end,
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: [
-        //             _buildBar(0.3, AppColors.primary.withOpacity(0.3)),
-        //             _buildBar(0.5, AppColors.primary.withOpacity(0.4)),
-        //             _buildBar(0.7, AppColors.primary.withOpacity(0.6)),
-        //             _buildBar(0.95, AppColors.primary, label: '\$14.8k'),
-        //             _buildBar(0.6, AppColors.primary.withOpacity(0.4)),
-        //             _buildBar(0.4, AppColors.primary.withOpacity(0.3)),
-        //           ],
-        //         ),
-        //       ),
-        //       const SizedBox(height: 8),
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         children: const [
-        //           Text(
-        //             'Nov',
-        //             style: TextStyle(fontSize: 10, color: AppColors.textMuted),
-        //           ),
-        //           Text(
-        //             'Dec',
-        //             style: TextStyle(fontSize: 10, color: AppColors.textMuted),
-        //           ),
-        //           Text(
-        //             'Jan',
-        //             style: TextStyle(fontSize: 10, color: AppColors.textMuted),
-        //           ),
-        //           Text(
-        //             'Feb',
-        //             style: TextStyle(
-        //               fontSize: 10,
-        //               fontWeight: FontWeight.bold,
-        //               color: AppColors.textMain,
-        //             ),
-        //           ),
-        //           Text(
-        //             'Mar',
-        //             style: TextStyle(fontSize: 10, color: AppColors.textMuted),
-        //           ),
-        //           Text(
-        //             'Apr',
-        //             style: TextStyle(fontSize: 10, color: AppColors.textMuted),
-        //           ),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         const SizedBox(height: 16),
         const Text(
           'Event Impact Summary',
@@ -656,7 +656,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     );
   }
 
-  // ================= 2. MANAGE TAB =================
+  
   Widget _buildManageTab() {
     return ListView(
       key: const ValueKey('manage'),
@@ -730,11 +730,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             );
           },
         ),
-        // _buildManageEventCard(
-        //   'Rural Tech Ed',
-        //   'Ongoing • 12 Tasks assigned',
-        //   Icons.calendar_today,
-        // ),
+        
+        
+        
+        
+        
         const Text(
           'Past Events',
           style: TextStyle(
@@ -774,17 +774,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             );
           },
         ),
-        // Opacity(
-        //   opacity: 0.7,
-        //   child: _buildManageEventCard(
-        //     'Digital Literacy Camp',
-        //     'Completed Oct 2023 • Goal Met',
-        //     Icons.event_available,
-        //     isPast: true,
-        //   ),
-        // ),
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
-        // const SizedBox(height: 24),
+        
         const Text(
           'Volunteer Roster',
           style: TextStyle(
@@ -954,12 +954,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     );
   }
 
-  // ================= 3. REQUESTS TAB =================
+  
   Widget _buildRequestsTab() {
     return Column(
       key: const ValueKey('requests'),
       children: [
-        // Smooth Animated Sliding Sub-Tab Bar
+        
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
           child: Container(

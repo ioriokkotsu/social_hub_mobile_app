@@ -89,7 +89,7 @@ class _LogHoursPageState extends State<LogHoursPage> {
                             onTap: () {
                               _showDialog(
                                 CupertinoDatePicker(
-                                  // backgroundColor: AppColors.primary.withValues(alpha: 0.06),
+                                  
                                   use24hFormat: true,
                                   mode: CupertinoDatePickerMode.dateAndTime,
                                   initialDateTime: dateTime,
@@ -173,7 +173,7 @@ class _LogHoursPageState extends State<LogHoursPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 _buildLabel('Tasks Completed'),
                 Container(
                   decoration: BoxDecoration(
@@ -199,35 +199,35 @@ class _LogHoursPageState extends State<LogHoursPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                _buildLabel('Proof / Photo (Optional)'),
-                Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.appBg,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.gray100, width: 2),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.camera_alt_outlined,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Tap to upload photo',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 30),
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
               ],
             ),
           ),

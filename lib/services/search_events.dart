@@ -53,7 +53,7 @@ Future<List<DocumentSnapshot>> searchEvents(
       String aField = '';
       String bField = '';
 
-      // Get the appropriate field for sorting
+      
       switch (searchBy.toLowerCase()) {
         case 'title':
           aField = a.get('eventTitle')?.toString().toLowerCase() ?? '';

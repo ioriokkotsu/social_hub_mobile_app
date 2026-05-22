@@ -5,14 +5,14 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Stream to listen to authentication state changes (logged in or logged out)
-  // This is what StreamBuilder in main.dart listens to!
+  
+  
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Get the current logged-in user
+  
   User? get currentUser => _auth.currentUser;
 
-  // --- Sign Up with Email & Password ---
+  
   Future<UserCredential> signUpWithEmail(
     String email,
     String password, {
@@ -21,11 +21,11 @@ class AuthService {
     required String number,
   }) async {
     try {
-      // 1. Create the user in Firebase Auth
+      
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // 2. Auto-create the user document in the 'users' Firestore collection
+      
       if (userCredential.user != null) {
         await _firestore.collection('users').doc(userCredential.user!.uid).set({
           'uid': userCredential.user!.uid,
@@ -42,7 +42,7 @@ class AuthService {
 
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      // Throw custom error messages based on Firebase error codes
+      
       if (e.code == 'weak-password') {
         throw Exception('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
@@ -56,7 +56,7 @@ class AuthService {
     }
   }
 
-  // --- Sign Up NGO with Email & Password ---
+  
   Future<UserCredential> signUpNgoWithEmail(
     String email,
     String password, {
@@ -90,7 +90,7 @@ class AuthService {
     }
   }
 
-  // --- Log In with Email & Password ---
+  
   Future<UserCredential> loginWithEmail(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -112,12 +112,12 @@ class AuthService {
     }
   }
 
-  // --- Log Out ---
+  
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
-  // User Data : Future
+  
   Future<Map<String, dynamic>?> getUserData(String? uid) async {
     try {
       DocumentSnapshot doc = await _firestore
@@ -133,14 +133,14 @@ class AuthService {
     }
   }
 
-  // User Data : Stream Snapshot
+  
   Stream<DocumentSnapshot<Map<String, dynamic>>> getUserDataSnapshot(
     String? uid,
   ) {
     return _firestore.collection('users').doc(uid).snapshots();
   }
 
-  // Single Collection : Future
+  
   Future<Map<String, dynamic>?> getCollectionData(
     dynamic referenceOrUid,
     String collection,
@@ -151,7 +151,7 @@ class AuthService {
       if (referenceOrUid is DocumentReference<Map<String, dynamic>>) {
         doc = await referenceOrUid.get();
       } else {
-        // Normal UID string
+        
         doc = await _firestore.collection(collection).doc(referenceOrUid).get();
       }
 
@@ -168,7 +168,7 @@ class AuthService {
     }
   }
 
-  // Single Collection : Stream Snapshot
+  
   Stream<DocumentSnapshot<Map<String, dynamic>>> getCollectionDataSnapshot(
     dynamic referenceOrUid,
     String collection,
@@ -184,7 +184,7 @@ class AuthService {
     return docRef.snapshots();
   }
 
-  //Query Collection : Future
+  
   Future<List<Map<String, dynamic>>> getUsers(String collection) async {
     try {
       QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
@@ -197,14 +197,14 @@ class AuthService {
     }
   }
 
-  //Query Collection : Stream Snapshot
+  
   Stream<QuerySnapshot<Map<String, dynamic>>> getCollectionStream(
     String collection,
   ) {
     return _firestore.collection(collection).snapshots();
   }
 
-  // Query with Multiple Filters
+  
   Future<List<Map<String, dynamic>>> getQueryAdvanced({
     List<Map<String, dynamic>>? filters,
     required String collection,
@@ -226,7 +226,7 @@ class AuthService {
     }
   }
 
-  //Update Users Collection
+  
   Future<void> updateCollection(String uid, Map<String, dynamic> data) async {
     try {
       await _firestore.collection('users').doc(uid).update(data);
@@ -235,7 +235,7 @@ class AuthService {
     }
   }
 
-  //Get a  specific field from colection using document path
+  
   Future<String?> getFieldOfCollectionFromPath(String path,String fieldName) async {
     try {
       DocumentSnapshot doc = await FirebaseFirestore.instance.doc(path).get();
@@ -250,7 +250,7 @@ class AuthService {
     }
   }
 
-  //Add new document to a collection
+  
   Future<void> addDocToCollection(String collection, Map<String, dynamic> data) async {
     try {
       await _firestore.collection(collection).add(data);

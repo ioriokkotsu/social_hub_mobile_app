@@ -134,41 +134,41 @@ class _VolunteerListPageState extends State<VolunteerListPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: OutlinedButton.icon(
-              //         onPressed: () => Navigator.pop(context),
-              //         icon: const Icon(Icons.email),
-              //         label: const Text('Email'),
-              //         style: OutlinedButton.styleFrom(
-              //           foregroundColor: AppColors.textMain,
-              //           padding: const EdgeInsets.symmetric(vertical: 16),
-              //           shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(12),
-              //           ),
-              //           side: const BorderSide(color: AppColors.gray100),
-              //         ),
-              //       ),
-              //     ),
-              //     const SizedBox(width: 12),
-              //     Expanded(
-              //       child: ElevatedButton.icon(
-              //         onPressed: () => Navigator.pop(context),
-              //         icon: const Icon(Icons.chat_bubble_outline),
-              //         label: const Text('Message'),
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor: AppColors.textMain,
-              //           foregroundColor: Colors.white,
-              //           padding: const EdgeInsets.symmetric(vertical: 16),
-              //           shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(12),
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
             ],
           ),
         );

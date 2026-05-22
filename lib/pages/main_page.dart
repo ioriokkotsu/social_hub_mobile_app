@@ -63,21 +63,21 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
 
-        // bottomNavigationBar:
-        // AnimatedContainer(
-        //   duration: const Duration(milliseconds: 200),
-        //   height: isDrawerOpen ? 0 : null,
-        //   width: isDrawerOpen ? 0 : null,
-        //   child: BottomNavBar(
-        //     currentIndex: currentIndex,
-        //     onTap: (index) {
-        //       setState(() {
-        //         currentIndex = index;
-        //       });
-        //     },
-        //     isDrawerOpen: isDrawerOpen,
-        //   ),
-        // ),
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
       ),
     );
   }

@@ -250,23 +250,23 @@ class _PendingVolunteersPageState extends State<PendingVolunteersPage> {
     );
   }
 
-  //               initials: 'SJ',
-  //               color: Colors.blue,
-  //               role: 'Logistics Coordinator',
-  //               motivation:
-  //                   '"I have 3 years of experience organizing community events and managing transport logistics."',
-  //             ),
-  //             _buildPendingCard(
-  //               name: 'David Chen',
-  //               imgUrl: 'https://i.pravatar.cc/100?img=68',
-  //               role: 'Coding Instructor',
-  //             ),
-  //           ],
-  //         );
-  //       }
-  //     ),
-  //   );
-  // }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   Widget _buildPendingCard({
     required String id,

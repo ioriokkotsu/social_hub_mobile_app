@@ -39,7 +39,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           Container(
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: 0.9),
-              // color: Colors.transparent,
+              
               border: Border.all(color: Color.fromARGB(255, 148, 149, 149)),
               borderRadius: BorderRadius.circular(24),
               boxShadow: floatingShadow,
@@ -71,7 +71,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       active: _isActive(1),
                     ),
 
-                    // const SizedBox(width: 50), // space for FAB
+                    
                     navItem(
                       3,
                       Icons.newspaper_outlined,
@@ -93,59 +93,59 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
           ),
 
-          // if (!widget.isDrawerOpen)
-          //   Positioned(
-          //     top: -15,
+          
+          
+          
 
-          //     child: GestureDetector(
-          //       onTap: () {},
+          
+          
 
-          //       child: Container(
-          //         width: 60,
-          //         height: 60,
+          
+          
+          
 
-          //         decoration: BoxDecoration(
-          //           shape: BoxShape.circle,
-          //           color: AppColors.primary,
-          //           boxShadow: floatingShadow,
-          //         ),
+          
+          
+          
+          
+          
 
-          //         child: const Icon(Icons.add, color: Colors.white, size: 28),
-          //       ),
-          //     ),
-          //   ),
-          // if (!widget.isDrawerOpen)
-          //   Positioned(
-          //     bottom: 32,
-          //     right: 20,
-          //     child: SizedBox(
-          //       width: 200,
-          //       height: 300,
-          //       child: FanFloatingMenu(
-          //         menuItems: [
-          //           FanMenuItem(
-          //             onTap: () {},
-          //             icon: Icons.edit_rounded,
-          //             title: 'Test Firebase',
-          //           ),
-          //           FanMenuItem(
-          //             onTap: () {
-          //               print("object");
-          //             },
-          //             icon: Icons.edit_rounded,
-          //             title: 'Edit Texts',
-          //           ),
-          //           FanMenuItem(
-          //             onTap: () {},
-          //             icon: Icons.edit_rounded,
-          //             title: 'Edit Texts',
-          //           ),
-          //         ],
-          //         toggleButtonColor: AppColors.primary,
-          //         buttonSize: 60,
-          //       ),
-          //     ),
-          //   ),
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
         ],
       ),
     );
@@ -197,7 +197,7 @@ Widget navItem(
             children: [
               Icon(icon, color: color, size: 30),
 
-              // const SizedBox(height: 4),
+              
               Text(
                 label,
                 style: TextStyle(

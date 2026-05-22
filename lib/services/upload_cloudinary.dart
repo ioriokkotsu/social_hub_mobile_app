@@ -25,11 +25,11 @@ Future<String?> uploadToCloudinary(String filePath) async {
     final resBody = await response.stream.bytesToString();
     final data = jsonDecode(resBody);
 
-    print("UPLOAD SUCCESS: ${data['secure_url']}"); // DEBUG
+    print("UPLOAD SUCCESS: ${data['secure_url']}"); 
 
     return data['secure_url'];
   } else {
-    print("UPLOAD FAILED: ${response.statusCode}"); // DEBUG
+    print("UPLOAD FAILED: ${response.statusCode}"); 
     return null;
   }
 }
@@ -49,19 +49,19 @@ Future<void> updateProfilePicture(String uid) async {
 
   final image = await pickImage();
   if (image == null) {
-    print("No image selected"); // DEBUG
+    print("No image selected"); 
     return;
   }
 
 
   final imageUrl = await uploadToCloudinary(image.path);
   if (imageUrl == null) {
-    print("Upload failed"); // DEBUG
+    print("Upload failed"); 
     return;
   }
 
-  // 3. Save to Firestore
+  
   await saveImageURL('users', uid, 'profileURL', imageUrl);
 
-  print("PROFILE UPDATED SUCCESSFULLY"); // DEBUG
+  print("PROFILE UPDATED SUCCESSFULLY"); 
 }

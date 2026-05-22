@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:social_hub/pages/log_hours_page.dart';
 import 'package:social_hub/pages/ngo_profile_page.dart';
 import 'package:social_hub/pages/volunteer_application_page.dart';
 import 'package:social_hub/services/auth_service.dart';
@@ -10,9 +11,10 @@ import 'package:social_hub/theme/theme.dart';
 import 'package:intl/intl.dart';
 
 class ProjectDetailPage extends StatefulWidget {
-  const ProjectDetailPage({super.key, required this.uid});
+  const ProjectDetailPage({super.key, required this.uid,required this.eventTitle});
 
   final String uid;
+  final String eventTitle;
 
   @override
   State<ProjectDetailPage> createState() => _ProjectDetailPageState();
@@ -44,7 +46,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                     expandedHeight: 250,
                     pinned: true,
                     backgroundColor: AppColors.primary.withAlpha(100),
-                    iconTheme: const IconThemeData(color: Colors.black),
+                    iconTheme: const IconThemeData(color: AppColors.surface),
                     flexibleSpace: FlexibleSpaceBar(
                       background: Stack(
                         fit: StackFit.expand,
@@ -102,7 +104,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            //start date - end date
+                            
                             '${DateFormat.yMMMd().add_jm().format((event?['startDate'] as Timestamp).toDate())} - ${DateFormat.yMMMd().add_jm().format((event?['endDate'] as Timestamp).toDate())}',
                             style: GoogleFonts.poppins(
                               fontSize: 15.5,
@@ -404,7 +406,20 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                   status != 'Approved' && status != 'Pending';
 
                               return ElevatedButton(
-                                onPressed: canApply
+                                onPressed: status == 'Approved'
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          createSlideRoute(
+                                            LogHoursPage(
+                                              eventID: widget.uid,
+                                              eventTitle: widget.eventTitle,
+                                              isFromEventDetails: true,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    : canApply
                                     ? () {
                                         Navigator.push(
                                           context,
@@ -433,7 +448,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
 
                                 child: Text(
                                   status == 'Approved'
-                                      ? 'Joined'
+                                      ? 'Log Hours'
                                       : status == 'Pending'
                                       ? 'Pending'
                                       : 'Join',

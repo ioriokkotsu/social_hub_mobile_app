@@ -44,13 +44,15 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               physics: const BouncingScrollPhysics(),
               child: Row(
                 children: [
-                  // _buildBadgePreview(
-                  //   Icons.workspace_premium,
-                  //   'Top 10%',
-                  //   AppColors.accent,
-                  // ),
-                  // const SizedBox(width: 12),
+                  
+                  
+                  
+                  
+                  
+                  
                   FirestoreFutureBuilder(
+                    height: 31,
+                    width: 92.1,
                     future: FirebaseFirestore.instance
                         .collection('users')
                         .doc(AuthService().currentUser!.uid)
@@ -71,7 +73,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
       ),
       body: Column(
         children: [
-          // Smooth Animated Tab Bar
+          
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
             child: Container(
@@ -83,7 +85,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               ),
               child: Stack(
                 children: [
-                  // Sliding Indicator
+                  
                   AnimatedAlign(
                     alignment: _isTasksTab
                         ? Alignment.centerLeft
@@ -107,7 +109,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
                       ),
                     ),
                   ),
-                  // Tab Buttons
+                  
                   Row(
                     children: [
                       Expanded(
@@ -194,114 +196,114 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
     );
   }
 
-  // --- SECTION 1: Tasks ---
+  
   Widget _buildTasksSection() {
     return ListView(
       key: const ValueKey('tasks'),
       padding: const EdgeInsets.all(24),
       physics: const BouncingScrollPhysics(),
       children: [
-        // const Text(
-        //   'Upcoming Tasks',
-        //   style: TextStyle(
-        //     fontFamily: 'Poppins',
-        //     fontSize: 16,
-        //     fontWeight: FontWeight.bold,
-        //   ),
-        // ),
-        // const SizedBox(height: 12),
-        // Container(
-        //   padding: const EdgeInsets.all(16),
-        //   decoration: BoxDecoration(
-        //     color: AppColors.surface,
-        //     borderRadius: BorderRadius.circular(16),
-        //     boxShadow: softShadow,
-        //     border: const Border(
-        //       left: BorderSide(color: AppColors.primary, width: 4),
-        //     ),
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       // Column(
-        //       //   crossAxisAlignment: CrossAxisAlignment.start,
-        //       //   children: [
-        //       //     Row(
-        //       //       children: [
-        //       //         const Text(
-        //       //           'Teach HTML Basics',
-        //       //           style: TextStyle(
-        //       //             fontWeight: FontWeight.bold,
-        //       //             fontSize: 14,
-        //       //           ),
-        //       //         ),
-        //       //         const SizedBox(width: 8),
-        //       //         Container(
-        //       //           padding: const EdgeInsets.symmetric(
-        //       //             horizontal: 8,
-        //       //             vertical: 2,
-        //       //           ),
-        //       //           decoration: BoxDecoration(
-        //       //             color: AppColors.secondary.withOpacity(0.2),
-        //       //             borderRadius: BorderRadius.circular(4),
-        //       //           ),
-        //       //           child: const Text(
-        //       //             'Tomorrow',
-        //       //             style: TextStyle(
-        //       //               color: AppColors.primary,
-        //       //               fontSize: 10,
-        //       //               fontWeight: FontWeight.bold,
-        //       //             ),
-        //       //           ),
-        //       //         ),
-        //       //       ],
-        //       //     ),
-        //       //     const SizedBox(height: 4),
-        //       //     Row(
-        //       //       children: const [
-        //       //         Icon(
-        //       //           Icons.location_on,
-        //       //           size: 12,
-        //       //           color: AppColors.textMuted,
-        //       //         ),
-        //       //         SizedBox(width: 4),
-        //       //         Text(
-        //       //           'Rural Tech Edu Hub',
-        //       //           style: TextStyle(
-        //       //             fontSize: 12,
-        //       //             color: AppColors.textMuted,
-        //       //           ),
-        //       //         ),
-        //       //       ],
-        //       //     ),
-        //       //   ],
-        //       // ),
-        //       // GestureDetector(
-        //       //   onTap: () {},
-        //       //   child: Container(
-        //       //     padding: const EdgeInsets.symmetric(
-        //       //       horizontal: 12,
-        //       //       vertical: 6,
-        //       //     ),
-        //       //     decoration: BoxDecoration(
-        //       //       color: AppColors.primary.withOpacity(0.1),
-        //       //       borderRadius: BorderRadius.circular(8),
-        //       //     ),
-        //       //     child: const Text(
-        //       //       'View',
-        //       //       style: TextStyle(
-        //       //         color: AppColors.primary,
-        //       //         fontSize: 12,
-        //       //         fontWeight: FontWeight.bold,
-        //       //       ),
-        //       //     ),
-        //       //   ),
-        //       // ),
-        //     ],
-        //   ),
-        // ),
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
-        // const SizedBox(height: 24),
+        
         const Text(
           'Recent Activity',
           style: TextStyle(
@@ -312,6 +314,8 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
         ),
         const SizedBox(height: 12),
         FirestoreStreamBuilder<QuerySnapshot>(
+          width: 363.4,
+          height: 80,
           empty: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Center(
@@ -321,8 +325,6 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               ),
             ),
           ),
-          width: 363.4,
-          height: 72,
           radius: 12,
           stream: FirebaseFirestore.instance
               .collection('volunteerLogs')
@@ -357,19 +359,19 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
             );
           },
         ),
-        // Pending Log
-        // _buildActivityItem(
-        //   eventRef: FirebaseFirestore.instance.collection('communityEvents').doc('QzMtSxmpzlPR0VP5qwIc'),
-        //   status: 'Pending',
-        //   hours: 4,
-        // ),
+        
+        
+        
+        
+        
+        
 
-        // // Approved Log
-        // _buildActivityItem(
-        //   eventRef: FirebaseFirestore.instance.collection('communityEvents').doc('QzMtSxmpzlPR0VP5qwIc'),
-        //   status: 'Approved',
-        //   hours: 3,
-        // ),
+        
+        
+        
+        
+        
+        
       ],
     );
   }
@@ -435,6 +437,8 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FirestoreFutureBuilder(
+                  width: 220,
+                  height: 20,
                   future: eventRef.get(),
                   builder: (event) {
                     return Text(
@@ -516,7 +520,7 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
     }
   }
 
-  // --- SECTION 2: Projects ---
+  
   Widget _buildProjectsSection() {
     return ListView(
       key: const ValueKey('projects'),
@@ -533,6 +537,8 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
         ),
         const SizedBox(height: 12),
         FirestoreStreamBuilder(
+          width: 363.4,
+          height: 80,
           empty: const Center(
             child: Text(
               'You have not joined any projects yet.',
@@ -568,20 +574,6 @@ class _VolunteerDashboardPageState extends State<VolunteerDashboardPage> {
                         )
                         .toList(),
                   );
-            Column(
-              spacing: 16,
-              children: projects
-                  .map(
-                    (project) => _buildJoinedProjectCard(
-                      eventTitle: project['eventTitle'],
-                      totalLogHours: '${project['totalLogHours']}',
-                      eventImageURL: project['eventImageURL'],
-                      status: project['status'],
-                      eventID: project['uid'],
-                    ),
-                  )
-                  .toList(),
-            );
           },
         ),
       ],

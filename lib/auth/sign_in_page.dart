@@ -206,9 +206,8 @@ class _LogInPageState extends State<LogInPage> {
                         GestureDetector(
                           onTap: () => Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  SignUpPage(selectedRole: widget.selectedRole),
+                            createSlideRoute(
+                              SignUpPage(selectedRole: widget.selectedRole),
                             ),
                           ),
                           child: const Text(

@@ -12,17 +12,17 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE5F0E6), // bg-map-pattern base
+      backgroundColor: const Color(0xFFE5F0E6), 
       body: Stack(
         children: [
-          // Simulated Dotted Map Pattern Background
+          
           Positioned.fill(
             child: CustomPaint(
               painter: _MapPatternPainter(),
             ),
           ),
 
-          // Simulated Map Pins
+          
           Positioned(
             top: MediaQuery.of(context).size.height * 0.35,
             left: MediaQuery.of(context).size.width * 0.25,
@@ -34,7 +34,7 @@ class _MapPageState extends State<MapPage> {
             child: _buildMapPin('Clean Wells', AppColors.accent),
           ),
 
-          // Top Gradient Header with Search
+          
           Positioned(
             top: 0,
             left: 0,
@@ -131,7 +131,7 @@ class _MapPageState extends State<MapPage> {
   }
 }
 
-// Custom Painter to mimic the HTML background radial-gradient dots
+
 class _MapPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

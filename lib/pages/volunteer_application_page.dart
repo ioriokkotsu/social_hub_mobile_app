@@ -67,7 +67,7 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
                   padding: const EdgeInsets.all(24),
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    // Project Context Box
+                    
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -106,7 +106,7 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Motivation Input
+                    
                     _buildLabel('Motivation'),
                     _buildTextField(
                       hint: 'Why do you want to join this project?',
@@ -115,12 +115,12 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Role Selection
+                    
                     _buildLabel('Available Roles'),
                     _buildDropdown(_getRequiredRoles(event)),
                     const SizedBox(height: 24),
 
-                    // Terms and Conditions Checkbox
+                    
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -175,7 +175,7 @@ class _VolunteerApplicationPageState extends State<VolunteerApplicationPage> {
                 ),
               ),
 
-              // Submit Button Sticky Bottom
+              
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: const BoxDecoration(

@@ -75,7 +75,7 @@ Future<void> updateStatusLogHours(String logID, String newStatus) async {
 
     if (newStatus == 'Approved') {
 
-      //User
+      
       DocumentSnapshot userDoc = await logDoc['userID'].get();
       List listJoinedEvents = List.from(userDoc['listJoinedEvents'] ?? []);
 
@@ -91,7 +91,7 @@ Future<void> updateStatusLogHours(String logID, String newStatus) async {
 
       await logDoc['userID'].update({'listJoinedEvents': listJoinedEvents});
 
-      //Event
+      
       DocumentSnapshot eventDoc = await logDoc['eventID'].get();
       List listJoinedVolunteers = List.from(
         eventDoc['listJoinedVolunteers'] ?? [],

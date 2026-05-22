@@ -38,59 +38,59 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        // floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () async {
-        //     AuthService().signOut();
-        //     // final data = {
-        //     //   "eventTitle": "Code4Future Rural Tech Camp",
-        //     //   "eventCategory": "Technology",
-        //     //   "eventVenue": "Community Hall, Kuala Selangor",
+        
+        
+        
+        
+        
+        
+        
+        
 
-        //     //   "startDate": Timestamp.fromDate(
-        //     //     DateTime.parse("2026-06-10T09:00:00"),
-        //     //   ),
+        
+        
+        
 
-        //     //   "endDate": Timestamp.fromDate(
-        //     //     DateTime.parse("2026-06-12T18:00:00"),
-        //     //   ),
+        
+        
+        
 
-        //     //   "amountTarget": 15000.0,
-        //     //   "amountRaised": 0.0,
+        
+        
 
-        //     //   "eventDescription":
-        //     //       "This event focuses on teaching basic programming and digital literacy to students from rural communities. Volunteers will conduct hands-on workshops covering mobile apps, internet safety, and beginner coding projects. Donations collected will be used to purchase laptops, internet devices, and learning materials for underprivileged schools.",
+        
+        
 
-        //     //   "requiredRoles": [
-        //     //     "Flutter Developer",
-        //     //     "UI/UX Designer",
-        //     //     "Technical Mentor",
-        //     //     "Event Coordinator",
-        //     //   ],
+        
+        
+        
+        
+        
+        
 
-        //     //   "eventImageURL": "https://example.com/images/code4future.jpg",
+        
 
-        //     //   "createdAt": FieldValue.serverTimestamp(),
+        
 
-        //     //   "listJoinedVolunteers": [],
+        
 
-        //     //   "status": "Active",
+        
 
-        //     //   // Correct DocumentReference
-        //     //   "organizedBy": FirebaseFirestore.instance
-        //     //       .collection('ngo')
-        //     //       .doc('G62tB1ShJfaeQ4jPflziVnQZhTw1'),
-        //     // };
+        
+        
+        
+        
+        
 
-        //     // final id = "customDocumentID";
+        
 
-        //     // await FirebaseFirestore.instance
-        //     //     .collection('communityEvents')
-        //     //     .add(data);
-        //   },
-        //   backgroundColor: AppColors.primary,
-        //   child: const Icon(Icons.add, color: AppColors.surface),
-        // ),
+        
+        
+        
+        
+        
+        
+        
         backgroundColor: AppColors.appBg,
         drawer: DrawerSideBar(),
         onDrawerChanged: (isOpen) {
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  //Section Title
+                  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -204,7 +204,7 @@ Widget card(
     onTap: () {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ProjectDetailPage(uid: uid)),
+        createSlideRoute(ProjectDetailPage(uid: uid, eventTitle: eventTitle)),
       );
     },
     child: Container(

@@ -96,29 +96,29 @@ class DrawerSideBar extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
 
               children: [
-                // drawerItem(
-                //   icon: Icons.map_outlined,
-                //   iconColor: Colors.red,
-                //   label: 'Explore Map',
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (context) => const MapPage()),
-                //     );
-                //   },
-                // ),
-                // const SizedBox(height: 8),
-                // drawerItem(
-                //   icon: Icons.newspaper,
-                //   iconColor: Colors.blue,
-                //   label: 'Global News',
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (context) => NewsPage()),
-                //     );
-                //   },
-                // ),
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 const SizedBox(height: 8),
                 drawerItem(
                   icon: Icons.event_outlined,
@@ -153,16 +153,16 @@ class DrawerSideBar extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 8),
                   child: Divider(color: Colors.grey[300], thickness: 1),
                 ),
-                // drawerItem(
-                //   icon: Icons.settings,
-                //   iconColor: AppColors.textMuted,
-                //   label: 'Settings',
-                // ),
-                // drawerItem(
-                //   icon: Icons.question_mark_rounded,
-                //   iconColor: AppColors.textMuted,
-                //   label: "Help & Support",
-                // ),
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
               ],
             ),
           ),

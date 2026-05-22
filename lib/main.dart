@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
       home: StreamBuilder<User?>(
         stream: AuthService().authStateChanges,
         builder: (context, snapshot) {
-          // Show a loader while checking the auth state
+          
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               backgroundColor: AppColors.appBg,
@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
             );
           }
           
-          // If a user is currently logged in, route by Firestore profile role.
+          
           if (snapshot.hasData) {
             return FutureBuilder<String>(
               future: _resolveRole(snapshot.data!.uid),
@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
             );
           }
           
-          // If NO user is logged in, start from role selection first.
+          
           return const RoleSelectionPage();
         },
       ),

@@ -34,14 +34,14 @@ final List<BoxShadow> floatingShadow = [
   )
 ];
 
-// Reusable Slide Animation for navigating to new pages
+
 Route createSlideRoute(Widget page) {
   return PageRouteBuilder(
     transitionDuration: Duration(milliseconds: 450),
     reverseTransitionDuration: Duration(milliseconds: 450),
     pageBuilder: (context, animation, secondaryAnimation) => page,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(1.0, 0.0); // Slide from right
+      const begin = Offset(1.0, 0.0); 
       const end = Offset.zero;
       const curve = Curves.easeOutQuart;
 

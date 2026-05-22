@@ -88,8 +88,8 @@ class ChatScreen extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => ChatRoomPage()
+          createSlideRoute(
+            ChatRoomPage()
           ),
         );
       },

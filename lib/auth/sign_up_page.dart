@@ -191,12 +191,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     style: TextStyle(color: AppColors.textMuted, fontSize: 14),
                   ),
                   GestureDetector(
-                    // onTap: _isLoading ? null : _loginForSelectedRole,
+                    
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            LogInPage(selectedRole: widget.selectedRole),
+                      createSlideRoute(
+                        LogInPage(selectedRole: widget.selectedRole),
                       ),
                     ),
                     child: const Text(

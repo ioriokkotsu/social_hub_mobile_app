@@ -343,6 +343,7 @@ class _FeedPageState extends State<FeedPage> {
                     const Divider(color: AppColors.gray100),
                     Expanded(
                       child: FirestoreStreamBuilder<QuerySnapshot>(
+                        loading: const Center(child: CircularProgressIndicator()),
                         stream: postDoc.reference
                             .collection('comments')
                             .orderBy('createdAt', descending: true)
@@ -439,6 +440,7 @@ class _FeedPageState extends State<FeedPage> {
                         ),
                       ),
                     ),
+                    const Divider(color: AppColors.gray100),
                     Row(
                       children: [
                         FirestoreFutureBuilder(

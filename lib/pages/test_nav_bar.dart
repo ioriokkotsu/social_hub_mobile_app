@@ -51,7 +51,7 @@ class _TestNavBarState extends State<TestNavBar> {
         ),
       ),
 
-      // CUSTOM BOTTOM NAV BAR
+      
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(
           left: 18,
