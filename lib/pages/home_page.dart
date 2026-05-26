@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/component/drawer.dart';
 import 'package:social_hub/pages/community_project_page.dart';
-import 'package:social_hub/pages/news_page.dart';
 import 'package:social_hub/pages/project_detail_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/stream_builder.dart';

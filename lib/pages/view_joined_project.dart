@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:social_hub/admin/admin_ops.dart';
 import 'package:social_hub/pages/log_hours_page.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';
@@ -398,72 +397,6 @@ class _ViewJoinedProjectPageState extends State<ViewJoinedProjectPage> {
                   
                 ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAnnouncementCard({
-    required String timeAgo,
-    required Color borderColor,
-    required String content,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: softShadow,
-        border: Border(left: BorderSide(color: borderColor, width: 4)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: AppColors.blue500.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: Text(
-                    'EG',
-                    style: TextStyle(
-                      color: AppColors.blue500,
-                      fontSize: 8,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'EduGlobal NGO',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-              ),
-              const Spacer(),
-              Text(
-                timeAgo,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: AppColors.textMuted,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            content,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppColors.textMain,
-              height: 1.5,
             ),
           ),
         ],

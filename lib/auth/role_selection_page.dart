@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:social_hub/auth/sign_in_page.dart';
-import 'package:social_hub/auth/sign_up_page.dart';
 import 'package:social_hub/theme/theme.dart';
 
 class RoleSelectionPage extends StatelessWidget {

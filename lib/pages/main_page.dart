@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:social_hub/component/bottom_nav_bar.dart';
-import 'package:social_hub/pages/chat_page.dart';
 import 'package:social_hub/pages/feed_page.dart';
 import 'package:social_hub/pages/home_page.dart';
 import 'package:social_hub/pages/news_page.dart';

@@ -14,23 +14,6 @@ class NGOProfilePage extends StatefulWidget {
 }
 
 class _NGOProfilePageState extends State<NGOProfilePage> {
-  bool _isFollowing = false;
-
-  void _toggleFollow() {
-    setState(() {
-      _isFollowing = !_isFollowing;
-    });
-
-    if (_isFollowing) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('You are now following EduGlobal NGO!'),
-          backgroundColor: AppColors.primary,
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

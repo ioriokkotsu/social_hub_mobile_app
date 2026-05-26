@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:social_hub/pages/donation_history_page.dart';
 import 'package:social_hub/pages/edit_profile_page.dart';
-import 'package:social_hub/pages/my_badges_page.dart';
 import 'package:social_hub/pages/volunteer_dashboard.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/stream_builder.dart';

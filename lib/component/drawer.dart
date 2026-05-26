@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/pages/community_project_page.dart';
 import 'package:social_hub/pages/donation_history_page.dart';
-import 'package:social_hub/pages/news_page.dart';
 import 'package:social_hub/pages/volunteer_dashboard.dart';
 import 'package:social_hub/services/auth_service.dart';
 import 'package:social_hub/services/future_builder.dart';

@@ -90,7 +90,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           createSlideRoute(
                             RoleSelectionPage(),
                           ),
-                        );;
+                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -460,44 +460,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     );
   }
 
-  Widget _buildBar(double heightFactor, Color color, {String? label}) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            if (label != null)
-              Container(
-                margin: const EdgeInsets.only(bottom: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            FractionallySizedBox(
-              widthFactor: 1,
-              child: Container(
-                height: 100 * heightFactor,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildImpactSummaryCard(
     String title,

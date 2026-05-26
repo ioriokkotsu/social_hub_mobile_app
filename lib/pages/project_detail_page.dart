@@ -52,7 +52,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            event?['eventImageURL'] ?? '',
+                            event['eventImageURL'] ?? '',
                             fit: BoxFit.cover,
                           ),
                           Container(color: Colors.black.withValues(alpha: 0.1)),
@@ -84,7 +84,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                (event?['eventCategory'] ?? 'Uncategorized').toUpperCase(),
+                                (event['eventCategory'] ?? 'Uncategorized').toUpperCase(),
                                 style: const TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 12,
@@ -96,7 +96,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '${event?['eventTitle'] ?? 'Project Title'}',
+                            '${event['eventTitle'] ?? 'Project Title'}',
                             style: GoogleFonts.poppins(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
@@ -105,7 +105,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                           const SizedBox(height: 24),
                           Text(
                             
-                            '${DateFormat.yMMMd().add_jm().format((event?['startDate'] as Timestamp).toDate())} - ${DateFormat.yMMMd().add_jm().format((event?['endDate'] as Timestamp).toDate())}',
+                            '${DateFormat.yMMMd().add_jm().format((event['startDate'] as Timestamp).toDate())} - ${DateFormat.yMMMd().add_jm().format((event['endDate'] as Timestamp).toDate())}',
                             style: GoogleFonts.poppins(
                               fontSize: 15.5,
                               color: AppColors.textMain,
@@ -127,7 +127,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: event?['eventVenue'] ?? 'N/A',
+                                  text: event['eventVenue'] ?? 'N/A',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                     color: AppColors.textMuted,
@@ -149,7 +149,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
 
                           FirestoreFutureBuilder(
                             future: AuthService().getCollectionData(
-                              event?['organizedBy'],
+                              event['organizedBy'],
                               'ngo',
                             ),
                             builder: (ngo) {
@@ -273,7 +273,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                       const SizedBox(height: 4),
                                       Text(
                                         formatter.format(
-                                          event?['amountRaised'] ?? 0,
+                                          event['amountRaised'] ?? 0,
                                         ),
                                         style: const TextStyle(
                                           fontSize: 16.5,
@@ -305,7 +305,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                       const SizedBox(height: 4),
                                       Text(
                                         formatter.format(
-                                          event?['amountTarget'] ?? 0,
+                                          event['amountTarget'] ?? 0,
                                         ),
                                         style: const TextStyle(
                                           fontSize: 16.5,
@@ -330,7 +330,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            event?['eventDescription'] ??
+                            event['eventDescription'] ??
                                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                             style: const TextStyle(
                               fontSize: 14,
@@ -426,7 +426,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                           createSlideRoute(
                                             VolunteerApplicationPage(
                                               eventID: widget.uid,
-                                              ngoRef: event?['organizedBy'],
+                                              ngoRef: event['organizedBy'],
                                             ),
                                           ),
                                         );

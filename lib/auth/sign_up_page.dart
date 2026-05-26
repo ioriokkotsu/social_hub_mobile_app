@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_hub/auth/role_selection_page.dart';
 import 'package:social_hub/auth/sign_in_page.dart';
-import 'package:social_hub/pages/home_page.dart';
 import 'package:social_hub/pages/main_page.dart';
 import 'package:social_hub/theme/theme.dart';
 import '../services/auth_service.dart';
